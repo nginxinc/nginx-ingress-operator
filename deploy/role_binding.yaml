@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nginx-ingress-operator
+subjects:
+- kind: ServiceAccount
+  name: nginx-ingress-operator
+  namespace: default # TODO change this, the operator should be in a new namespace created only for this eg: nginx-ingress-operator
+roleRef:
+  kind: ClusterRole
+  name: nginx-ingress-operator
+  apiGroup: rbac.authorization.k8s.io
