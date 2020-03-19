@@ -5,7 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: nginx-ingress-operator
-  namespace: default # TODO change this, the operator should be in a new namespace created only for this eg: nginx-ingress-operator
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: nginx-ingress-operator

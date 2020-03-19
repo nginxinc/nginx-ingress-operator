@@ -9,6 +9,7 @@ Learn more about operators in the [Kubernetes Documentation](https://kubernetes.
 1. Install the NGINX Ingress Operator. See [docs](./docs/installation.md).
 1. Deploy a new NGINX Ingress Controller using the [NginxIngressController](docs/nginx-ingress-controller.md) Custom Resource:
     * For an NGINX installation see the [NGINX example](./examples/deployment-oss-min).
+    * For an NGINX Plus installation see the [NGINX Plus example](./examples/deployment-plus-min).
 
 ## Development
 

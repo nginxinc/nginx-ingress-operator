@@ -11,6 +11,9 @@ import (
 )
 
 func TestGeneratePodArgs(t *testing.T) {
+	var promPort, statusPort uint16
+	promPort = 9114
+	statusPort = 9090
 	name := "my-nginx-ingress"
 	namespace := "my-nginx-ingress"
 	tests := []struct {
@@ -160,7 +163,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					LogLevel:   3,
 					NginxStatus: &k8sv1alpha1.NginxStatus{
 						Enable:     true,
-						Port:       9090,
+						Port:       &statusPort,
 						AllowCidrs: "127.0.0.1",
 					},
 					ReportIngressStatus: &k8sv1alpha1.ReportIngressStatus{
@@ -171,7 +174,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					WildcardTLS:          "my-nginx-ingress/wildcard-secret",
 					Prometheus: &k8sv1alpha1.Prometheus{
 						Enable: true,
-						Port:   9114,
+						Port:   &promPort,
 					},
 					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
 					EnableTLSPassthrough: true,

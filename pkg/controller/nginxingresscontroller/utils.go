@@ -66,8 +66,8 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 	if instance.Spec.NginxStatus != nil && instance.Spec.NginxStatus.Enable {
 		args = append(args, "-nginx-status")
 
-		if instance.Spec.NginxStatus.Port != 0 {
-			args = append(args, fmt.Sprintf("-nginx-status-port=%v", instance.Spec.NginxStatus.Port))
+		if instance.Spec.NginxStatus.Port != nil {
+			args = append(args, fmt.Sprintf("-nginx-status-port=%v", *instance.Spec.NginxStatus.Port))
 		}
 
 		if instance.Spec.NginxStatus.AllowCidrs != "" {
@@ -96,8 +96,8 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 	if instance.Spec.Prometheus != nil && instance.Spec.Prometheus.Enable {
 		args = append(args, "-enable-prometheus-metrics")
 
-		if instance.Spec.Prometheus.Port != 0 {
-			args = append(args, fmt.Sprintf("-prometheus-metrics-listen-port=%v", instance.Spec.Prometheus.Port))
+		if instance.Spec.Prometheus.Port != nil {
+			args = append(args, fmt.Sprintf("-prometheus-metrics-listen-port=%v", *instance.Spec.Prometheus.Port))
 		}
 	}
 
@@ -139,7 +139,6 @@ func remove(list []string, s string) []string {
 }
 
 func VerifySCCAPIExists() (bool, error) {
-	return false, nil // FIXME
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return false, err
