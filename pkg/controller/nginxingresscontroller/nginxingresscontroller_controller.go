@@ -509,6 +509,14 @@ func (r *ReconcileNginxIngressController) Reconcile(request reconcile.Request) (
 		}
 	}
 
+	if !instance.Status.Deployed {
+		instance.Status.Deployed = true
+		err := r.client.Status().Update(context.TODO(), instance)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+	}
+
 	reqLogger.Info("Finish reconcile for NginxIngressController")
 	return reconcile.Result{}, nil
 }

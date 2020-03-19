@@ -7,9 +7,9 @@ spec:
   type: deployment
   nginxPlus: false
   image:
-    repository: nginx/nginx-ingress
-    tag: edge
-    pullPolicy: IfNotPresent
+    repository: registry.hub.docker.com/nginx/nginx-ingress
+    tag: edge-ubi
+    pullPolicy: Always
   replicas: 1
   serviceType: NodePort
   enableCRDs: true

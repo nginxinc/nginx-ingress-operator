@@ -1,0 +1,5 @@
+channels:
+- currentCSV: nginx-ingress-operator.v0.0.3
+  name: alpha
+defaultChannel: alpha
+packageName: nginx-ingress-operator
