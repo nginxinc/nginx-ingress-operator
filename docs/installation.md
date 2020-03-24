@@ -1,7 +1,6 @@
 # Installation
 
 ## Prerequisites
-* [operator-sdk](https://github.com/operator-framework/operator-sdk/blob/v0.15.1/doc/user/install-operator-sdk.md) = 0.15.1
 * Go >= 1.13
 * Docker
 
