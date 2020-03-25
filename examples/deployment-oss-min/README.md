@@ -13,10 +13,12 @@ Have the NGINX Ingress Operator deployed in your cluster. Follow [installation](
     kubectl create -f ns.yaml
     ```  
 
-2. Create a new NginxIngressController resource that defines our NGINX Ingress Controller instance:
+2. Create a new NginxIngressController resource that defines our NGINX Ingress Controller instance (**Note**: If using Openshift, change the `image.tag` to `edge-ubi`):
     ```
     kubectl create -f nginx-ingress-controller.yaml
     ```
+
+ 
 
 This will deploy an NGINX Ingress Controller instance using a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) in the `my-nginx-controller` namespace. 
 

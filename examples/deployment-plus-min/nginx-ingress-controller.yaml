@@ -7,7 +7,7 @@ spec:
   type: deployment
   nginxPlus: true
   image:
-    repository: nginx/nginx-ingress
+    repository: nginx-plus-ingress
     tag: edge
     pullPolicy: Always
   replicas: 1
