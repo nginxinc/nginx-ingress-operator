@@ -127,6 +127,25 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					EnableCRDs:           true,
+					EnableTLSPassthrough: true,
+					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
+				},
+			},
+			expected: []string{
+				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
+				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
+				"-enable-tls-passthrough",
+				"-global-configuration=my-nginx-ingress/globalconfiguration",
+			},
+		},
+		{
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					NginxPlus:           true,
 					DefaultSecret:       "my-nginx-ingress/my-secret",
 					EnableCRDs:          false,
@@ -154,6 +173,8 @@ func TestGeneratePodArgs(t *testing.T) {
 						Enable: true,
 						Port:   9114,
 					},
+					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
+					EnableTLSPassthrough: true,
 				},
 			},
 			expected: []string{

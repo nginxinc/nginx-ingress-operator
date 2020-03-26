@@ -9,9 +9,7 @@ spec:
   image:
     repository: nginx/nginx-ingress
     tag: edge
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   replicas: 1
   serviceType: NodePort
   enableCRDs: true
-  nginxStatus:
-    enable: true

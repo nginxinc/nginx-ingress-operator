@@ -80,6 +80,15 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +nullable
 	ConfigMapData map[string]string `json:"configMapData"`
+	// The GlobalConfiguration resource for global configuration of the Ingress Controller.
+	// Format is namespace/name.
+	// Requires enableCRDs set to true.
+	// +kubebuilder:validation:Optional
+	GlobalConfiguration string `json:"globalConfiguration"`
+	// Enable TLS Passthrough on port 443.
+	// Requires enableCRDs set to true.
+	// +kubebuilder:validation:Optional
+	EnableTLSPassthrough bool `json:"enableTLSPassthrough"`
 }
 
 // Image defines the Repository, Tag and ImagePullPolicy of the Ingress Controller Image.

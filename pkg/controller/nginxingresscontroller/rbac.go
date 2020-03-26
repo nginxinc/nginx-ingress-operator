@@ -45,7 +45,7 @@ func clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
 		{
 			Verbs:     []string{"get", "list", "watch"},
 			APIGroups: []string{"k8s.nginx.org"},
-			Resources: []string{"virtualservers", "virtualserverroutes"},
+			Resources: []string{"virtualservers", "virtualserverroutes", "globalconfigurations", "transportservers"},
 		},
 	}
 

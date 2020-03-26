@@ -53,7 +53,7 @@ func TestClusterRoleForNginxIngressController(t *testing.T) {
 			{
 				Verbs:     []string{"get", "list", "watch"},
 				APIGroups: []string{"k8s.nginx.org"},
-				Resources: []string{"virtualservers", "virtualserverroutes"},
+				Resources: []string{"virtualservers", "virtualserverroutes", "globalconfigurations", "transportservers"},
 			},
 		},
 	}
