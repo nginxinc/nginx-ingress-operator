@@ -1,0 +1,12 @@
+language: go
+sudo: required
+services:
+  - docker
+go:
+  - "1.13"
+script:
+  - echo "Building nginx ingress operator commit:${TRAVIS_COMMIT}"
+  - make build;
+before_install:
+  - echo "Checking nginx ingress operator for linting errors" && wget -O - -q ${golangci_lint} | sh -s v1.17.1
+  - export PATH="$PATH:./bin" && make lint
