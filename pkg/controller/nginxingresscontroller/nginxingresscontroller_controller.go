@@ -205,7 +205,7 @@ func (r *ReconcileNginxIngressController) checkPrerequisites(reqLogger logr.Logg
 		return err
 	}
 
-	err, existed := r.createIfNotExists(sa.Name, sa.Namespace, sa)
+	err, existed := r.createIfNotExists(sa)
 	if err != nil {
 		return err
 	}
@@ -247,7 +247,7 @@ func (r *ReconcileNginxIngressController) checkPrerequisites(reqLogger logr.Logg
 		return err
 	}
 
-	err, existed = r.createIfNotExists(cm.Name, cm.Namespace, cm)
+	err, existed = r.createIfNotExists(cm)
 	if err != nil {
 		return err
 	}
@@ -356,7 +356,7 @@ func (r *ReconcileNginxIngressController) Reconcile(request reconcile.Request) (
 	ns := &v1.Namespace{}
 	err = r.client.Get(context.TODO(), types.NamespacedName{Name: instance.Namespace, Namespace: v1.NamespaceAll}, ns)
 	if (err != nil && errors.IsNotFound(err)) || (ns.Status.Phase == "Terminating") {
-		reqLogger.Info(fmt.Sprintf("The namespace '%v' does not exist or is in Terminating status, cancelling Reconciling", instance.Namespace))
+		reqLogger.Info(fmt.Sprintf("The namespace '%v' does not exist or is in Terminating status, canceling Reconciling", instance.Namespace))
 		return reconcile.Result{}, nil
 	} else if err != nil {
 		reqLogger.Error(err, "Failed to check if namespace exists")
@@ -488,7 +488,7 @@ func (r *ReconcileNginxIngressController) Reconcile(request reconcile.Request) (
 }
 
 // createIfNotExists creates a new object. If the object exists, does nothing. It returns whether the object existed before or not.
-func (r *ReconcileNginxIngressController) createIfNotExists(name string, namespace string, object runtime.Object) (error, bool) {
+func (r *ReconcileNginxIngressController) createIfNotExists(object runtime.Object) (error, bool) {
 	err := r.client.Create(context.TODO(), object)
 	if err != nil && errors.IsAlreadyExists(err) {
 		return nil, true
