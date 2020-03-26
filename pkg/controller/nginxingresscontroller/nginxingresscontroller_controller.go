@@ -59,13 +59,24 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 
 	err := clientReader.Get(context.TODO(), types.NamespacedName{Name: clusterRoleName, Namespace: v1.NamespaceAll}, cr)
 
-	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("no previous ClusterRole found, creating a new one.")
-		err = clientWriter.Create(context.TODO(), cr)
-	}
-
 	if err != nil {
-		return fmt.Errorf("error creating ClusterRole: %v", err)
+		if errors.IsNotFound(err) {
+			reqLogger.Info("no previous ClusterRole found, creating a new one.")
+			err = clientWriter.Create(context.TODO(), cr)
+			if err != nil {
+				return fmt.Errorf("error creating ClusterRole: %v", err)
+			}
+		} else {
+			return fmt.Errorf("error getting ClusterRole: %v", err)
+		}
+	} else {
+		// For updates in the ClusterRole permissions (eg new CRDs of the Ingress Controller).
+		reqLogger.Info("previous ClusterRole found, updating.")
+		cr := clusterRoleForNginxIngressController(clusterRoleName)
+		err = clientWriter.Update(context.TODO(), cr)
+		if err != nil {
+			return fmt.Errorf("error updating ClusterRole: %v", err)
+		}
 	}
 
 	crb := clusterRoleBindingForNginxIngressController(clusterRoleName)
@@ -91,7 +102,6 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 	vs := vsForNginxIngressController()
 
 	_, err = crdsClient.Create(vs)
-	// if already exists, pass the error silently
 	if err != nil && errors.IsAlreadyExists(err) {
 		reqLogger.Info("VirtualServer CRD already present, skipping creation.")
 	} else if err != nil {
@@ -102,6 +112,22 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 	_, err = crdsClient.Create(vsr)
 	if err != nil && errors.IsAlreadyExists(err) {
 		reqLogger.Info("VirtualServerRoute CRD already present, skipping creation.")
+	} else if err != nil {
+		return err
+	}
+
+	gc := gcForNginxIngressController()
+	_, err = crdsClient.Create(gc)
+	if err != nil && errors.IsAlreadyExists(err) {
+		reqLogger.Info("GlobalConfiguration CRD already present, skipping creation.")
+	} else if err != nil {
+		return err
+	}
+
+	ts := tsForNginxIngressController()
+	_, err = crdsClient.Create(ts)
+	if err != nil && errors.IsAlreadyExists(err) {
+		reqLogger.Info("TransportServer CRD already present, skipping creation.")
 	} else if err != nil {
 		return err
 	}

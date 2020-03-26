@@ -65,6 +65,8 @@ spec:
      port: 9114
    configMapData:
      error-log-level: debug
+   enableTLSPassthrough: true
+   globalConfiguration: my-nginx-ingress/nginx-configuration
  ``` 
  
 | Field | Type | Description | Required |
@@ -88,7 +90,9 @@ spec:
 | `wildcardTLS` | `string` | A Secret with a TLS certificate and key for TLS termination of every Ingress host for which TLS termination is enabled but the Secret is not specified. If the argument is not set, for such Ingress hosts NGINX will break any attempt to establish a TLS connection. If the argument is set, but the Ingress controller is not able to fetch the Secret from Kubernetes API, the Ingress Controller will fail to start. Format is `namespace/name`. | No |
 | `prometheus` | [prometheus](#nginxingresscontrollerprometheus) | Configures NGINX or NGINX Plus metrics in the Prometheus format. | No |
 | `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
- 
+| `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires enableCRDs set to true. | No | 
+| `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires enableCRDs set to true. | No | 
+
 ## NginxIngressController.Image
 
 | Field | Type | Description | Required |

@@ -3,6 +3,7 @@ package nginxingresscontroller
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
 	secv1 "github.com/openshift/api/security/v1"
@@ -12,6 +13,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 )
+
+const apiVersionUnsupportedError = "server does not support API version"
 
 // generatePodArgs generate a list of arguments for the Ingress Controller pods based on the CRD.
 func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
@@ -98,6 +101,16 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		}
 	}
 
+	if instance.Spec.EnableCRDs {
+		if instance.Spec.EnableTLSPassthrough {
+			args = append(args, "-enable-tls-passthrough")
+		}
+
+		if instance.Spec.GlobalConfiguration != "" {
+			args = append(args, fmt.Sprintf("-global-configuration=%v", instance.Spec.GlobalConfiguration))
+		}
+	}
+
 	return args
 }
 
@@ -143,6 +156,10 @@ func VerifySCCAPIExists() (bool, error) {
 
 	err = discovery.ServerSupportsVersion(clientSet, gv)
 	if err != nil {
+		// This error means the call could not find SCC in the API, but there was no API error.
+		if strings.Contains(err.Error(), apiVersionUnsupportedError) {
+			return false, nil
+		}
 		return false, err
 	}
 

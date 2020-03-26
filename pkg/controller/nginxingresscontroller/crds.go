@@ -54,3 +54,53 @@ func vsrForNginxIngressController() *v1beta1.CustomResourceDefinition {
 		},
 	}
 }
+
+func gcForNginxIngressController() *v1beta1.CustomResourceDefinition {
+	return &v1beta1.CustomResourceDefinition{
+		ObjectMeta: v1.ObjectMeta{
+			Name: "globalconfigurations.k8s.nginx.org",
+		},
+		Spec: v1beta1.CustomResourceDefinitionSpec{
+			Group: "k8s.nginx.org",
+			Names: v1beta1.CustomResourceDefinitionNames{
+				Plural:     "globalconfigurations",
+				Singular:   "globalconfiguration",
+				ShortNames: []string{"gc"},
+				Kind:       "GlobalConfiguration",
+			},
+			Scope: "Namespaced",
+			Versions: []v1beta1.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+		},
+	}
+}
+
+func tsForNginxIngressController() *v1beta1.CustomResourceDefinition {
+	return &v1beta1.CustomResourceDefinition{
+		ObjectMeta: v1.ObjectMeta{
+			Name: "transportservers.k8s.nginx.org",
+		},
+		Spec: v1beta1.CustomResourceDefinitionSpec{
+			Group: "k8s.nginx.org",
+			Names: v1beta1.CustomResourceDefinitionNames{
+				Plural:     "transportservers",
+				Singular:   "transportserver",
+				ShortNames: []string{"ts"},
+				Kind:       "TransportServer",
+			},
+			Scope: "Namespaced",
+			Versions: []v1beta1.CustomResourceDefinitionVersion{
+				{
+					Name:    "v1alpha1",
+					Served:  true,
+					Storage: true,
+				},
+			},
+		},
+	}
+}

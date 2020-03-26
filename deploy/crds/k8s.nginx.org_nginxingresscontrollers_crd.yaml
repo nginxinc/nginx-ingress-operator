@@ -55,6 +55,15 @@ spec:
                 controller reporting the status of Ingress resources – only one replica
                 will report status.
               type: boolean
+            enableTLSPassthrough:
+              description: Enable TLS Passthrough on port 443. Requires enableCRDs
+                set to true.
+              type: boolean
+            globalConfiguration:
+              description: The GlobalConfiguration resource for global configuration
+                of the Ingress Controller. Format is namespace/name. Requires enableCRDs
+                set to true.
+              type: string
             healthStatus:
               description: Adds a new location to the default server. The location
                 responds with the 200 status code for any request. Useful for external
@@ -123,7 +132,7 @@ spec:
                     commas. (default “127.0.0.1”)
                   type: string
                 enable:
-                  description: Enable the NginxStatus. Default is true.
+                  description: Enable the NginxStatus.
                   type: boolean
                 port:
                   description: Set the port where the NGINX stub_status or the NGINX
@@ -152,7 +161,7 @@ spec:
               type: object
             replicas:
               description: The number of replicas of the Ingress Controller pod. The
-                default is 1. Only applies if the Kind is set to deployment.
+                default is 1. Only applies if the type is set to deployment.
               format: int32
               type: integer
             reportIngressStatus:
