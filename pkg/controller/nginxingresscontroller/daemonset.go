@@ -87,6 +87,10 @@ func hasDaemonSetChanged(ds *appsv1.DaemonSet, instance *k8sv1alpha1.NginxIngres
 		return true
 	}
 
+	if container.ImagePullPolicy != corev1.PullPolicy(instance.Spec.Image.PullPolicy) {
+		return true
+	}
+
 	return hasDifferentArguments(container, instance)
 }
 
