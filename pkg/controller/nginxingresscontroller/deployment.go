@@ -92,6 +92,10 @@ func hasDeploymentChanged(dep *appsv1.Deployment, instance *k8sv1alpha1.NginxIng
 		return true
 	}
 
+	if container.ImagePullPolicy != corev1.PullPolicy(instance.Spec.Image.PullPolicy) {
+		return true
+	}
+
 	return hasDifferentArguments(container, instance)
 }
 

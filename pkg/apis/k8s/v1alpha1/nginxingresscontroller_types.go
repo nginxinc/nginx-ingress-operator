@@ -120,7 +120,7 @@ type NginxStatus struct {
 	// +kubebuilder:validation:Minimum=1023
 	// +kubebuilder:validation:Maximum=65535
 	// +kubebuilder:validation:Optional
-	Port uint16 `json:"port"`
+	Port uint16 `json:"port"` // TODO try omitempty
 	// Whitelist IPv4 IP/CIDR blocks to allow access to NGINX stub_status or the NGINX Plus API.
 	// Separate multiple IP/CIDR by commas. (default “127.0.0.1”)
 	// +kubebuilder:validation:Optional
