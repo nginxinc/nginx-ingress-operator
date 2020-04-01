@@ -139,6 +139,7 @@ func remove(list []string, s string) []string {
 }
 
 func VerifySCCAPIExists() (bool, error) {
+	return false, nil // FIXME
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return false, err
