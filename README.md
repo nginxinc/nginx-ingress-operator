@@ -11,6 +11,11 @@ Learn more about operators in the [Kubernetes Documentation](https://kubernetes.
     * For an NGINX installation see the [NGINX example](./examples/deployment-oss-min).
     * For an NGINX Plus installation see the [NGINX Plus example](./examples/deployment-plus-min).
 
+## NGINX Ingress Operator Releases
+We publish NGINX Ingress Operator releases on GitHub. See our [releases page](https://github.com/nginxinc/nginx-ingress-operator/releases).
+
+The latest stable release is [0.0.4](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.0.4). For production use, we recommend that you choose the latest stable release.
+
 ## Development
 
 It is possible to run the operator in your local machine. This is useful for testing or during development.
