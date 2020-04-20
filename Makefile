@@ -1,5 +1,5 @@
-OLD_TAG = 0.0.3
 TAG = 0.0.4
+
 IMAGE = nginx-ingress-operator
 
 RUN_NAMESPACE = default
@@ -31,8 +31,7 @@ generate-bundle:
 	mkdir bundle
 	cp deploy/crds/* bundle/
 	cp deploy/olm-catalog/nginx-ingress-operator/nginx-ingress-operator.package.yaml bundle/
-	cp deploy/olm-catalog/nginx-ingress-operator/$(TAG)/* bundle/
-	cp deploy/olm-catalog/nginx-ingress-operator/$(OLD_TAG)/nginx-ingress-operator.v$(OLD_TAG).clusterserviceversion.yaml bundle/
+	./hack/copy_manifests.sh
 	-rm bundle.zip
 	zip -j bundle.zip bundle/*.yaml
 
