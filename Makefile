@@ -1,5 +1,5 @@
-OLD_TAG = 0.0.2
-TAG = 0.0.3
+OLD_TAG = 0.0.3
+TAG = 0.0.4
 IMAGE = nginx-ingress-operator
 
 RUN_NAMESPACE = default
