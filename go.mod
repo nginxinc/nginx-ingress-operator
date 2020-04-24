@@ -1,6 +1,6 @@
 module github.com/nginxinc/nginx-ingress-operator
 
-go 1.13
+go 1.14
 
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
