@@ -9,6 +9,7 @@ import (
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	v1 "k8s.io/api/core/v1"
@@ -101,7 +102,7 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 	crdsClient := apixClient.CustomResourceDefinitions()
 	vs := vsForNginxIngressController()
 
-	_, err = crdsClient.Create(vs)
+	_, err = crdsClient.Create(context.TODO(), vs, metav1.CreateOptions{})
 	if err != nil && errors.IsAlreadyExists(err) {
 		reqLogger.Info("VirtualServer CRD already present, skipping creation.")
 	} else if err != nil {
@@ -109,7 +110,7 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 	}
 
 	vsr := vsrForNginxIngressController()
-	_, err = crdsClient.Create(vsr)
+	_, err = crdsClient.Create(context.TODO(), vsr, metav1.CreateOptions{})
 	if err != nil && errors.IsAlreadyExists(err) {
 		reqLogger.Info("VirtualServerRoute CRD already present, skipping creation.")
 	} else if err != nil {
@@ -117,7 +118,7 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 	}
 
 	gc := gcForNginxIngressController()
-	_, err = crdsClient.Create(gc)
+	_, err = crdsClient.Create(context.TODO(), gc, metav1.CreateOptions{})
 	if err != nil && errors.IsAlreadyExists(err) {
 		reqLogger.Info("GlobalConfiguration CRD already present, skipping creation.")
 	} else if err != nil {
@@ -125,7 +126,7 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 	}
 
 	ts := tsForNginxIngressController()
-	_, err = crdsClient.Create(ts)
+	_, err = crdsClient.Create(context.TODO(), ts, metav1.CreateOptions{})
 	if err != nil && errors.IsAlreadyExists(err) {
 		reqLogger.Info("TransportServer CRD already present, skipping creation.")
 	} else if err != nil {
