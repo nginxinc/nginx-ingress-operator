@@ -2,11 +2,13 @@ package nginxingresscontroller
 
 import (
 	"context"
+	commonerrors "errors"
 	"fmt"
 	"strings"
 
 	"github.com/go-logr/logr"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
+	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	appsv1 "k8s.io/api/apps/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -47,6 +49,66 @@ func Add(mgr manager.Manager) error {
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager, sccAPIExists bool) reconcile.Reconciler {
 	return &ReconcileNginxIngressController{client: mgr.GetClient(), scheme: mgr.GetScheme(), sccAPIExists: sccAPIExists}
+}
+
+// isLocal returns true if the Operator is running locally and false if running inside a cluster
+func isLocal() bool {
+	_, err := k8sutil.GetOperatorNamespace()
+	if err != nil {
+		if commonerrors.Is(err, k8sutil.ErrRunLocal) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func createKICCustomResourceDefinitions(mgr manager.Manager) error {
+	reqLogger := log.WithValues("Request.Namespace", "", "Request.Name", "nginxingresscontroller-controller")
+
+	if isLocal() {
+		reqLogger.Info("Skipping KIC CRDs creation; not running in a cluster")
+		return nil
+	}
+
+	// Create CRDs with a different client (apiextensions)
+	apixClient, err := apixv1beta1client.NewForConfig(mgr.GetConfig())
+	if err != nil {
+		reqLogger.Error(err, "unable to create client for CRD registration")
+		return err
+	}
+
+	crds, err := kicCRDs()
+
+	if err != nil {
+		return err
+	}
+
+	crdsClient := apixClient.CustomResourceDefinitions()
+	for _, crd := range crds {
+		oldCRD, err := crdsClient.Get(context.TODO(), crd.Name, metav1.GetOptions{})
+		if err != nil {
+			if errors.IsNotFound(err) {
+				reqLogger.Info(fmt.Sprintf("no previous CRD %v found, creating a new one.", crd.Name))
+				_, err = crdsClient.Create(context.TODO(), crd, metav1.CreateOptions{})
+				if err != nil {
+					return fmt.Errorf("error creating CustomResourceDefinition %v: %v", crd.Name, err)
+				}
+			} else {
+				return fmt.Errorf("error getting CustomResourceDefinition %v: %v", crd.Name, err)
+			}
+		} else {
+			// Update CRDs if they already exist
+			reqLogger.Info(fmt.Sprintf("previous CustomResourceDefinition %v found, updating.", crd.Name))
+			oldCRD.Spec = crd.Spec
+			_, err = crdsClient.Update(context.TODO(), oldCRD, metav1.UpdateOptions{})
+			if err != nil {
+				return fmt.Errorf("error updating CustomResourceDefinition %v: %v", crd.Name, err)
+			}
+		}
+	}
+
+	return nil
 }
 
 // create common resources shared by all the Ingress Controllers
@@ -92,45 +154,9 @@ func createCommonResources(mgr manager.Manager, sccAPIExists bool) error {
 		return fmt.Errorf("error creating ClusterRoleBinding: %v", err)
 	}
 
-	// Create CRDs with a different client (apiextensions)
-	apixClient, err := apixv1beta1client.NewForConfig(mgr.GetConfig())
+	err = createKICCustomResourceDefinitions(mgr)
 	if err != nil {
-		reqLogger.Error(err, "unable to create client for CRD registration")
-		return err
-	}
-
-	crdsClient := apixClient.CustomResourceDefinitions()
-	vs := vsForNginxIngressController()
-
-	_, err = crdsClient.Create(context.TODO(), vs, metav1.CreateOptions{})
-	if err != nil && errors.IsAlreadyExists(err) {
-		reqLogger.Info("VirtualServer CRD already present, skipping creation.")
-	} else if err != nil {
-		return err
-	}
-
-	vsr := vsrForNginxIngressController()
-	_, err = crdsClient.Create(context.TODO(), vsr, metav1.CreateOptions{})
-	if err != nil && errors.IsAlreadyExists(err) {
-		reqLogger.Info("VirtualServerRoute CRD already present, skipping creation.")
-	} else if err != nil {
-		return err
-	}
-
-	gc := gcForNginxIngressController()
-	_, err = crdsClient.Create(context.TODO(), gc, metav1.CreateOptions{})
-	if err != nil && errors.IsAlreadyExists(err) {
-		reqLogger.Info("GlobalConfiguration CRD already present, skipping creation.")
-	} else if err != nil {
-		return err
-	}
-
-	ts := tsForNginxIngressController()
-	_, err = crdsClient.Create(context.TODO(), ts, metav1.CreateOptions{})
-	if err != nil && errors.IsAlreadyExists(err) {
-		reqLogger.Info("TransportServer CRD already present, skipping creation.")
-	} else if err != nil {
-		return err
+		return fmt.Errorf("error creating KIC CRDs: %v", err)
 	}
 
 	if sccAPIExists {

@@ -11,6 +11,7 @@ COPY build/bin /usr/local/bin
 RUN  /usr/local/bin/user_setup
 
 COPY LICENSE /licenses/
+COPY build/kic_crds /kic_crds
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 
