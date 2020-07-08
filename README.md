@@ -27,9 +27,13 @@ It is possible to run the operator in your local machine. This is useful for tes
     ```
     kubectl apply -f deploy/crds/k8s.nginx.org_nginxingresscontrollers_crd.yaml
     ```
+1. Apply the NGINX Ingress Controller CRDs:
+    ```
+    kubectl apply -f build/kic_crds
+    ```
 1. Run `make run-local`.
 
-The operator will run in your local machine but will be communicating with the cluster.
+The operator will run in your local machine but will be communicating with the cluster. The operator will only watch the `default` namespace when deployed locally.
 
 ### Update CRD
 

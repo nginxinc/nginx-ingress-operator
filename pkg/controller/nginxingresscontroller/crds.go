@@ -1,106 +1,59 @@
 package nginxingresscontroller
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
-func vsForNginxIngressController() *v1beta1.CustomResourceDefinition {
-	return &v1beta1.CustomResourceDefinition{
-		ObjectMeta: v1.ObjectMeta{
-			Name: "virtualservers.k8s.nginx.org",
-		},
-		Spec: v1beta1.CustomResourceDefinitionSpec{
-			Group: "k8s.nginx.org",
-			Names: v1beta1.CustomResourceDefinitionNames{
-				Plural:     "virtualservers",
-				Singular:   "virtualserver",
-				ShortNames: []string{"vs"},
-				Kind:       "VirtualServer",
-			},
-			Scope: "Namespaced",
-			Versions: []v1beta1.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
-		},
+const crdsPath = "/kic_crds"
+const decoderBufferSize = 100
+
+func getCRDsManifests() ([]string, error) {
+	files, err := ioutil.ReadDir(crdsPath)
+	if err != nil {
+		return nil, err
 	}
+
+	var manifests []string
+	for _, f := range files {
+		manifests = append(manifests, fmt.Sprintf("%v/%v", crdsPath, f.Name()))
+	}
+
+	return manifests, nil
 }
 
-func vsrForNginxIngressController() *v1beta1.CustomResourceDefinition {
-	return &v1beta1.CustomResourceDefinition{
-		ObjectMeta: v1.ObjectMeta{
-			Name: "virtualserverroutes.k8s.nginx.org",
-		},
-		Spec: v1beta1.CustomResourceDefinitionSpec{
-			Group: "k8s.nginx.org",
-			Names: v1beta1.CustomResourceDefinitionNames{
-				Plural:     "virtualserverroutes",
-				Singular:   "virtualserveroute",
-				ShortNames: []string{"vsr"},
-				Kind:       "VirtualServerRoute",
-			},
-			Scope: "Namespaced",
-			Versions: []v1beta1.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1",
-					Served:  true,
-					Storage: true,
-				},
-			},
-		},
+func kicCRDs() ([]*v1beta1.CustomResourceDefinition, error) {
+	manifests, err := getCRDsManifests()
+	if err != nil {
+		return nil, err
 	}
-}
 
-func gcForNginxIngressController() *v1beta1.CustomResourceDefinition {
-	return &v1beta1.CustomResourceDefinition{
-		ObjectMeta: v1.ObjectMeta{
-			Name: "globalconfigurations.k8s.nginx.org",
-		},
-		Spec: v1beta1.CustomResourceDefinitionSpec{
-			Group: "k8s.nginx.org",
-			Names: v1beta1.CustomResourceDefinitionNames{
-				Plural:     "globalconfigurations",
-				Singular:   "globalconfiguration",
-				ShortNames: []string{"gc"},
-				Kind:       "GlobalConfiguration",
-			},
-			Scope: "Namespaced",
-			Versions: []v1beta1.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1alpha1",
-					Served:  true,
-					Storage: true,
-				},
-			},
-		},
-	}
-}
+	var crds []*v1beta1.CustomResourceDefinition
+	for _, path := range manifests {
+		f, err := os.Open(path)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open the CRD manifest %v: %v", path, err)
+		}
 
-func tsForNginxIngressController() *v1beta1.CustomResourceDefinition {
-	return &v1beta1.CustomResourceDefinition{
-		ObjectMeta: v1.ObjectMeta{
-			Name: "transportservers.k8s.nginx.org",
-		},
-		Spec: v1beta1.CustomResourceDefinitionSpec{
-			Group: "k8s.nginx.org",
-			Names: v1beta1.CustomResourceDefinitionNames{
-				Plural:     "transportservers",
-				Singular:   "transportserver",
-				ShortNames: []string{"ts"},
-				Kind:       "TransportServer",
-			},
-			Scope: "Namespaced",
-			Versions: []v1beta1.CustomResourceDefinitionVersion{
-				{
-					Name:    "v1alpha1",
-					Served:  true,
-					Storage: true,
-				},
-			},
-		},
+		var crd v1beta1.CustomResourceDefinition
+
+		err = yaml.NewYAMLOrJSONDecoder(f, decoderBufferSize).Decode(&crd)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse the CRD manifest %v: %v", path, err)
+		}
+
+		err = f.Close()
+		if err != nil {
+			return nil, fmt.Errorf("failed to close the CRD manifest %v: %v", path, err)
+		}
+
+		crds = append(crds, &crd)
 	}
+
+	return crds, nil
 }

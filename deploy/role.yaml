@@ -102,6 +102,7 @@ rules:
   verbs:
   - create
   - delete
+  - update
   - get
 - apiGroups:
   - extensions
