@@ -109,6 +109,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		if instance.Spec.GlobalConfiguration != "" {
 			args = append(args, fmt.Sprintf("-global-configuration=%v", instance.Spec.GlobalConfiguration))
 		}
+
+		if instance.Spec.EnableSnippets {
+			args = append(args, "-enable-snippets")
+		}
 	}
 
 	return args

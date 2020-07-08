@@ -34,6 +34,10 @@ type NginxIngressControllerSpec struct {
 	// Enables the use of NGINX Ingress Resource Definitions (VirtualServer and VirtualServerRoute).
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableCRDs bool `json:"enableCRDs"`
+	// Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources.
+	// +kubebuilder:validation:Optional
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	EnableSnippets bool `json:"enableSnippets"`
 	// +kubebuilder:validation:Optional
 	// A class of the Ingress controller. The Ingress controller only processes Ingress resources that belong to its
 	// class (in other words, have the annotation “kubernetes.io/ingress.class”).
