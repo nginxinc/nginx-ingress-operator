@@ -131,6 +131,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					EnableCRDs:           true,
+					EnableSnippets:       true,
 					EnableTLSPassthrough: true,
 					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
 				},
@@ -140,6 +141,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
 				"-enable-tls-passthrough",
 				"-global-configuration=my-nginx-ingress/globalconfiguration",
+				"-enable-snippets",
 			},
 		},
 		{
@@ -177,6 +179,7 @@ func TestGeneratePodArgs(t *testing.T) {
 						Port:   &promPort,
 					},
 					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
+					EnableSnippets:       true,
 					EnableTLSPassthrough: true,
 				},
 			},
