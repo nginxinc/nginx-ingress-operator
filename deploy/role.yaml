@@ -70,6 +70,7 @@ rules:
   - get
 - apiGroups:
   - k8s.nginx.org
+  - appprotect.f5.com
   resources:
   - '*'
   verbs:

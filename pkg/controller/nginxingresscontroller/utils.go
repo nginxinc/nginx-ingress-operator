@@ -30,6 +30,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 
 	if instance.Spec.NginxPlus {
 		args = append(args, "-nginx-plus")
+
+		if instance.Spec.AppProtect != nil && instance.Spec.AppProtect.Enable {
+			args = append(args, "-enable-app-protect")
+		}
 	}
 
 	if !instance.Spec.EnableCRDs {
@@ -113,6 +117,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		if instance.Spec.EnableSnippets {
 			args = append(args, "-enable-snippets")
 		}
+	}
+
+	if instance.Spec.NginxReloadTimeout != 0 {
+		args = append(args, fmt.Sprintf("-nginx-reload-timeout=%v", instance.Spec.NginxReloadTimeout))
 	}
 
 	return args

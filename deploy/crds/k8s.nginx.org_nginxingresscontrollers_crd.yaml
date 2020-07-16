@@ -32,6 +32,17 @@ spec:
           spec:
             description: NginxIngressControllerSpec defines the desired state of NginxIngressController
             properties:
+              appProtect:
+                description: App Protect support configuration. Requires enableCRDs
+                  set to true.
+                nullable: true
+                properties:
+                  enable:
+                    description: Enable App Protect.
+                    type: boolean
+                required:
+                - enable
+                type: object
               configMapData:
                 additionalProperties:
                   type: string
@@ -126,6 +137,11 @@ spec:
                   is false meaning the Ingress Controller will be deployed for NGINX
                   OSS.
                 type: boolean
+              nginxReloadTimeout:
+                description: Timeout in milliseconds which the Ingress Controller
+                  will wait for a successful NGINX reload after a change or at the
+                  initial start.
+                type: integer
               nginxStatus:
                 description: NGINX stub_status, or the NGINX Plus API.
                 nullable: true
