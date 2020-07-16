@@ -45,10 +45,14 @@ func clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
 		{
 			Verbs:     []string{"get", "list", "watch"},
 			APIGroups: []string{"k8s.nginx.org"},
-			Resources: []string{"virtualservers", "virtualserverroutes", "globalconfigurations", "transportservers"},
+			Resources: []string{"virtualservers", "virtualserverroutes", "globalconfigurations", "transportservers", "policies"},
+		},
+		{
+			Verbs:     []string{"get", "list", "watch"},
+			APIGroups: []string{"appprotect.f5.com"},
+			Resources: []string{"aplogconfs", "appolicies"},
 		},
 	}
-
 	return &rbacv1.ClusterRole{
 		ObjectMeta: v1.ObjectMeta{
 			Name: name,

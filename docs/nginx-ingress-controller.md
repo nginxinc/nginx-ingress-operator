@@ -68,6 +68,9 @@ spec:
      error-log-level: debug
    enableTLSPassthrough: true
    globalConfiguration: my-nginx-ingress/nginx-configuration
+   nginxReloadTimeout: 5000
+   appProtect:
+     enable: true
  ``` 
  
 | Field | Type | Description | Required |
@@ -94,6 +97,8 @@ spec:
 | `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
 | `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires enableCRDs set to true. | No |
 | `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires enableCRDs set to true. | No |
+| `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires nginxPlus set to true. | No |
+| `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
 
 ## NginxIngressController.Image
 
@@ -131,3 +136,9 @@ spec:
 | --- | --- | --- | --- |
 | `enable` | `boolean` | Enable Prometheus metrics. | Yes |
 | `port` | `int` | Sets the port where the Prometheus metrics are exposed. Default is 9113. Format is `1023 - 65535`. | No |
+
+## NginxIngressController.AppProtect
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| `enable` | `boolean` | Enable App Protect. | Yes |

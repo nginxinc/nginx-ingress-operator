@@ -181,12 +181,17 @@ func TestGeneratePodArgs(t *testing.T) {
 					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
 					EnableSnippets:       true,
 					EnableTLSPassthrough: true,
+					AppProtect: &k8sv1alpha1.AppProtect{
+						Enable: true,
+					},
+					NginxReloadTimeout: 5000,
 				},
 			},
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
 				"-nginx-plus",
+				"-enable-app-protect",
 				"-enable-custom-resources=false",
 				"-ingress-class=ingressClass",
 				"-use-ingress-class-only",
@@ -204,6 +209,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-wildcard-tls-secret=my-nginx-ingress/wildcard-secret",
 				"-enable-prometheus-metrics",
 				"-prometheus-metrics-listen-port=9114",
+				"-nginx-reload-timeout=5000",
 			},
 		},
 	}

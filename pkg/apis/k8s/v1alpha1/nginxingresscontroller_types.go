@@ -35,6 +35,7 @@ type NginxIngressControllerSpec struct {
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableCRDs bool `json:"enableCRDs"`
 	// Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources.
+	// Requires enableCRDs set to true.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableSnippets bool `json:"enableSnippets"`
@@ -115,6 +116,16 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableTLSPassthrough bool `json:"enableTLSPassthrough"`
+	// App Protect support configuration.
+	// Requires enableCRDs set to true.
+	// +kubebuilder:validation:Optional
+	// +nullable
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	AppProtect *AppProtect `json:"appProtect"`
+	// Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start.
+	// +kubebuilder:validation:Optional
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	NginxReloadTimeout int `json:"nginxReloadTimeout"`
 }
 
 // Image defines the Repository, Tag and ImagePullPolicy of the Ingress Controller Image.
@@ -176,6 +187,12 @@ type Prometheus struct {
 	// +kubebuilder:validation:Optional
 	// +nullable
 	Port *uint16 `json:"port"`
+}
+
+// App Protect support configuration.
+type AppProtect struct {
+	// Enable App Protect.
+	Enable bool `json:"enable"`
 }
 
 // NginxIngressControllerStatus defines the observed state of NginxIngressController
