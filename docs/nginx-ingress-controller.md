@@ -70,7 +70,7 @@ spec:
    globalConfiguration: my-nginx-ingress/nginx-configuration
    nginxReloadTimeout: 5000
    appProtect:
-     enable: true
+     enable: false
  ``` 
  
 | Field | Type | Description | Required |
