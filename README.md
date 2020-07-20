@@ -4,6 +4,17 @@ The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and
 
 Learn more about operators in the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
 
+To install a specific version of the NGINX Ingress Controller with the operator, a specific version of the NGINX Ingress Operator is required.
+
+The following table shows the relation between the versions of the two projects:
+
+| NGINX Ingress Controller | NGINX Ingress Operator |
+| --- | --- |
+| < 1.7.0 | N/A |
+| 1.7.x | 0.0.4 |
+
+Note: The NGINX Ingress Operator works only for NGINX Ingress Controller versions after `1.7.0`.
+
 ## Getting Started
 
 1. Install the NGINX Ingress Operator. See [docs](./docs/installation.md).
