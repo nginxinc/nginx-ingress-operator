@@ -13,7 +13,7 @@ build: binary
 	docker build -f build/Dockerfile -t $(IMAGE):$(TAG) .
 
 run-local:
-	operator-sdk run local
+	operator-sdk run --local
 
 generate-crds:
 	operator-sdk generate k8s && operator-sdk generate crds

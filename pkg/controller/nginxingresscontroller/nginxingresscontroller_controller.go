@@ -86,11 +86,11 @@ func createKICCustomResourceDefinitions(mgr manager.Manager) error {
 
 	crdsClient := apixClient.CustomResourceDefinitions()
 	for _, crd := range crds {
-		oldCRD, err := crdsClient.Get(context.TODO(), crd.Name, metav1.GetOptions{})
+		oldCRD, err := crdsClient.Get(crd.Name, metav1.GetOptions{})
 		if err != nil {
 			if errors.IsNotFound(err) {
 				reqLogger.Info(fmt.Sprintf("no previous CRD %v found, creating a new one.", crd.Name))
-				_, err = crdsClient.Create(context.TODO(), crd, metav1.CreateOptions{})
+				_, err = crdsClient.Create(crd)
 				if err != nil {
 					return fmt.Errorf("error creating CustomResourceDefinition %v: %v", crd.Name, err)
 				}
@@ -101,7 +101,7 @@ func createKICCustomResourceDefinitions(mgr manager.Manager) error {
 			// Update CRDs if they already exist
 			reqLogger.Info(fmt.Sprintf("previous CustomResourceDefinition %v found, updating.", crd.Name))
 			oldCRD.Spec = crd.Spec
-			_, err = crdsClient.Update(context.TODO(), oldCRD, metav1.UpdateOptions{})
+			_, err = crdsClient.Update(oldCRD)
 			if err != nil {
 				return fmt.Errorf("error updating CustomResourceDefinition %v: %v", crd.Name, err)
 			}
