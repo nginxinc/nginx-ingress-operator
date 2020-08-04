@@ -1,5 +1,5 @@
-OLD_TAG = 0.0.3
-TAG = 0.0.4
+OLD_TAG = 0.0.4
+TAG = 0.0.6
 
 IMAGE = nginx-ingress-operator
 
