@@ -17,7 +17,7 @@ spec:
         - name: nginx-ingress-operator
           # Replace this with the built image name if necessary
           # For Openshift, use: registry.connect.redhat.com/nginx/nginx-ingress-operator:<version>
-          image: nginx-ingress-operator:latest
+          image: nginx/nginx-ingress-operator:latest
           command:
           - nginx-ingress-operator
           imagePullPolicy: IfNotPresent
