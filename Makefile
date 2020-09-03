@@ -139,10 +139,10 @@ bundle-build:
 #
 #generate-crds:
 #	operator-sdk generate k8s && operator-sdk generate crds
-#
-#lint:
-#	golangci-lint run
-#
+
+lint:
+	golangci-lint run
+
 #generate-metadata: generate-crds
 #	operator-sdk generate csv --csv-version=$(TAG) --from-version=$(OLD_TAG) --make-manifests=false
 #	echo "Metadata generated, please make sure you add/update fields in nginx-ingress-operator.v$(TAG).clusterserviceversion.yaml"
