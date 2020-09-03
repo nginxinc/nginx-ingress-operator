@@ -1,0 +1,11 @@
+domain: nginx.org
+layout: go.kubebuilder.io/v2
+projectName: nginx-ingress-operator
+repo: github.com/nginxinc/nginx-ingress-operator
+resources:
+- group: k8s
+  kind: NginxIngressController
+  version: v1alpha1
+version: 3-alpha
+plugins:
+  go.sdk.operatorframework.io/v2-alpha: {}

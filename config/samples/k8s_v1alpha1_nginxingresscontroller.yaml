@@ -1,0 +1,7 @@
+apiVersion: k8s.nginx.org/v1alpha1
+kind: NginxIngressController
+metadata:
+  name: nginxingresscontroller-sample
+spec:
+  # Add fields here
+  foo: bar
