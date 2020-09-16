@@ -98,6 +98,11 @@ type NginxIngressControllerSpec struct {
 	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	Prometheus *Prometheus `json:"prometheus,omitempty"`
+	// Enable collection of latency metrics for upstreams.
+	// +kubebuilder:validation:Optional
+	// +nullable
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	EnableLatencyMetrics bool `json:"enableLatencyMetrics"`
 	// Initial values of the Ingress Controller ConfigMap.
 	// Check https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/ for
 	// more information about possible values.

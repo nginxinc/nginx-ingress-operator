@@ -103,6 +103,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		if instance.Spec.Prometheus.Port != nil {
 			args = append(args, fmt.Sprintf("-prometheus-metrics-listen-port=%v", *instance.Spec.Prometheus.Port))
 		}
+
+		if instance.Spec.EnableLatencyMetrics {
+			args = append(args, "enable-latency-metrics")
+		}
 	}
 
 	if instance.Spec.EnableCRDs {
