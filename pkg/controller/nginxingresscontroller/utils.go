@@ -105,7 +105,7 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		}
 
 		if instance.Spec.EnableLatencyMetrics {
-			args = append(args, "enable-latency-metrics")
+			args = append(args, "-enable-latency-metrics")
 		}
 	}
 
