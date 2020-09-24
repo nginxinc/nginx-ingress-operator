@@ -98,7 +98,8 @@ type NginxIngressControllerSpec struct {
 	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	Prometheus *Prometheus `json:"prometheus,omitempty"`
-	// Enable collection of latency metrics for upstreams.
+	// Bucketed response times from when NGINX establishes a connection to an upstream server to when the last byte of the response body is received by NGINX.
+	// **Note** The metric for the upstream isn't available until traffic is sent to the upstream.
 	// +kubebuilder:validation:Optional
 	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true

@@ -181,11 +181,6 @@ spec:
               required:
               - enable
               type: object
-            enableLatencyMetrics:
-              description: Bucketed response times from when NGINX establishes a
-                connection to an upstream server to when the last byte of the response body is received by NGINX.
-              nullable: true
-              type: boolean
             replicas:
               description: The number of replicas of the Ingress Controller pod. The
                 default is 1. Only applies if the type is set to deployment.

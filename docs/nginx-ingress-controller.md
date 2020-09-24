@@ -64,6 +64,7 @@ spec:
    prometheus:
      enable: true
      port: 9114
+     enableLatencyMetrics: false
    configMapData:
      error-log-level: debug
    enableTLSPassthrough: true
@@ -71,7 +72,6 @@ spec:
    nginxReloadTimeout: 5000
    appProtect:
      enable: false
-   enableLatencyMetrics: false
  ``` 
  
 | Field | Type | Description | Required |
@@ -100,7 +100,6 @@ spec:
 | `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires enableCRDs set to true. | No |
 | `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires nginxPlus set to true. | No |
 | `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
-| `enableLatencyMetrics` | `boolean` | Bucketed response times from when NGINX establishes a connection to an upstream server to when the last byte of the response body is received by NGINX. **Note** The metric for the upstream isn't available until traffic is sent to the upstream | No |
 
 ## NginxIngressController.Image
 
@@ -138,6 +137,7 @@ spec:
 | --- | --- | --- | --- |
 | `enable` | `boolean` | Enable Prometheus metrics. | Yes |
 | `port` | `int` | Sets the port where the Prometheus metrics are exposed. Default is 9113. Format is `1023 - 65535`. | No |
+| `enableLatencyMetrics` | `boolean` | Bucketed response times from when NGINX establishes a connection to an upstream server to when the last byte of the response body is received by NGINX. **Note** The metric for the upstream isn't available until traffic is sent to the upstream. Requires prometheus set to true | No |
 
 ## NginxIngressController.AppProtect
 
