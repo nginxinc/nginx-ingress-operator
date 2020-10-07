@@ -1,3 +1,5 @@
+[![Continuous Integration](https://github.com/nginxinc/nginx-ingress-operator/workflows/Continuous%20Integration/badge.svg)](https://github.com/nginxinc/nginx-ingress-operator/actions)
+
 # NGINX Ingress Operator
 
 The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more [NGINX/NGINX Plus Ingress Controllers](https://github.com/nginxinc/kubernetes-ingress) which in turn handle Ingress traffic for applications running in a cluster.
