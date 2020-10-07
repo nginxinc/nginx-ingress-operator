@@ -39,11 +39,6 @@ jobs:
         run: make binary
         env:
           GOFLAGS: '-gcflags=-trimpath=${{ github.workspace }} -asmflags=-trimpath=${{ github.workspace }}'
-      # - name: Upload Binary
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: nginx-ingress-operator
-      #     path: ${{ github.workspace }}/build/_output/bin/nginx-ingress-operator
       - name: Cache Artifacts 
         uses: actions/cache@v2
         with:
@@ -70,11 +65,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      # - name: Retrieve Binary
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: nginx-ingress-operator
-      #     path: ${{ github.workspace }}/build/_output/bin
       - name: Fetch Cached Artifacts
         uses: actions/cache@v2
         with:
@@ -112,11 +102,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      # - name: Retrieve Binary
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: nginx-ingress-operator
-      #     path: ${{ github.workspace }}/build/_output/bin
       - name: Fetch Cached Artifacts
         uses: actions/cache@v2
         with:
