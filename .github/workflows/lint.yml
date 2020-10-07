@@ -8,6 +8,10 @@ on:
       - opened
       - reopened
       - synchronize
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - '**.md'
 
 defaults:
   run:

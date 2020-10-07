@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - 'master'
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - '**.md'
   pull_request:
     branches:
       - master
@@ -11,6 +15,10 @@ on:
       - opened
       - reopened
       - synchronize
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - '**.md'
   create:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
