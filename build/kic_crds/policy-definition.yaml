@@ -53,6 +53,38 @@ spec:
                   type: array
                   items:
                     type: string
+            egressMTLS:
+              description: EgressMTLS defines an Egress MTLS policy.
+              type: object
+              properties:
+                ciphers:
+                  type: string
+                protocols:
+                  type: string
+                serverName:
+                  type: boolean
+                sessionReuse:
+                  type: boolean
+                sslName:
+                  type: string
+                tlsSecret:
+                  type: string
+                trustedCertSecret:
+                  type: string
+                verifyDepth:
+                  type: integer
+                verifyServer:
+                  type: boolean
+            ingressMTLS:
+              description: IngressMTLS defines an Ingress MTLS policy.
+              type: object
+              properties:
+                clientCertSecret:
+                  type: string
+                verifyClient:
+                  type: string
+                verifyDepth:
+                  type: integer
             rateLimit:
               description: RateLimit defines a rate limit policy.
               type: object
