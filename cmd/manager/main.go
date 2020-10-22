@@ -14,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
+	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/rest"
 
@@ -31,6 +32,7 @@ import (
 	"github.com/spf13/pflag"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	k8sVersion "k8s.io/apimachinery/pkg/util/version"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -42,6 +44,7 @@ var (
 	metricsHost               = "0.0.0.0"
 	metricsPort         int32 = 8383
 	operatorMetricsPort int32 = 8686
+	runningK8sVersion   *k8sVersion.Version
 )
 var log = logf.Log.WithName("cmd")
 
@@ -50,6 +53,7 @@ func printVersion() {
 	log.Info(fmt.Sprintf("Go Version: %s", runtime.Version()))
 	log.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
 	log.Info(fmt.Sprintf("Version of operator-sdk: %v", sdkVersion.Version))
+	log.Info(fmt.Sprintf("Version of kubernetes: %v", runningK8sVersion))
 }
 
 func main() {
@@ -73,14 +77,24 @@ func main() {
 	// uniform and structured logs.
 	logf.SetLogger(zap.Logger())
 
-	printVersion()
-
 	// Get a config to talk to the apiserver
 	cfg, err := config.GetConfig()
 	if err != nil {
 		log.Error(err, "")
 		os.Exit(1)
 	}
+	clientset, err := kubernetes.NewForConfig(cfg)
+	if err != nil {
+		log.Error(err, "")
+		os.Exit(1)
+	}
+	runningK8sVersion, err = getK8sVersion(clientset)
+	if err != nil {
+		log.Error(err, "")
+		os.Exit(1)
+	}
+
+	printVersion()
 
 	ctx := context.TODO()
 	// Become the leader before proceeding
@@ -207,4 +221,18 @@ func serveCRMetrics(cfg *rest.Config, operatorNs string) error {
 		return err
 	}
 	return nil
+}
+
+func getK8sVersion(client kubernetes.Interface) (v *k8sVersion.Version, err error) {
+	serverVersion, err := client.Discovery().ServerVersion()
+	if err != nil {
+		return nil, err
+	}
+
+	runningVersion, err := k8sVersion.ParseGeneric(serverVersion.String())
+	if err != nil {
+		return nil, fmt.Errorf("unexpected error parsing running Kubernetes version: %v", err)
+	}
+
+	return runningVersion, nil
 }
