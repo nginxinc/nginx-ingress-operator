@@ -24,11 +24,6 @@ This will deploy the operator in the `default` namespace.
     kubectl apply -f deploy/role_binding.yaml
     ```
 
-1. Deploy the IngressClass (if running kubernetes version >= 18.0):
-    ```
-    kubectl apply -f deploy/ingress-class.yaml
-    ```
-
 1. Deploy the Operator:
     ```
     kubectl apply -f deploy/operator.yaml

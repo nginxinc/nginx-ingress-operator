@@ -9,12 +9,16 @@ import (
 	secv1 "github.com/openshift/api/security/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/version"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
 const apiVersionUnsupportedError = "server does not support API version"
+
+// RunningK8sVersion contains the version of k8s
+var RunningK8sVersion *version.Version
 
 // generatePodArgs generate a list of arguments for the Ingress Controller pods based on the CRD.
 func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
@@ -184,4 +188,19 @@ func VerifySCCAPIExists() (bool, error) {
 
 func generateImage(repository string, tag string) string {
 	return fmt.Sprintf("%v:%v", repository, tag)
+}
+
+// GetK8sVersion returns the running version of k8s
+func GetK8sVersion(client kubernetes.Interface) (v *version.Version, err error) {
+	serverVersion, err := client.Discovery().ServerVersion()
+	if err != nil {
+		return nil, err
+	}
+
+	runningVersion, err := version.ParseGeneric(serverVersion.String())
+	if err != nil {
+		return nil, fmt.Errorf("unexpected error parsing running Kubernetes version: %v", err)
+	}
+
+	return runningVersion, nil
 }

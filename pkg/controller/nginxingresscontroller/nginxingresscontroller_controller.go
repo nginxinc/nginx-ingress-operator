@@ -12,6 +12,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/version"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	v1 "k8s.io/api/core/v1"
@@ -86,11 +87,11 @@ func createKICCustomResourceDefinitions(mgr manager.Manager) error {
 
 	crdsClient := apixClient.CustomResourceDefinitions()
 	for _, crd := range crds {
-		oldCRD, err := crdsClient.Get(crd.Name, metav1.GetOptions{})
+		oldCRD, err := crdsClient.Get(context.TODO(), crd.Name, metav1.GetOptions{})
 		if err != nil {
 			if errors.IsNotFound(err) {
 				reqLogger.Info(fmt.Sprintf("no previous CRD %v found, creating a new one.", crd.Name))
-				_, err = crdsClient.Create(crd)
+				_, err = crdsClient.Create(context.TODO(), crd, metav1.CreateOptions{})
 				if err != nil {
 					return fmt.Errorf("error creating CustomResourceDefinition %v: %v", crd.Name, err)
 				}
@@ -101,7 +102,7 @@ func createKICCustomResourceDefinitions(mgr manager.Manager) error {
 			// Update CRDs if they already exist
 			reqLogger.Info(fmt.Sprintf("previous CustomResourceDefinition %v found, updating.", crd.Name))
 			oldCRD.Spec = crd.Spec
-			_, err = crdsClient.Update(oldCRD)
+			_, err = crdsClient.Update(context.TODO(), oldCRD, metav1.UpdateOptions{})
 			if err != nil {
 				return fmt.Errorf("error updating CustomResourceDefinition %v: %v", crd.Name, err)
 			}
@@ -307,6 +308,25 @@ func (r *ReconcileNginxIngressController) checkPrerequisites(reqLogger logr.Logg
 
 	if !existed {
 		reqLogger.Info("ConfigMap created", "ConfigMap.Namespace", cm.Namespace, "ConfigMap.Name", cm.Name)
+	}
+
+	// IngressClass is available from k8s 1.18+
+	minVersion, _ := version.ParseGeneric("v1.18.0")
+	if RunningK8sVersion.AtLeast(minVersion) {
+		if instance.Spec.IngressClass == "" {
+			instance.Spec.IngressClass = "nginx"
+			reqLogger.Info("Warning! IngressClass not set, using default", "IngressClass.Name", instance.Spec.IngressClass)
+		}
+		ic := ingressClassForNginxIngressController(instance)
+
+		err, existed = r.createIfNotExists(ic)
+		if err != nil {
+			return err
+		}
+
+		if !existed {
+			reqLogger.Info("IngressClass created", "IngressClass.Name", ic.Name)
+		}
 	}
 
 	if instance.Spec.DefaultSecret == "" {
