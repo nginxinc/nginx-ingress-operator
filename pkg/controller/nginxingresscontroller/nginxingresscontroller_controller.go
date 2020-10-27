@@ -20,7 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 
-	apixv1beta1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1"
+	apixv1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -73,7 +73,7 @@ func createKICCustomResourceDefinitions(mgr manager.Manager) error {
 	}
 
 	// Create CRDs with a different client (apiextensions)
-	apixClient, err := apixv1beta1client.NewForConfig(mgr.GetConfig())
+	apixClient, err := apixv1client.NewForConfig(mgr.GetConfig())
 	if err != nil {
 		reqLogger.Error(err, "unable to create client for CRD registration")
 		return err
