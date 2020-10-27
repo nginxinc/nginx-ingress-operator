@@ -56,6 +56,11 @@ func TestClusterRoleForNginxIngressController(t *testing.T) {
 				Resources: []string{"virtualservers", "virtualserverroutes", "globalconfigurations", "transportservers", "policies"},
 			},
 			{
+				Verbs:     []string{"update"},
+				APIGroups: []string{"k8s.nginx.org"},
+				Resources: []string{"virtualservers/status", "virtualserverroutes/status"},
+			},
+			{
 				Verbs:     []string{"get", "list", "watch"},
 				APIGroups: []string{"appprotect.f5.com"},
 				Resources: []string{"aplogconfs", "appolicies"},
