@@ -34,13 +34,18 @@ func clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
 		},
 		{
 			Verbs:     []string{"get", "list", "watch"},
-			APIGroups: []string{"extensions"},
+			APIGroups: []string{"networking.k8s.io"},
 			Resources: []string{"ingresses"},
 		},
 		{
 			Verbs:     []string{"update"},
-			APIGroups: []string{"extensions"},
+			APIGroups: []string{"networking.k8s.io"},
 			Resources: []string{"ingresses/status"},
+		},
+		{
+			Verbs:     []string{"get", "create"},
+			APIGroups: []string{"networking.k8s.io"},
+			Resources: []string{"ingressclasses"},
 		},
 		{
 			Verbs:     []string{"get", "list", "watch"},

@@ -1,9 +1,9 @@
 package nginxingresscontroller
 
 import (
-	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	rbacv1 "k8s.io/api/rbac/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -42,13 +42,18 @@ func TestClusterRoleForNginxIngressController(t *testing.T) {
 			},
 			{
 				Verbs:     []string{"get", "list", "watch"},
-				APIGroups: []string{"extensions"},
+				APIGroups: []string{"networking.k8s.io"},
 				Resources: []string{"ingresses"},
 			},
 			{
 				Verbs:     []string{"update"},
-				APIGroups: []string{"extensions"},
+				APIGroups: []string{"networking.k8s.io"},
 				Resources: []string{"ingresses/status"},
+			},
+			{
+				Verbs:     []string{"get", "create"},
+				APIGroups: []string{"networking.k8s.io"},
+				Resources: []string{"ingressclasses"},
 			},
 			{
 				Verbs:     []string{"get", "list", "watch"},
@@ -69,8 +74,8 @@ func TestClusterRoleForNginxIngressController(t *testing.T) {
 	}
 
 	result := clusterRoleForNginxIngressController(name)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("clusterRoleForNginxIngressController(%v) returned %+v but expected %+v", name, result, expected)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("clusterRoleForNginxIngressController(%v) mismatch (-want +got):\n%s", name, diff)
 	}
 }
 
@@ -84,8 +89,8 @@ func TestSubjectForServiceAccount(t *testing.T) {
 	}
 
 	result := subjectForServiceAccount(namespace, name)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("subjectForServiceAccount(%v, %v) returned %+v but expected %+v", namespace, name, result, expected)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("subjectForServiceAccount(%v, %v) mismatch (-want +got):\n%s", namespace, name, diff)
 	}
 }
 
@@ -103,7 +108,7 @@ func TestClusterRoleBindingForNginxIngressController(t *testing.T) {
 	}
 
 	result := clusterRoleBindingForNginxIngressController(name)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("clusterRoleBindingForNginxIngressController(%v) returned %+v but expected %+v", name, result, expected)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("clusterRoleBindingForNginxIngressController(%v) mismatch (-want +got):\n%s", name, diff)
 	}
 }

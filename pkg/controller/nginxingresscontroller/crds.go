@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
@@ -26,20 +26,20 @@ func getCRDsManifests() ([]string, error) {
 	return manifests, nil
 }
 
-func kicCRDs() ([]*v1beta1.CustomResourceDefinition, error) {
+func kicCRDs() ([]*v1.CustomResourceDefinition, error) {
 	manifests, err := getCRDsManifests()
 	if err != nil {
 		return nil, err
 	}
 
-	var crds []*v1beta1.CustomResourceDefinition
+	var crds []*v1.CustomResourceDefinition
 	for _, path := range manifests {
 		f, err := os.Open(path)
 		if err != nil {
 			return nil, fmt.Errorf("failed to open the CRD manifest %v: %v", path, err)
 		}
 
-		var crd v1beta1.CustomResourceDefinition
+		var crd v1.CustomResourceDefinition
 
 		err = yaml.NewYAMLOrJSONDecoder(f, decoderBufferSize).Decode(&crd)
 
