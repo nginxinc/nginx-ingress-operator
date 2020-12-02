@@ -26,12 +26,13 @@ generate-metadata: generate-crds
 	echo "Metadata generated, please make sure you add/update fields in nginx-ingress-operator.v$(TAG).clusterserviceversion.yaml"
 
 generate-bundle:
-	-rm -rf bundle
-	mkdir bundle
-	cp deploy/crds/* bundle/
-	cp deploy/olm-catalog/nginx-ingress-operator/nginx-ingress-operator.package.yaml bundle/
-	./hack/copy_manifests.sh
-	-rm bundle.zip
-	zip -j bundle.zip bundle/*.yaml
+	@mkdir bundle/$(TAG)
+	@cp deploy/crds/* bundle/$(TAG)
+	@cp deploy/olm-catalog/nginx-ingress-operator/nginx-ingress-operator.package.yaml bundle/
+	@cp -R deploy/olm-catalog/nginx-ingress-operator/$(TAG)/ bundle/$(TAG)/
+	cd bundle && opm alpha bundle generate -d ./$(TAG)/ -u ./$(TAG)/
+	@mv bundle/bundle.Dockerfile bundle/bundle-$(TAG).Dockerfile
+	@echo '\nLABEL com.redhat.openshift.versions="v4.5,v4.6"\nLABEL com.redhat.delivery.operator.bundle=true\nLABEL com.redhat.delivery.backport=true' >> bundle/bundle-$(TAG).Dockerfile
+	docker build -t bundle:$(TAG) -f bundle/bundle-$(TAG).Dockerfile ./bundle
 
 .PHONY: build
