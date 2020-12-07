@@ -2,7 +2,6 @@
 build/_output
 build/_test
 bundle.zip
-bundle/
 # Created by https://www.gitignore.io/api/go,vim,emacs,visualstudiocode
 ### Emacs ###
 # -*- mode: gitignore; -*-
