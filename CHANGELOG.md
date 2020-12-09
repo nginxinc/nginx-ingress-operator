@@ -1,5 +1,28 @@
 # Changelog
 
+### 0.0.7
+
+FEATURES:
+
+* [29](https://github.com/nginxinc/nginx-ingress-operator/pull/29) Add IngressClass support.
+* [26](https://github.com/nginxinc/nginx-ingress-operator/pull/26) Add mTLS policy support.
+* [25](https://github.com/nginxinc/nginx-ingress-operator/pull/25) Add JWT policy support.
+* [21](https://github.com/nginxinc/nginx-ingress-operator/pull/21) Add latency metrics support.
+* [18](https://github.com/nginxinc/nginx-ingress-operator/pull/18) Add support for policies in VS routes and VSR subroutes. Add RateLimit policy support
+
+FIXES:
+
+* [35](https://github.com/nginxinc/nginx-ingress-operator/pull/35) Fix error for latency metrics arg.
+* [31](https://github.com/nginxinc/nginx-ingress-operator/pull/31) Add Status update for VS/VSR to RBAC.
+
+KNOWS ISSUES:
+* The Operator doesn't automatically remove IngressClasses created by [29](https://github.com/nginxinc/nginx-ingress-operator/pull/29)
+
+COMPATIBILITY:
+
+* NGINX Ingress Controller 1.9.0 or newer.
+* Openshift 4.5 or newer.
+
 ### 0.0.6
 
 FEATURES:
