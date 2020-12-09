@@ -64,7 +64,7 @@ spec:
    prometheus:
      enable: true
      port: 9114
-     enableLatencyMetrics: false
+   enableLatencyMetrics: false
    configMapData:
      error-log-level: debug
    enableTLSPassthrough: true
