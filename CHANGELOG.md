@@ -12,7 +12,6 @@ FEATURES:
 
 FIXES:
 
-* [35](https://github.com/nginxinc/nginx-ingress-operator/pull/35) Fix error for latency metrics arg.
 * [31](https://github.com/nginxinc/nginx-ingress-operator/pull/31) Add Status update for VS/VSR to RBAC.
 
 KNOWS ISSUES:
