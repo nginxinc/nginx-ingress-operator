@@ -3,7 +3,7 @@ kind: ClusterServiceVersion
 metadata:
   annotations:
     alm-examples: >-
-      [{ "apiVersion": "k8s.nginx.org/v1alpha1", "kind": "NginxIngressController", "metadata": { "name": "my-nginx-ingress-controller", "namespace": "my-nginx-ingress" }, "spec": { "enableCRDs": true, "image": { "pullPolicy": "Always", "repository": "docker.io/nginx/nginx-ingress", "tag": "1.9.1-ubi" }, "nginxPlus": false, "replicas": 1, "serviceType": "NodePort", "type": "deployment" } }]
+      [{ "apiVersion": "k8s.nginx.org/v1alpha1", "kind": "NginxIngressController", "metadata": { "name": "my-nginx-ingress-controller", "namespace": "my-nginx-ingress" }, "spec": { "enableCRDs": true, "ingressClass": "nginx", "image": { "pullPolicy": "Always", "repository": "docker.io/nginx/nginx-ingress", "tag": "1.9.1-ubi" }, "nginxPlus": false, "replicas": 1, "serviceType": "NodePort", "type": "deployment" } }]
     capabilities: Basic Install
     categories: Networking
     certified: "true"
@@ -344,7 +344,7 @@ spec:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
                         value: nginx-ingress-operator
-                    image: nginx/nginx-ingress-operator:0.0.7
+                    image:  registry.connect.redhat.com/nginx/nginx-ingress-operator:0.0.7
                     imagePullPolicy: IfNotPresent
                     name: nginx-ingress-operator
                     resources: {}
