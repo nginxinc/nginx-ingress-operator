@@ -16,7 +16,7 @@ run-local:
 	operator-sdk run --local
 
 generate-crds:
-	operator-sdk generate k8s && operator-sdk generate crds
+	operator-sdk generate k8s && operator-sdk generate crds --crd-version v1beta1
 
 lint:
 	golangci-lint run
