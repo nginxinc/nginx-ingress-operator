@@ -30,10 +30,10 @@ func defaultSecretForNginxIngressController(instance *k8sv1alpha1.NginxIngressCo
 			Namespace: instance.Namespace,
 		},
 		Data: map[string][]byte{
-			"tls.crt": crt,
-			"tls.key": key,
+			corev1.TLSCertKey:       crt,
+			corev1.TLSPrivateKeyKey: key,
 		},
-		Type: "Opaque",
+		Type: corev1.SecretTypeTLS,
 	}
 
 	return secret, nil
