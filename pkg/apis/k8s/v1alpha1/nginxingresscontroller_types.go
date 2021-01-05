@@ -23,6 +23,7 @@ type NginxIngressControllerSpec struct {
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	Replicas *int32 `json:"replicas"`
 	// The TLS Secret for TLS termination of the default server. The format is namespace/name.
+	// The secret must be of the type kubernetes.io/tls.
 	// If not specified, the operator will generate and deploy a TLS Secret with a self-signed certificate and key.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
@@ -87,6 +88,7 @@ type NginxIngressControllerSpec struct {
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableLeaderElection bool `json:"enableLeaderElection"`
 	// A Secret with a TLS certificate and key for TLS termination of every Ingress host for which TLS termination is enabled but the Secret is not specified.
+	// The secret must be of the type kubernetes.io/tls.
 	// If the argument is not set, for such Ingress hosts NGINX will break any attempt to establish a TLS connection.
 	// If the argument is set, but the Ingress controller is not able to fetch the Secret from Kubernetes API, the Ingress Controller will fail to start.
 	// Format is namespace/name.
