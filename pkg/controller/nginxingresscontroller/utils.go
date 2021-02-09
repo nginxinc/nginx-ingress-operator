@@ -125,6 +125,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		if instance.Spec.EnableSnippets {
 			args = append(args, "-enable-snippets")
 		}
+
+		if instance.Spec.EnablePreviewPolicies {
+			args = append(args, "-enable-preview-policies")
+		}
 	}
 
 	if instance.Spec.NginxReloadTimeout != 0 {

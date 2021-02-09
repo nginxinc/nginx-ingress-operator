@@ -73,6 +73,9 @@ spec:
                 controller reporting the status of Ingress resources – only one replica
                 will report status.
               type: boolean
+            enablePreviewPolicies:
+              description: Enables preview policies. Requires enableCRDs set to true.
+              type: boolean
             enableSnippets:
               description: Enable custom NGINX configuration snippets in VirtualServer
                 and VirtualServerRoute resources. Requires enableCRDs set to true.

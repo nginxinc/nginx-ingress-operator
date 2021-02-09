@@ -40,6 +40,11 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableSnippets bool `json:"enableSnippets"`
+	// Enables preview policies.
+	// Requires enableCRDs set to true.
+	// +kubebuilder:validation:Optional
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	EnablePreviewPolicies bool `json:"enablePreviewPolicies"`
 	// +kubebuilder:validation:Optional
 	// A class of the Ingress controller. The Ingress controller only processes Ingress resources that belong to its
 	// class (in other words, have the annotation “kubernetes.io/ingress.class”).
