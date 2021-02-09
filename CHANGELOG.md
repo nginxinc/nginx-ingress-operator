@@ -19,7 +19,7 @@ KNOWS ISSUES:
 
 COMPATIBILITY:
 
-* NGINX Ingress Controller 1.9.0 or newer.
+* NGINX Ingress Controller 1.9.x.
 * Openshift 4.5 or newer.
 
 ### 0.0.6
@@ -39,7 +39,7 @@ IMPROVEMENTS:
 
 COMPATIBILITY:
 
-* NGINX Ingress Controller 1.8.0 or newer.
+* NGINX Ingress Controller 1.8.x.
 * Openshift 4.3 or newer.
 
 ### 0.0.4
@@ -51,5 +51,5 @@ FEATURES:
 
 COMPATIBILITY:
 
-* NGINX Ingress Controller 1.7.0 or newer.
+* NGINX Ingress Controller 1.7.x.
 * Openshift 4.3 or newer.
