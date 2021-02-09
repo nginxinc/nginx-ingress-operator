@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -130,10 +131,11 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					EnableCRDs:           true,
-					EnableSnippets:       true,
-					EnableTLSPassthrough: true,
-					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
+					EnableCRDs:            true,
+					EnableSnippets:        true,
+					EnablePreviewPolicies: true,
+					EnableTLSPassthrough:  true,
+					GlobalConfiguration:   "my-nginx-ingress/globalconfiguration",
 				},
 			},
 			expected: []string{
@@ -142,6 +144,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-enable-tls-passthrough",
 				"-global-configuration=my-nginx-ingress/globalconfiguration",
 				"-enable-snippets",
+				"-enable-preview-policies",
 			},
 		},
 		{
@@ -153,7 +156,6 @@ func TestGeneratePodArgs(t *testing.T) {
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					NginxPlus:           true,
 					DefaultSecret:       "my-nginx-ingress/my-secret",
-					EnableCRDs:          false,
 					IngressClass:        "ingressClass",
 					UseIngressClassOnly: true,
 					WatchNamespace:      "default",
@@ -180,12 +182,14 @@ func TestGeneratePodArgs(t *testing.T) {
 					},
 					EnableLatencyMetrics: true,
 					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
-					EnableSnippets:       true,
 					EnableTLSPassthrough: true,
 					AppProtect: &k8sv1alpha1.AppProtect{
 						Enable: true,
 					},
-					NginxReloadTimeout: 5000,
+					NginxReloadTimeout:    5000,
+					EnableCRDs:            false,
+					EnableSnippets:        true,
+					EnablePreviewPolicies: true,
 				},
 			},
 			expected: []string{
@@ -218,8 +222,8 @@ func TestGeneratePodArgs(t *testing.T) {
 
 	for _, test := range tests {
 		result := generatePodArgs(test.instance)
-		if !reflect.DeepEqual(result, test.expected) {
-			t.Errorf("generatePodArgs(%+v) returned \n %v but expected \n %v", test.instance, result, test.expected)
+		if diff := cmp.Diff(test.expected, result); diff != "" {
+			t.Errorf("generatePodArgs(%+v) mismatch (-want +got):\n%s", test.instance, diff)
 		}
 	}
 }
