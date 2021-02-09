@@ -45,7 +45,6 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnablePreviewPolicies bool `json:"enablePreviewPolicies"`
-	// +kubebuilder:validation:Optional
 	// A class of the Ingress controller. The Ingress controller only processes Ingress resources that belong to its
 	// class (in other words, have the annotation “kubernetes.io/ingress.class”).
 	// Additionally, the Ingress controller processes Ingress resources that do not have that annotation,
@@ -53,10 +52,10 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	IngressClass string `json:"ingressClass"`
-	// Specifies extra labels of the service.
+	// The service of the Ingress controller.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
-	ExtraLabels map[string]string `json:"extraLabels,omitempty"`
+	Service *Service `json:"service"`
 	// Ignore Ingress resources without the “kubernetes.io/ingress.class” annotation.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
@@ -189,9 +188,16 @@ type ReportIngressStatus struct {
 	Enable bool `json:"enable"`
 	// Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally.
 	// The external address of the service is used when reporting the status of Ingress resources.
-	// Note: Only if ServiceType is different than LoadBalancer.
+	// Note: Only if serviceType is NodePort.
 	// +kubebuilder:validation:Optional
 	ExternalService string `json:"externalService"`
+	// Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system.
+	// The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources.
+	// Requires reportIngressStatus.enable set to true.
+	// Note: Only if serviceType is NodePort and reportIngressStatus.externalService is not set.
+	// +kubebuilder:validation:Optional
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	IngressLink string `json:"ingressLink,omitempty"`
 }
 
 // Prometheus defines the Prometheus metrics for the Ingress Controller.
@@ -207,10 +213,17 @@ type Prometheus struct {
 	Port *uint16 `json:"port"`
 }
 
-// App Protect support configuration.
+// AppProtect support configuration.
 type AppProtect struct {
 	// Enable App Protect.
 	Enable bool `json:"enable"`
+}
+
+// Service defines the Service for the Ingress Controller.
+type Service struct {
+	// Specifies extra labels of the service.
+	// +kubebuilder:validation:Optional
+	ExtraLabels map[string]string `json:"extraLabels,omitempty"`
 }
 
 // NginxIngressControllerStatus defines the observed state of NginxIngressController

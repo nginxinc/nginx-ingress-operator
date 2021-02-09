@@ -111,9 +111,35 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					DefaultSecret:       "my-nginx-ingress/my-secret",
-					ServiceType:         "LoadBalancer",
-					ReportIngressStatus: &k8sv1alpha1.ReportIngressStatus{Enable: true},
+					DefaultSecret: "my-nginx-ingress/my-secret",
+					ServiceType:   "NodePort",
+					ReportIngressStatus: &k8sv1alpha1.ReportIngressStatus{
+						Enable:      true,
+						IngressLink: "my-ingresslink",
+					},
+				},
+			},
+			expected: []string{
+				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
+				"-default-server-tls-secret=my-nginx-ingress/my-secret",
+				"-enable-custom-resources=false",
+				"-report-ingress-status",
+				"-ingresslink=my-ingresslink",
+			},
+		},
+		{
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					DefaultSecret: "my-nginx-ingress/my-secret",
+					ServiceType:   "LoadBalancer",
+					ReportIngressStatus: &k8sv1alpha1.ReportIngressStatus{
+						Enable:      true,
+						IngressLink: "my-invalid-ingresslink",
+					},
 				},
 			},
 			expected: []string{
@@ -173,6 +199,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					ReportIngressStatus: &k8sv1alpha1.ReportIngressStatus{
 						Enable:          true,
 						ExternalService: "external",
+						IngressLink:     "my-invalid-ingressLink",
 					},
 					EnableLeaderElection: true,
 					WildcardTLS:          "my-nginx-ingress/wildcard-secret",

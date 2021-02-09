@@ -84,11 +84,6 @@ spec:
               description: Enable TLS Passthrough on port 443. Requires enableCRDs
                 set to true.
               type: boolean
-            extraLabels:
-              additionalProperties:
-                type: string
-              description: Specifies extra labels of the service.
-              type: object
             globalConfiguration:
               description: The GlobalConfiguration resource for global configuration
                 of the Ingress Controller. Format is namespace/name. Requires enableCRDs
@@ -212,11 +207,27 @@ spec:
                   description: 'Specifies the name of the service with the type LoadBalancer
                     through which the Ingress controller pods are exposed externally.
                     The external address of the service is used when reporting the
-                    status of Ingress resources. Note: Only if ServiceType is different
-                    than LoadBalancer.'
+                    status of Ingress resources. Note: Only if serviceType is NodePort.'
+                  type: string
+                ingressLink:
+                  description: 'Specifies the name of the IngressLink resource, which
+                    exposes the Ingress Controller pods via a BIG-IP system. The IP
+                    of the BIG-IP system is used when reporting the status of Ingress,
+                    VirtualServer and VirtualServerRoute resources. Requires reportIngressStatus.enable
+                    set to true. Note: Only if serviceType is NodePort and reportIngressStatus.externalService
+                    is not set.'
                   type: string
               required:
               - enable
+              type: object
+            service:
+              description: The service of the Ingress controller.
+              properties:
+                extraLabels:
+                  additionalProperties:
+                    type: string
+                  description: Specifies extra labels of the service.
+                  type: object
               type: object
             serviceType:
               description: 'The type of the Service for the Ingress Controller. Valid

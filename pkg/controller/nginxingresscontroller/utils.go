@@ -90,6 +90,8 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 			args = append(args, fmt.Sprintf("-external-service=%v", instance.Spec.ReportIngressStatus.ExternalService))
 		} else if instance.Spec.ServiceType == "LoadBalancer" {
 			args = append(args, fmt.Sprintf("-external-service=%v", instance.Name))
+		} else if instance.Spec.ReportIngressStatus.IngressLink != "" {
+			args = append(args, fmt.Sprintf("-ingresslink=%v", instance.Spec.ReportIngressStatus.IngressLink))
 		}
 	}
 
