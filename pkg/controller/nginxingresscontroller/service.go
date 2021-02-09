@@ -12,7 +12,7 @@ func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressControll
 		ObjectMeta: v1.ObjectMeta{
 			Name:      instance.Name,
 			Namespace: instance.Namespace,
-			Labels:    instance.Spec.ExtraLabels,
+			Labels:    instance.Spec.Service.ExtraLabels,
 		},
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{

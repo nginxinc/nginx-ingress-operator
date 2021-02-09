@@ -24,7 +24,9 @@ func TestServiceForNginxIngressController(t *testing.T) {
 		},
 		Spec: k8sv1alpha1.NginxIngressControllerSpec{
 			ServiceType: serviceType,
-			ExtraLabels: extraLabels,
+			Service: &k8sv1alpha1.Service{
+				ExtraLabels: extraLabels,
+			},
 		},
 	}
 	expected := &corev1.Service{

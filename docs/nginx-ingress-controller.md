@@ -85,6 +85,7 @@ spec:
 | `enableCRDs` | `boolean` | Enables the use of NGINX Ingress Resource Definitions (VirtualServer and VirtualServerRoute). | No |
 | `enableSnippets` | `boolean` | Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources. Requires enableCRDs set to true. | No |
 | `ingressClass` | `string` | A class of the Ingress controller. For Kubernetes >= 1.18, the Ingress controller only processes resources that belong to its class - i.e. have the "ingressClassName" field resource equal to the class. Additionally the Ingress Controller processes all the VirtualServer/VirtualServerRoute resources that do not have the "ingressClassName" field. For Kubernetes < 1.18, the Ingress Controller only processes resources that belong to its class - i.e have the annotation "kubernetes.io/ingress.class" (for Ingress resources) or field "ingressClassName" (for VirtualServer/VirtualServerRoute resources) equal to the class. Additionally, the Ingress Controller processes resources that do not have the class set, which can be disabled by setting `useIngressClassOnly` to `true`. Default is `nginx`. | No |
+| `service` | [service](#nginxingresscontrollerservice) | The service of the Ingress Controller. | No |
 | `useIngressClassOnly` | `boolean` | Ignore Ingress resources without the `"kubernetes.io/ingress.class"` annotation. For kubernetes versions >= 1.18 this flag will be IGNORED. | No |
 | `watchNamespace` | `boolean` | Namespace to watch for Ingress resources. By default the Ingress controller watches all namespaces. | No |
 | `healthStatus` | [healthStatus](#nginxingresscontrollerhealthstatus) | Adds a new location to the default server. The location responds with the 200 status code for any request. Useful for external health-checking of the Ingress Controller. | No |
@@ -124,12 +125,19 @@ spec:
 | `port` | `int` | Set the port where the NGINX stub_status or the NGINX Plus API is exposed. Default is `8080`. Format is `1023 - 65535` | No |
 | `allowCidrs` | `string` | Whitelist IPv4 IP/CIDR blocks to allow access to NGINX stub_status or the NGINX Plus API. Separate multiple IP/CIDR by commas. (default `127.0.0.1`) | No |
 
+## NginxIngressController.Service
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| `extraLabels` | `map[string]string` | Specifies extra labels of the service. | No |
+
 ## NginxIngressController.ReportIngressStatus
 
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 | `enable` | `boolean` | Enable reporting of the Ingress status. | Yes |
-| `externalService` | `string` | Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally. The external address of the service is used when reporting the status of Ingress resources. Note: Only if ServiceType is different than LoadBalancer. | No |
+| `externalService` | `string` | Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally. The external address of the service is used when reporting the status of Ingress resources. Note: Only if ServiceType is `NodePort`. | No |
+| `ingressLink` | `string` | Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system. The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. Requires `reportIngressStatus.enable` set to `true`. Note: Only if ServiceType is `NodePort` and externalService is not set. | No |
 
 ## NginxIngressController.Prometheus
 
