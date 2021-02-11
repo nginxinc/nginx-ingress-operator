@@ -126,6 +126,13 @@ func (in *NginxIngressControllerSpec) DeepCopyInto(out *NginxIngressControllerSp
 		*out = new(int32)
 		**out = **in
 	}
+	if in.ExtraLabels != nil {
+		in, out := &in.ExtraLabels, &out.ExtraLabels
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	if in.HealthStatus != nil {
 		in, out := &in.HealthStatus, &out.HealthStatus
 		*out = new(HealthStatus)

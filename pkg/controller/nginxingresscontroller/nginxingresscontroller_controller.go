@@ -32,9 +32,11 @@ import (
 
 var log = logf.Log.WithName("controller_nginxingresscontroller")
 
-const clusterRoleName = "nginx-ingress-role"
-const sccName = "nginx-ingress-scc"
-const finalizer = "finalizer.nginxingresscontroller.k8s.nginx.org"
+const (
+	clusterRoleName = "nginx-ingress-role"
+	sccName         = "nginx-ingress-scc"
+	finalizer       = "finalizer.nginxingresscontroller.k8s.nginx.org"
+)
 
 // Add creates a new NginxIngressController Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.

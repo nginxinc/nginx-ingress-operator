@@ -50,8 +50,13 @@ type NginxIngressControllerSpec struct {
 	// class (in other words, have the annotation “kubernetes.io/ingress.class”).
 	// Additionally, the Ingress controller processes Ingress resources that do not have that annotation,
 	// which can be disabled by setting UseIngressClassOnly to true. Default is `nginx`.
+	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	IngressClass string `json:"ingressClass"`
+	// Specifies extra labels of the service.
+	// +kubebuilder:validation:Optional
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	ExtraLabels map[string]string `json:"extraLabels,omitempty"`
 	// Ignore Ingress resources without the “kubernetes.io/ingress.class” annotation.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true

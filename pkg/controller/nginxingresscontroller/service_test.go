@@ -1,9 +1,9 @@
 package nginxingresscontroller
 
 import (
-	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,20 +14,24 @@ func TestServiceForNginxIngressController(t *testing.T) {
 	name := "my-service"
 	namespace := "my-nginx-ingress"
 	serviceType := "LoadBalancer"
+	extraLabels := map[string]string{"app": "my-nginx-ingress"}
 
 	instance := &k8sv1alpha1.NginxIngressController{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace,
+			Labels:    extraLabels,
 		},
 		Spec: k8sv1alpha1.NginxIngressControllerSpec{
 			ServiceType: serviceType,
+			ExtraLabels: extraLabels,
 		},
 	}
 	expected := &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace,
+			Labels:    extraLabels,
 		},
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{
@@ -56,7 +60,7 @@ func TestServiceForNginxIngressController(t *testing.T) {
 	}
 
 	result := serviceForNginxIngressController(instance)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("serviceForNginxIngressController(%v) returned %+v but expected %+v", instance, result, expected)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("serviceForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}
 }

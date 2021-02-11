@@ -84,6 +84,11 @@ spec:
               description: Enable TLS Passthrough on port 443. Requires enableCRDs
                 set to true.
               type: boolean
+            extraLabels:
+              additionalProperties:
+                type: string
+              description: Specifies extra labels of the service.
+              type: object
             globalConfiguration:
               description: The GlobalConfiguration resource for global configuration
                 of the Ingress Controller. Format is namespace/name. Requires enableCRDs
