@@ -43,6 +43,7 @@ spec:
    serviceType: NodePort
    enableCRDs: true
    enableSnippets: false
+   enablePreviewPolicies: false
    defaultSecret: my-nginx-ingress/default-secret
    ingressClass: my-nginx-ingress
    useIngressClassOnly: true
@@ -83,7 +84,8 @@ spec:
 | `defaultSecret` | `string` | The TLS Secret for TLS termination of the default server. The format is namespace/name. The secret must be of the type kubernetes.io/tls. If not specified, the operator will generate and deploy a TLS Secret with a self-signed certificate and key. | No |
 | `serviceType` | `string` | The type of the Service for the Ingress Controller. Valid Service types are `NodePort` or `LoadBalancer`. | Yes |
 | `enableCRDs` | `boolean` | Enables the use of NGINX Ingress Resource Definitions (VirtualServer and VirtualServerRoute). | No |
-| `enableSnippets` | `boolean` | Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources. Requires enableCRDs set to true. | No |
+| `enableSnippets` | `boolean` | Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources. Requires `enableCRDs` set to `true`. | No |
+| `enablePreviewPolicies` | `boolean` | Enables preview policies. Requires `enableCRDs` set to `true`. | No |
 | `ingressClass` | `string` | A class of the Ingress controller. For Kubernetes >= 1.18, the Ingress controller only processes resources that belong to its class - i.e. have the "ingressClassName" field resource equal to the class. Additionally the Ingress Controller processes all the VirtualServer/VirtualServerRoute resources that do not have the "ingressClassName" field. For Kubernetes < 1.18, the Ingress Controller only processes resources that belong to its class - i.e have the annotation "kubernetes.io/ingress.class" (for Ingress resources) or field "ingressClassName" (for VirtualServer/VirtualServerRoute resources) equal to the class. Additionally, the Ingress Controller processes resources that do not have the class set, which can be disabled by setting `useIngressClassOnly` to `true`. Default is `nginx`. | No |
 | `service` | [service](#nginxingresscontrollerservice) | The service of the Ingress Controller. | No |
 | `useIngressClassOnly` | `boolean` | Ignore Ingress resources without the `"kubernetes.io/ingress.class"` annotation. For kubernetes versions >= 1.18 this flag will be IGNORED. | No |
@@ -97,9 +99,9 @@ spec:
 | `wildcardTLS` | `string` | A Secret with a TLS certificate and key for TLS termination of every Ingress host for which TLS termination is enabled but the Secret is not specified. The secret must be of the type kubernetes.io/tls. If the argument is not set, for such Ingress hosts NGINX will break any attempt to establish a TLS connection. If the argument is set, but the Ingress controller is not able to fetch the Secret from Kubernetes API, the Ingress Controller will fail to start. Format is `namespace/name`. | No |
 | `prometheus` | [prometheus](#nginxingresscontrollerprometheus) | Configures NGINX or NGINX Plus metrics in the Prometheus format. | No |
 | `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
-| `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires enableCRDs set to true. | No |
-| `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires enableCRDs set to true. | No |
-| `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires nginxPlus set to true. | No |
+| `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires `enableCRDs` set to `true`. | No |
+| `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires `enableCRDs` set to `true`. | No |
+| `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires `nginxPlus` set to `true`. | No |
 | `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
 
 ## NginxIngressController.Image
