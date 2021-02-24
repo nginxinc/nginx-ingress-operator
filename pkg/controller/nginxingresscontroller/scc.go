@@ -9,7 +9,6 @@ import (
 )
 
 func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints {
-	var priority int32 = 20
 	var uid int64 = 101
 
 	allowPrivilegeEscalation := true
@@ -19,7 +18,6 @@ func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints
 			Name: name,
 		},
 		AllowHostPorts:           false,
-		Priority:                 &priority,
 		AllowPrivilegedContainer: false,
 		RunAsUser: secv1.RunAsUserStrategyOptions{
 			Type: "MustRunAs",
