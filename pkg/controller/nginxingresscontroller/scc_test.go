@@ -11,7 +11,6 @@ import (
 )
 
 func TestSccForNginxIngressController(t *testing.T) {
-	var priority int32 = 20
 	var uid int64 = 101
 
 	name := "my-nginx-ingress"
@@ -22,7 +21,6 @@ func TestSccForNginxIngressController(t *testing.T) {
 			Name: name,
 		},
 		AllowHostPorts:           false,
-		Priority:                 &priority,
 		AllowPrivilegedContainer: false,
 		RunAsUser: secv1.RunAsUserStrategyOptions{
 			Type: "MustRunAs",
