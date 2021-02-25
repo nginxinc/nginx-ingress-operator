@@ -8,11 +8,16 @@ import (
 )
 
 func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *corev1.Service {
+	extraLabels := map[string]string{}
+	if instance.Spec.Service != nil {
+		extraLabels = instance.Spec.Service.ExtraLabels
+	}
+
 	return &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      instance.Name,
 			Namespace: instance.Namespace,
-			Labels:    instance.Spec.Service.ExtraLabels,
+			Labels:    extraLabels,
 		},
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{
