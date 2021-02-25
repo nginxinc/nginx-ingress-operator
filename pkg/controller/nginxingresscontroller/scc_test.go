@@ -2,9 +2,9 @@ package nginxingresscontroller
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	secv1 "github.com/openshift/api/security/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,7 +12,6 @@ import (
 
 func TestSccForNginxIngressController(t *testing.T) {
 	var uid int64 = 101
-
 	name := "my-nginx-ingress"
 	allowPrivilegeEscalation := true
 
@@ -50,8 +49,8 @@ func TestSccForNginxIngressController(t *testing.T) {
 	}
 
 	result := sccForNginxIngressController(name)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("sccForNginxIngressController(%v) returned %+v but expected %+v", name, result, expected)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("sccForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}
 }
 
