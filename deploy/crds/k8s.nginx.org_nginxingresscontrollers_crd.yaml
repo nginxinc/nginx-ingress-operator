@@ -59,7 +59,7 @@ spec:
               type: string
             enableCRDs:
               description: Enables the use of NGINX Ingress Resource Definitions (VirtualServer
-                and VirtualServerRoute).
+                and VirtualServerRoute). Default is true.
               type: boolean
             enableLatencyMetrics:
               description: Bucketed response times from when NGINX establishes a connection
