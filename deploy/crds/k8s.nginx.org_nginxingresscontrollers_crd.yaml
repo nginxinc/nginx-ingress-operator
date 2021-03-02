@@ -261,7 +261,6 @@ spec:
                 API, the Ingress Controller will fail to start. Format is namespace/name.
               type: string
           required:
-          - enableCRDs
           - image
           - serviceType
           - type
