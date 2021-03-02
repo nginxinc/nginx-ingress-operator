@@ -35,7 +35,6 @@ func TestSccForNginxIngressController(t *testing.T) {
 		FSGroup: secv1.FSGroupStrategyOptions{
 			Type: "MustRunAs",
 		},
-		Groups: []string{"system:authenticated"},
 		SupplementalGroups: secv1.SupplementalGroupsStrategyOptions{
 			Type: "MustRunAs",
 		},
@@ -57,7 +56,7 @@ func TestSccForNginxIngressController(t *testing.T) {
 func TestUserForSCC(t *testing.T) {
 	namespace := "my-nginx-ingress"
 	name := "my-nginx-ingress-controller"
-	expected := fmt.Sprintf("%v:%v", namespace, name)
+	expected := fmt.Sprintf("system:serviceaccount:%v:%v", namespace, name)
 
 	result := userForSCC(namespace, name)
 	if expected != result {

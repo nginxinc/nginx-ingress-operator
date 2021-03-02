@@ -33,7 +33,6 @@ func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints
 		FSGroup: secv1.FSGroupStrategyOptions{
 			Type: "MustRunAs",
 		},
-		Groups: []string{"system:authenticated"},
 		SupplementalGroups: secv1.SupplementalGroupsStrategyOptions{
 			Type: "MustRunAs",
 		},
@@ -48,5 +47,5 @@ func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints
 }
 
 func userForSCC(namespace string, name string) string {
-	return fmt.Sprintf("%v:%v", namespace, name)
+	return fmt.Sprintf("system:serviceaccount:%v:%v", namespace, name)
 }
