@@ -99,3 +99,166 @@ func TestDeploymentForNginxIngressController(t *testing.T) {
 		t.Errorf("deploymentForNginxIngressController(%+v) returned %+v but expected %+v", instance, result, expected)
 	}
 }
+
+func TestHasDeploymentChanged(t *testing.T) {
+	runAsUser := new(int64)
+	allowPrivilegeEscalation := new(bool)
+	*runAsUser = 101
+	*allowPrivilegeEscalation = true
+	replicas := new(int32)
+	*replicas = 1
+
+	instance := &k8sv1alpha1.NginxIngressController{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "my-nginx-ingress-controller",
+			Namespace: "my-nginx-ingress-controller",
+		},
+		Spec: k8sv1alpha1.NginxIngressControllerSpec{
+			Image: k8sv1alpha1.Image{
+				Repository: "nginx-ingress",
+				Tag:        "edge",
+			},
+			Replicas: replicas,
+		},
+	}
+
+	defaultDeployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "my-nginx-ingress-controller",
+			Namespace: "my-nginx-ingress-controller",
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: replicas,
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:  "my-nginx-ingress-controller",
+							Image: "nginx-ingress:edge",
+							Args:  generatePodArgs(instance),
+						},
+					},
+				},
+			},
+		},
+	}
+
+	tenReplicas := int32(10)
+
+	tests := []struct {
+		deployment *appsv1.Deployment
+		instance   *k8sv1alpha1.NginxIngressController
+		expected   bool
+		msg        string
+	}{
+		{
+			deployment: defaultDeployment,
+			instance:   instance,
+			expected:   false,
+			msg:        "no changes",
+		},
+		{
+			deployment: defaultDeployment,
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-ingress",
+						Tag:        "edge",
+					},
+					Replicas: &tenReplicas,
+				},
+			},
+			expected: true,
+			msg:      "replicas increased",
+		},
+		{
+			deployment: &appsv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: appsv1.DeploymentSpec{
+					Replicas: &tenReplicas, // Deployment with 10 replicas
+					Template: corev1.PodTemplateSpec{
+						ObjectMeta: v1.ObjectMeta{
+							Name:      "my-nginx-ingress-controller",
+							Namespace: "my-nginx-ingress-controller",
+						},
+						Spec: corev1.PodSpec{
+							Containers: []corev1.Container{
+								{
+									Name:  "my-nginx-ingress-controller",
+									Image: "nginx-ingress:edge",
+									Args:  generatePodArgs(instance),
+								},
+							},
+						},
+					},
+				},
+			},
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-ingress",
+						Tag:        "edge",
+					},
+				},
+			},
+			expected: true,
+			msg:      "replicas field removed",
+		},
+		{
+			deployment: defaultDeployment,
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-plus-ingress",
+						Tag:        "edge",
+					},
+				},
+			},
+			expected: true,
+			msg:      "image repository update",
+		},
+		{
+			deployment: defaultDeployment,
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-ingress",
+						Tag:        "edge",
+						PullPolicy: "Always",
+					},
+				},
+			},
+			expected: true,
+			msg:      "pull policy update",
+		},
+	}
+	for _, test := range tests {
+		result := hasDeploymentChanged(test.deployment, test.instance)
+		if result != test.expected {
+			t.Errorf("hasDeploymentChanged() returned %v but expected %v for the case of %v", result, test.expected, test.msg)
+		}
+	}
+}

@@ -82,7 +82,9 @@ func deploymentForNginxIngressController(instance *k8sv1alpha1.NginxIngressContr
 }
 
 func hasDeploymentChanged(dep *appsv1.Deployment, instance *k8sv1alpha1.NginxIngressController) bool {
-	if dep.Spec.Replicas != nil && instance.Spec.Replicas != nil && *dep.Spec.Replicas != *instance.Spec.Replicas {
+	defaultReplicaCount := int32(1)
+	if dep.Spec.Replicas != nil && instance.Spec.Replicas == nil && *dep.Spec.Replicas != defaultReplicaCount ||
+		dep.Spec.Replicas != nil && instance.Spec.Replicas != nil && *dep.Spec.Replicas != *instance.Spec.Replicas {
 		return true
 	}
 
@@ -101,6 +103,11 @@ func hasDeploymentChanged(dep *appsv1.Deployment, instance *k8sv1alpha1.NginxIng
 
 func updateDeployment(dep *appsv1.Deployment, instance *k8sv1alpha1.NginxIngressController) *appsv1.Deployment {
 	dep.Spec.Replicas = instance.Spec.Replicas
+	if instance.Spec.Replicas == nil {
+		defaultReplicaCount := new(int32)
+		*defaultReplicaCount = 1
+		dep.Spec.Replicas = defaultReplicaCount
+	}
 	dep.Spec.Template.Spec.Containers[0].Image = generateImage(instance.Spec.Image.Repository, instance.Spec.Image.Tag)
 	dep.Spec.Template.Spec.Containers[0].Args = generatePodArgs(instance)
 	return dep

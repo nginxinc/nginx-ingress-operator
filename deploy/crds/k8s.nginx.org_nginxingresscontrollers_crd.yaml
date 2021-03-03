@@ -195,6 +195,7 @@ spec:
               description: The number of replicas of the Ingress Controller pod. The
                 default is 1. Only applies if the type is set to deployment.
               format: int32
+              nullable: true
               type: integer
             reportIngressStatus:
               description: Update the address field in the status of Ingresses resources.
@@ -222,6 +223,7 @@ spec:
               type: object
             service:
               description: The service of the Ingress controller.
+              nullable: true
               properties:
                 extraLabels:
                   additionalProperties:
