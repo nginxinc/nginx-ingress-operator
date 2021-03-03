@@ -12,4 +12,3 @@ spec:
     pullPolicy: Always
   replicas: 1
   serviceType: NodePort
-  enableCRDs: true

@@ -12,5 +12,4 @@ spec:
     pullPolicy: IfNotPresent
   replicas: 1
   serviceType: NodePort
-  enableCRDs: true
   ingressClass: nginx

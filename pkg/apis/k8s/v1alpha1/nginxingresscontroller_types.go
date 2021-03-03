@@ -32,7 +32,8 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Enum=NodePort;LoadBalancer
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	ServiceType string `json:"serviceType"`
-	// Enables the use of NGINX Ingress Resource Definitions (VirtualServer and VirtualServerRoute).
+	// Enables the use of NGINX Ingress Resource Definitions (VirtualServer and VirtualServerRoute). Default is true.
+	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableCRDs bool `json:"enableCRDs"`
 	// Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources.
