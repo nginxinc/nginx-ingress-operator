@@ -2,18 +2,16 @@ package nginxingresscontroller
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	secv1 "github.com/openshift/api/security/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestSccForNginxIngressController(t *testing.T) {
-	var priority int32 = 20
 	var uid int64 = 101
-
 	name := "my-nginx-ingress"
 	allowPrivilegeEscalation := true
 
@@ -22,7 +20,6 @@ func TestSccForNginxIngressController(t *testing.T) {
 			Name: name,
 		},
 		AllowHostPorts:           false,
-		Priority:                 &priority,
 		AllowPrivilegedContainer: false,
 		RunAsUser: secv1.RunAsUserStrategyOptions{
 			Type: "MustRunAs",
@@ -38,7 +35,6 @@ func TestSccForNginxIngressController(t *testing.T) {
 		FSGroup: secv1.FSGroupStrategyOptions{
 			Type: "MustRunAs",
 		},
-		Groups: []string{"system:authenticated"},
 		SupplementalGroups: secv1.SupplementalGroupsStrategyOptions{
 			Type: "MustRunAs",
 		},
@@ -52,15 +48,15 @@ func TestSccForNginxIngressController(t *testing.T) {
 	}
 
 	result := sccForNginxIngressController(name)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("sccForNginxIngressController(%v) returned %+v but expected %+v", name, result, expected)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("sccForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}
 }
 
 func TestUserForSCC(t *testing.T) {
 	namespace := "my-nginx-ingress"
 	name := "my-nginx-ingress-controller"
-	expected := fmt.Sprintf("%v:%v", namespace, name)
+	expected := fmt.Sprintf("system:serviceaccount:%v:%v", namespace, name)
 
 	result := userForSCC(namespace, name)
 	if expected != result {

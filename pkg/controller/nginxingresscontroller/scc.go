@@ -9,7 +9,6 @@ import (
 )
 
 func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints {
-	var priority int32 = 20
 	var uid int64 = 101
 
 	allowPrivilegeEscalation := true
@@ -19,7 +18,6 @@ func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints
 			Name: name,
 		},
 		AllowHostPorts:           false,
-		Priority:                 &priority,
 		AllowPrivilegedContainer: false,
 		RunAsUser: secv1.RunAsUserStrategyOptions{
 			Type: "MustRunAs",
@@ -35,7 +33,6 @@ func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints
 		FSGroup: secv1.FSGroupStrategyOptions{
 			Type: "MustRunAs",
 		},
-		Groups: []string{"system:authenticated"},
 		SupplementalGroups: secv1.SupplementalGroupsStrategyOptions{
 			Type: "MustRunAs",
 		},
@@ -50,5 +47,5 @@ func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints
 }
 
 func userForSCC(namespace string, name string) string {
-	return fmt.Sprintf("%v:%v", namespace, name)
+	return fmt.Sprintf("system:serviceaccount:%v:%v", namespace, name)
 }
