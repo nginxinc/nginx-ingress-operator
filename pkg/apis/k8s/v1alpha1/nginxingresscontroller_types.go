@@ -20,6 +20,7 @@ type NginxIngressControllerSpec struct {
 	Image Image `json:"image"`
 	// The number of replicas of the Ingress Controller pod. The default is 1. Only applies if the type is set to deployment.
 	// +kubebuilder:validation:Optional
+	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	Replicas *int32 `json:"replicas"`
 	// The TLS Secret for TLS termination of the default server. The format is namespace/name.
@@ -55,6 +56,7 @@ type NginxIngressControllerSpec struct {
 	IngressClass string `json:"ingressClass"`
 	// The service of the Ingress controller.
 	// +kubebuilder:validation:Optional
+	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	Service *Service `json:"service"`
 	// Ignore Ingress resources without the “kubernetes.io/ingress.class” annotation.
