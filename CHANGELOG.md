@@ -1,5 +1,49 @@
 # Changelog
 
+### 0.1.0
+
+Features
+
+* Add IngressLink support (#58) @Dean-Coakley
+* Add AppProtect User Defined Signatures support (#55) @Dean-Coakley
+* Graduate Policies. Add enablePreviewPolicy flag support. (#56) @Dean-Coakley
+* Update secret type of default secret to TLS (#39) @pleshakov
+
+Bug Fixes
+
+* Fix replicas and service to be optional fields (#71) @Dean-Coakley
+* Make enableCRDs optional (#70) @Dean-Coakley
+* Fix Service to be an optional field. Add support for updating ExtraLabels. (#66) @Dean-Coakley
+* Fix SCC resource to only affect KIC pods (#65) @Dean-Coakley
+
+Documentation
+
+* Update IC compatibility in changelog (#54) @pleshakov
+
+Maintenance
+
+* Bump golangci/golangci-lint-action from v2.4.0 to v2.5.1 (#67) @dependabot
+* Add release-drafter (#64) @lucacome
+* Change dependabot interval to weekly (#63) @lucacome
+* Bump actions/cache from v2 to v2.1.4 (#53) @dependabot
+* Bump golangci/golangci-lint-action from v2 to v2.4.0 (#59) @dependabot
+* Bump github.com/google/go-cmp from 0.4.0 to 0.5.4 (#49) @dependabot
+* Add dependabot (#45) @lucacome
+* Update CRDs, CSVs and Makefile (#36) @lucacome
+
+Compatibility
+
+- NGINX Ingress Controller 1.10.x
+- Openshift 4.5 or newer.
+
+Upgrade Instructions
+
+1. Remove existing policy CRD: `kubectl delete crds policies.k8s.nginx.org`
+  **Please note that deletion of the policies.k8s.nginx.org CRD will result in all instances of that CRD being deleted too. Ensure to back up any important Custom Resource instances first!**
+2. Delete existing SCC: `kubectl delete scc nginx-ingress-scc`
+3. Deploy new operator.
+4. Update any existing instances of the nginxingresscontrollers.k8s.nginx.org Custom Resource to use a KIC 1.10 image.
+
 ### 0.0.7
 
 FEATURES:
@@ -14,7 +58,7 @@ FIXES:
 
 * [31](https://github.com/nginxinc/nginx-ingress-operator/pull/31) Add Status update for VS/VSR to RBAC.
 
-KNOWS ISSUES:
+KNOWN ISSUES:
 * The Operator doesn't automatically remove IngressClasses created by [29](https://github.com/nginxinc/nginx-ingress-operator/pull/29)
 
 COMPATIBILITY:
