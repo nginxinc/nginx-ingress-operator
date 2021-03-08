@@ -12,11 +12,11 @@ The following table shows the relation between the versions of the two projects:
 
 | NGINX Ingress Controller | NGINX Ingress Operator |
 | --- | --- |
-| < 1.7.0 | N/A |
-| 1.7.x | 0.0.4 |
-| 1.8.x | 0.0.6 |
-| 1.9.x | 0.0.7 |
 | 1.10.x | 0.1.0 |
+| 1.9.x | 0.0.7 |
+| 1.8.x | 0.0.6 |
+| 1.7.x | 0.0.4 |
+| < 1.7.0 | N/A |
 
 Note: The NGINX Ingress Operator works only for NGINX Ingress Controller versions after `1.7.0`.
 
