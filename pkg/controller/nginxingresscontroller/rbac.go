@@ -60,7 +60,7 @@ func clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
 		{
 			Verbs:     []string{"get", "list", "watch"},
 			APIGroups: []string{"appprotect.f5.com"},
-			Resources: []string{"aplogconfs", "appolicies"},
+			Resources: []string{"aplogconfs", "appolicies", "apusersigs"},
 		},
 	}
 	return &rbacv1.ClusterRole{
