@@ -2,33 +2,34 @@
 
 ### 0.1.0
 
-Features
+FEATURES:
 
 * [58](https://github.com/nginxinc/nginx-ingress-operator/pull/58) Add IngressLink support.
 * [56](https://github.com/nginxinc/nginx-ingress-operator/pull/56) Graduate Policies. Add enablePreviewPolicy flag support.
 * [55](https://github.com/nginxinc/nginx-ingress-operator/pull/55) Add AppProtect User Defined Signatures support.
 * [39](https://github.com/nginxinc/nginx-ingress-operator/pull/39) Update secret type of default secret to TLS.
 
-Bug Fixes
+FIXES:
 
 * [71](https://github.com/nginxinc/nginx-ingress-operator/pull/71) Fix replicas and service to be optional fields.
 * [70](https://github.com/nginxinc/nginx-ingress-operator/pull/70) Make enableCRDs optional.
 * [66](https://github.com/nginxinc/nginx-ingress-operator/pull/66) Fix Service to be an optional field. Add support for updating ExtraLabels.
 * [65](https://github.com/nginxinc/nginx-ingress-operator/pull/65) Fix SCC resource to only affect KIC pods.
 
-Documentation
+DOCUMENTATION:
 
 * [54](https://github.com/nginxinc/nginx-ingress-operator/pull/54) Update IC compatibility in changelog.
 
 KNOWN ISSUES:
+
 * The Operator doesn't automatically remove IngressClasses created by [29](https://github.com/nginxinc/nginx-ingress-operator/pull/29).
 
-Compatibility
+COMPATIBILITY:
 
 - NGINX Ingress Controller 1.10.x
 - Openshift 4.5 or newer.
 
-Upgrade Instructions
+UPGRADE INSTRUCTIONS:
 
 1. Remove the existing Policy CRD: `kubectl delete crd policies.k8s.nginx.org`
   **Please note that deletion of the policies.k8s.nginx.org CRD will result in all instances of that CRD being deleted too. Ensure to back up any important Custom Resource instances first!**
@@ -36,7 +37,8 @@ Upgrade Instructions
 3. Upgrade the operator to version 0.1.0.
 4. Update any existing instances of the nginxingresscontrollers.k8s.nginx.org Custom Resource to use an NGINX Ingress Controller 1.10.x image.
 
-Updating the secrets in KIC:
+UPDATING KIC SECRETS:
+
 Version 1.10.0 of the Ingress Controller added a requirement for secrets to be one of the following types: kubernetes.io/tls for TLS secrets; nginx.org/jwk for JWK secrets; or nginx.org/ca for CA secrets. The Ingress Controller now ignores secrets that are not one of these supported types. Before upgrading, please ensure that the secrets referenced in Ingress, VirtualServer or Policies resources are of a supported type, which is configured via the type field. Please see https://docs.nginx.com/nginx-ingress-controller/releases/#nginx-ingress-controller-1-10-0 for more details.
 
 ### 0.0.7
