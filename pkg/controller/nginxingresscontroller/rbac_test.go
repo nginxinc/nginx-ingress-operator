@@ -68,7 +68,7 @@ func TestClusterRoleForNginxIngressController(t *testing.T) {
 			{
 				Verbs:     []string{"get", "list", "watch"},
 				APIGroups: []string{"appprotect.f5.com"},
-				Resources: []string{"aplogconfs", "appolicies"},
+				Resources: []string{"aplogconfs", "appolicies", "apusersigs"},
 			},
 		},
 	}
