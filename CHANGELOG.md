@@ -30,8 +30,6 @@ COMPATIBILITY:
 
 UPGRADE INSTRUCTIONS:
 
-UPGRADE INSTRUCTIONS:
-
 1. Remove the existing Policy CRD: kubectl delete crd policies.k8s.nginx.org
 **Please note that deletion of the policies.k8s.nginx.org CRD will result in all instances of that CRD being deleted too. Ensure to back up any important Custom Resource instances first!**
 1. Delete the existing SCC: kubectl delete scc nginx-ingress-scc
