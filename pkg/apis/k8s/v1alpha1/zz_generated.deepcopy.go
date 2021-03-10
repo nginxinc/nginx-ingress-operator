@@ -126,6 +126,11 @@ func (in *NginxIngressControllerSpec) DeepCopyInto(out *NginxIngressControllerSp
 		*out = new(int32)
 		**out = **in
 	}
+	if in.EnableCRDs != nil {
+		in, out := &in.EnableCRDs, &out.EnableCRDs
+		*out = new(bool)
+		**out = **in
+	}
 	if in.Service != nil {
 		in, out := &in.Service, &out.Service
 		*out = new(Service)

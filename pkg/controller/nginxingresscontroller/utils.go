@@ -40,10 +40,6 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		}
 	}
 
-	if !instance.Spec.EnableCRDs {
-		args = append(args, "-enable-custom-resources=false")
-	}
-
 	if instance.Spec.IngressClass != "" {
 		args = append(args, fmt.Sprintf("-ingress-class=%v", instance.Spec.IngressClass))
 	}
@@ -115,7 +111,9 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		}
 	}
 
-	if instance.Spec.EnableCRDs {
+	if instance.Spec.EnableCRDs != nil && !*instance.Spec.EnableCRDs {
+		args = append(args, "-enable-custom-resources=false")
+	} else {
 		if instance.Spec.EnableTLSPassthrough {
 			args = append(args, "-enable-tls-passthrough")
 		}
