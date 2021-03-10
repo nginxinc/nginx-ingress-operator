@@ -4,7 +4,6 @@
 
 FEATURES:
 
-* [58](https://github.com/nginxinc/nginx-ingress-operator/pull/58) Add IngressLink support.
 * [56](https://github.com/nginxinc/nginx-ingress-operator/pull/56) Graduate Policies. Add enablePreviewPolicy flag support.
 * [55](https://github.com/nginxinc/nginx-ingress-operator/pull/55) Add AppProtect User Defined Signatures support.
 * [39](https://github.com/nginxinc/nginx-ingress-operator/pull/39) Update secret type of default secret to TLS.
