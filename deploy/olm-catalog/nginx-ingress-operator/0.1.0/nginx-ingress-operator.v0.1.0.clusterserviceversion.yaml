@@ -22,7 +22,7 @@ spec:
     - description: NginxIngressController is the Schema for the nginxingresscontrollers
         API
       kind: NginxIngressController
-      name: nginxingresscontrollers.k8s.nginx.orga
+      name: nginxingresscontrollers.k8s.nginx.org
       displayName: NginxIngressController
       resources:
         - kind: Deployment
