@@ -17,6 +17,8 @@ func TestGeneratePodArgs(t *testing.T) {
 	statusPort = 9090
 	name := "my-nginx-ingress"
 	namespace := "my-nginx-ingress"
+	enableCRDs := true
+	disableCRDs := false
 	tests := []struct {
 		instance *k8sv1alpha1.NginxIngressController
 		expected []string
@@ -27,9 +29,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					Name:      name,
 					Namespace: namespace,
 				},
-				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					EnableCRDs: true,
-				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{},
 			},
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
@@ -44,7 +44,6 @@ func TestGeneratePodArgs(t *testing.T) {
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					DefaultSecret: "my-nginx-ingress/my-secret",
-					EnableCRDs:    true,
 				},
 			},
 			expected: []string{
@@ -59,8 +58,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					NginxPlus:  true,
-					EnableCRDs: true,
+					NginxPlus: true,
 				},
 			},
 			expected: []string{
@@ -76,7 +74,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					EnableCRDs: false,
+					EnableCRDs: &disableCRDs,
 				},
 			},
 			expected: []string{
@@ -93,7 +91,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					NginxPlus:     true,
-					EnableCRDs:    false,
+					EnableCRDs:    &disableCRDs,
 					DefaultSecret: "my-nginx-ingress/my-secret",
 				},
 			},
@@ -122,7 +120,6 @@ func TestGeneratePodArgs(t *testing.T) {
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
-				"-enable-custom-resources=false",
 				"-report-ingress-status",
 				"-ingresslink=my-ingresslink",
 			},
@@ -145,7 +142,6 @@ func TestGeneratePodArgs(t *testing.T) {
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
-				"-enable-custom-resources=false",
 				"-report-ingress-status",
 				fmt.Sprintf("-external-service=%v", name),
 			},
@@ -157,7 +153,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					EnableCRDs:            true,
+					EnableCRDs:            &enableCRDs,
 					EnableSnippets:        true,
 					EnablePreviewPolicies: true,
 					EnableTLSPassthrough:  true,
@@ -214,7 +210,7 @@ func TestGeneratePodArgs(t *testing.T) {
 						Enable: true,
 					},
 					NginxReloadTimeout:    5000,
-					EnableCRDs:            false,
+					EnableCRDs:            &disableCRDs,
 					EnableSnippets:        true,
 					EnablePreviewPolicies: true,
 				},
@@ -224,7 +220,6 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
 				"-nginx-plus",
 				"-enable-app-protect",
-				"-enable-custom-resources=false",
 				"-ingress-class=ingressClass",
 				"-use-ingress-class-only",
 				"-watch-namespace=default",
@@ -242,6 +237,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-enable-prometheus-metrics",
 				"-prometheus-metrics-listen-port=9114",
 				"-enable-latency-metrics",
+				"-enable-custom-resources=false",
 				"-nginx-reload-timeout=5000",
 			},
 		},
@@ -277,8 +273,7 @@ func TestHasDifferentArguments(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					NginxPlus:  true,
-					EnableCRDs: true,
+					NginxPlus: true,
 				},
 			},
 			expected: false,
@@ -297,8 +292,7 @@ func TestHasDifferentArguments(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					NginxPlus:  true,
-					EnableCRDs: true,
+					NginxPlus: true,
 				},
 			},
 			expected: true,
@@ -319,7 +313,6 @@ func TestHasDifferentArguments(t *testing.T) {
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					NginxPlus:     true,
 					DefaultSecret: "my-namespace/my-secret",
-					EnableCRDs:    true,
 				},
 			},
 			expected: true,
