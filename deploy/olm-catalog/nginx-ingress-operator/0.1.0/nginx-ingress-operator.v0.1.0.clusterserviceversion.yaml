@@ -335,7 +335,7 @@ spec:
                       fieldPath: metadata.name
                 - name: OPERATOR_NAME
                   value: nginx-ingress-operator
-                image: nginx/nginx-ingress-operator:0.1.0
+                image: registry.connect.redhat.com/nginx/nginx-ingress-operator:0.1.0
                 imagePullPolicy: IfNotPresent
                 name: nginx-ingress-operator
                 resources: {}
