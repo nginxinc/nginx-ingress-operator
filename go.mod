@@ -1,6 +1,6 @@
 module github.com/nginxinc/nginx-ingress-operator
 
-go 1.15
+go 1.16
 
 require (
 	github.com/go-logr/logr v0.1.0
