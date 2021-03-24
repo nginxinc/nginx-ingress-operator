@@ -138,8 +138,8 @@ spec:
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 | `enable` | `boolean` | Enable reporting of the Ingress status. | Yes |
-| `externalService` | `string` | Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally. The external address of the service is used when reporting the status of Ingress resources. Note: Only if ServiceType is `NodePort`. | No |
-| `ingressLink` | `string` | Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system. The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. Requires `reportIngressStatus.enable` set to `true`. Note: Only if ServiceType is `NodePort` and externalService is not set. | No |
+| `externalService` | `string` | Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally. The external address of the service is used when reporting the status of Ingress resources. Note: if `serviceType` is `LoadBalancer`, the value of this field will be ignored, and the operator will use the name of the created LoadBalancer service instead. | No |
+| `ingressLink` | `string` | Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system. The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. Requires `reportIngressStatus.enable` set to `true`. Note: If `serviceType` is `LoadBalancer` or `reportIngressStatus.externalService` is set, the value of this field will be ignored. | No |
 
 ## NginxIngressController.Prometheus
 
