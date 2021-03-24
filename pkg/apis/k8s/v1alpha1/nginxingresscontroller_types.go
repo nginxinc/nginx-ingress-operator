@@ -192,13 +192,14 @@ type ReportIngressStatus struct {
 	Enable bool `json:"enable"`
 	// Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally.
 	// The external address of the service is used when reporting the status of Ingress resources.
-	// Note: Only if serviceType is NodePort.
+	// Note: if serviceType is LoadBalancer, the value of this field will be ignored, and the operator will use the name of the created LoadBalancer service instead.
 	// +kubebuilder:validation:Optional
 	ExternalService string `json:"externalService"`
 	// Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system.
 	// The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources.
 	// Requires reportIngressStatus.enable set to true.
-	// Note: Only if serviceType is NodePort and reportIngressStatus.externalService is not set.
+	// Note: If serviceType is LoadBalancer or reportIngressStatus.externalService is set, the value of this field
+	// will be ignored.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	IngressLink string `json:"ingressLink,omitempty"`
