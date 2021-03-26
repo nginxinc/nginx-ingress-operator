@@ -78,8 +78,9 @@ spec:
               description: Enables preview policies. Requires enableCRDs set to true.
               type: boolean
             enableSnippets:
-              description: Enable custom NGINX configuration snippets in VirtualServer
-                and VirtualServerRoute resources. Requires enableCRDs set to true.
+              description: Enable custom NGINX configuration snippets in VirtualServer,
+                VirtualServerRoute and TransportServer resources. Requires enableCRDs
+                set to true.
               type: boolean
             enableTLSPassthrough:
               description: Enable TLS Passthrough on port 443. Requires enableCRDs

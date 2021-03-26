@@ -38,7 +38,7 @@ type NginxIngressControllerSpec struct {
 	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	EnableCRDs *bool `json:"enableCRDs"`
-	// Enable custom NGINX configuration snippets in VirtualServer and VirtualServerRoute resources.
+	// Enable custom NGINX configuration snippets in VirtualServer, VirtualServerRoute and TransportServer resources.
 	// Requires enableCRDs set to true.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
