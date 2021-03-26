@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.4.1
+    controller-gen.kubebuilder.io/version: v0.5.0
   creationTimestamp: null
   name: transportservers.k8s.nginx.org
 spec:
@@ -16,7 +16,18 @@ spec:
     singular: transportserver
   scope: Namespaced
   versions:
-    - name: v1alpha1
+    - additionalPrinterColumns:
+        - description: Current state of the TransportServer. If the resource has a valid status, it means it has been validated and accepted by the Ingress Controller.
+          jsonPath: .status.state
+          name: State
+          type: string
+        - jsonPath: .status.reason
+          name: Reason
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1alpha1
       schema:
         openAPIV3Schema:
           description: TransportServer defines the TransportServer resource.
@@ -42,6 +53,8 @@ spec:
                       type: string
                 host:
                   type: string
+                ingressClassName:
+                  type: string
                 listener:
                   description: TransportServerListener defines a listener for a TransportServer.
                   type: object
@@ -50,10 +63,26 @@ spec:
                       type: string
                     protocol:
                       type: string
+                serverSnippets:
+                  type: string
+                sessionParameters:
+                  description: SessionParameters defines session parameters.
+                  type: object
+                  properties:
+                    timeout:
+                      type: string
                 upstreamParameters:
                   description: UpstreamParameters defines parameters for an upstream.
                   type: object
                   properties:
+                    connectTimeout:
+                      type: string
+                    nextUpstream:
+                      type: boolean
+                    nextUpstreamTimeout:
+                      type: string
+                    nextUpstreamTries:
+                      type: integer
                     udpRequests:
                       type: integer
                     udpResponses:
@@ -64,14 +93,48 @@ spec:
                     description: Upstream defines an upstream.
                     type: object
                     properties:
+                      failTimeout:
+                        type: string
+                      healthCheck:
+                        description: HealthCheck defines the parameters for active Upstream HealthChecks.
+                        type: object
+                        properties:
+                          enable:
+                            type: boolean
+                          fails:
+                            type: integer
+                          interval:
+                            type: string
+                          jitter:
+                            type: string
+                          passes:
+                            type: integer
+                          port:
+                            type: integer
+                          timeout:
+                            type: string
+                      maxFails:
+                        type: integer
                       name:
                         type: string
                       port:
                         type: integer
                       service:
                         type: string
+            status:
+              description: TransportServerStatus defines the status for the TransportServer resource.
+              type: object
+              properties:
+                message:
+                  type: string
+                reason:
+                  type: string
+                state:
+                  type: string
       served: true
       storage: true
+      subresources:
+        status: {}
 status:
   acceptedNames:
     kind: ""

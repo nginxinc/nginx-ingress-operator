@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.4.1
+    controller-gen.kubebuilder.io/version: v0.5.0
   creationTimestamp: null
   name: policies.k8s.nginx.org
 spec:
@@ -16,7 +16,15 @@ spec:
     singular: policy
   scope: Namespaced
   versions:
-    - name: v1
+    - additionalPrinterColumns:
+        - description: Current state of the Policy. If the resource has a valid status, it means it has been validated and accepted by the Ingress Controller.
+          jsonPath: .status.state
+          name: State
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
       schema:
         openAPIV3Schema:
           description: Policy defines a Policy for VirtualServer and VirtualServerRoute resources.
@@ -128,8 +136,38 @@ spec:
                       type: integer
                     zoneSize:
                       type: string
+                waf:
+                  description: 'WAF defines an WAF policy. policy status: preview'
+                  type: object
+                  properties:
+                    apPolicy:
+                      type: string
+                    enable:
+                      type: boolean
+                    securityLog:
+                      description: SecurityLog defines the security log of a WAF policy.
+                      type: object
+                      properties:
+                        apLogConf:
+                          type: string
+                        enable:
+                          type: boolean
+                        logDest:
+                          type: string
+            status:
+              description: PolicyStatus is the status of the policy resource
+              type: object
+              properties:
+                message:
+                  type: string
+                reason:
+                  type: string
+                state:
+                  type: string
       served: true
       storage: true
+      subresources:
+        status: {}
 status:
   acceptedNames:
     kind: ""
