@@ -5,6 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.5.0
   creationTimestamp: null
   name: policies.k8s.nginx.org
+# This is just a comment to test CRD sync
 spec:
   group: k8s.nginx.org
   names:
