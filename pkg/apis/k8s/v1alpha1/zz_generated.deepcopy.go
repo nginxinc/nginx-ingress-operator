@@ -151,6 +151,11 @@ func (in *NginxIngressControllerSpec) DeepCopyInto(out *NginxIngressControllerSp
 		*out = new(ReportIngressStatus)
 		**out = **in
 	}
+	if in.EnableLeaderElection != nil {
+		in, out := &in.EnableLeaderElection, &out.EnableLeaderElection
+		*out = new(bool)
+		**out = **in
+	}
 	if in.Prometheus != nil {
 		in, out := &in.Prometheus, &out.Prometheus
 		*out = new(Prometheus)

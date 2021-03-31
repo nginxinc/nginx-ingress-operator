@@ -91,8 +91,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		}
 	}
 
-	if instance.Spec.EnableLeaderElection {
-		args = append(args, "-enable-leader-election")
+	if instance.Spec.EnableLeaderElection == nil || *instance.Spec.EnableLeaderElection {
+		args = append(args, fmt.Sprintf("-leader-election-lock-name=%v-lock", instance.Name))
+	} else {
+		args = append(args, "-enable-leader-election=false")
 	}
 
 	if instance.Spec.WildcardTLS != "" {

@@ -95,7 +95,7 @@ spec:
 | `logLevel` | `int` | Log level for V logs. Format is `0 - 3` | No |
 | `nginxStatus` | [nginxStatus](#nginxingresscontrollernginxstatus) | Configures NGINX stub_status, or the NGINX Plus API. | No |
 | `reportIngressStatus` | [reportIngressStatus](#nginxingresscontrollerreportingressstatus) | Update the address field in the status of Ingresses resources. | No |
-| `enableLeaderElection` | `boolean` | Enables Leader election to avoid multiple replicas of the controller reporting the status of Ingress resources – only one replica will report status. | No |
+| `enableLeaderElection` | `boolean` | Enables Leader election to avoid multiple replicas of the controller reporting the status of Ingress resources – only one replica will report status. Default is `true`. | No |
 | `wildcardTLS` | `string` | A Secret with a TLS certificate and key for TLS termination of every Ingress host for which TLS termination is enabled but the Secret is not specified. The secret must be of the type kubernetes.io/tls. If the argument is not set, for such Ingress hosts NGINX will break any attempt to establish a TLS connection. If the argument is set, but the Ingress controller is not able to fetch the Secret from Kubernetes API, the Ingress Controller will fail to start. Format is `namespace/name`. | No |
 | `prometheus` | [prometheus](#nginxingresscontrollerprometheus) | Configures NGINX or NGINX Plus metrics in the Prometheus format. | No |
 | `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
