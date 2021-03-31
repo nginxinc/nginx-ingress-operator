@@ -72,7 +72,8 @@ spec:
             enableLeaderElection:
               description: Enables Leader election to avoid multiple replicas of the
                 controller reporting the status of Ingress resources – only one replica
-                will report status.
+                will report status. Default is true.
+              nullable: true
               type: boolean
             enablePreviewPolicies:
               description: Enables preview policies. Requires enableCRDs set to true.

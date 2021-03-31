@@ -97,9 +97,11 @@ type NginxIngressControllerSpec struct {
 	ReportIngressStatus *ReportIngressStatus `json:"reportIngressStatus,omitempty"`
 	// Enables Leader election to avoid multiple replicas of the controller reporting the status of Ingress resources
 	// – only one replica will report status.
+	// Default is true.
 	// +kubebuilder:validation:Optional
+	// +nullable
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
-	EnableLeaderElection bool `json:"enableLeaderElection"`
+	EnableLeaderElection *bool `json:"enableLeaderElection"`
 	// A Secret with a TLS certificate and key for TLS termination of every Ingress host for which TLS termination is enabled but the Secret is not specified.
 	// The secret must be of the type kubernetes.io/tls.
 	// If the argument is not set, for such Ingress hosts NGINX will break any attempt to establish a TLS connection.

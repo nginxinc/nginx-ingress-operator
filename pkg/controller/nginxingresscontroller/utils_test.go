@@ -2,7 +2,6 @@ package nginxingresscontroller
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -17,8 +16,8 @@ func TestGeneratePodArgs(t *testing.T) {
 	statusPort = 9090
 	name := "my-nginx-ingress"
 	namespace := "my-nginx-ingress"
-	enableCRDs := true
-	disableCRDs := false
+	enable := true
+	disable := false
 	tests := []struct {
 		instance *k8sv1alpha1.NginxIngressController
 		expected []string
@@ -34,6 +33,7 @@ func TestGeneratePodArgs(t *testing.T) {
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 			},
 		},
 		{
@@ -49,6 +49,7 @@ func TestGeneratePodArgs(t *testing.T) {
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 			},
 		},
 		{
@@ -65,6 +66,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
 				"-nginx-plus",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 			},
 		},
 		{
@@ -74,12 +76,13 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					EnableCRDs: &disableCRDs,
+					EnableCRDs: &disable,
 				},
 			},
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 				"-enable-custom-resources=false",
 			},
 		},
@@ -91,7 +94,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
 					NginxPlus:     true,
-					EnableCRDs:    &disableCRDs,
+					EnableCRDs:    &disable,
 					DefaultSecret: "my-nginx-ingress/my-secret",
 				},
 			},
@@ -99,6 +102,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
 				"-nginx-plus",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 				"-enable-custom-resources=false",
 			},
 		},
@@ -122,6 +126,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
 				"-report-ingress-status",
 				"-ingresslink=my-ingresslink",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 			},
 		},
 		{
@@ -144,6 +149,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-default-server-tls-secret=my-nginx-ingress/my-secret",
 				"-report-ingress-status",
 				fmt.Sprintf("-external-service=%v", name),
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 			},
 		},
 		{
@@ -153,7 +159,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					EnableCRDs:            &enableCRDs,
+					EnableCRDs:            &enable,
 					EnableSnippets:        true,
 					EnablePreviewPolicies: true,
 					EnableTLSPassthrough:  true,
@@ -163,10 +169,27 @@ func TestGeneratePodArgs(t *testing.T) {
 			expected: []string{
 				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
 				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 				"-enable-tls-passthrough",
 				"-global-configuration=my-nginx-ingress/globalconfiguration",
 				"-enable-snippets",
 				"-enable-preview-policies",
+			},
+		},
+		{
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					EnableLeaderElection: &disable,
+				},
+			},
+			expected: []string{
+				"-nginx-configmaps=my-nginx-ingress/my-nginx-ingress",
+				"-default-server-tls-secret=my-nginx-ingress/my-nginx-ingress",
+				"-enable-leader-election=false",
 			},
 		},
 		{
@@ -197,7 +220,7 @@ func TestGeneratePodArgs(t *testing.T) {
 						ExternalService: "external",
 						IngressLink:     "my-invalid-ingressLink",
 					},
-					EnableLeaderElection: true,
+					EnableLeaderElection: &enable,
 					WildcardTLS:          "my-nginx-ingress/wildcard-secret",
 					Prometheus: &k8sv1alpha1.Prometheus{
 						Enable: true,
@@ -210,7 +233,7 @@ func TestGeneratePodArgs(t *testing.T) {
 						Enable: true,
 					},
 					NginxReloadTimeout:    5000,
-					EnableCRDs:            &disableCRDs,
+					EnableCRDs:            &disable,
 					EnableSnippets:        true,
 					EnablePreviewPolicies: true,
 				},
@@ -232,7 +255,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-nginx-status-allow-cidrs=127.0.0.1",
 				"-report-ingress-status",
 				"-external-service=external",
-				"-enable-leader-election",
+				"-leader-election-lock-name=my-nginx-ingress-lock",
 				"-wildcard-tls-secret=my-nginx-ingress/wildcard-secret",
 				"-enable-prometheus-metrics",
 				"-prometheus-metrics-listen-port=9114",
@@ -265,6 +288,7 @@ func TestHasDifferentArguments(t *testing.T) {
 					fmt.Sprintf("-nginx-configmaps=%v/%v", namespace, name),
 					fmt.Sprintf("-default-server-tls-secret=%v/%v", namespace, name),
 					"-nginx-plus",
+					"-leader-election-lock-name=my-nginx-ingress-lock",
 				},
 			},
 			instance: &k8sv1alpha1.NginxIngressController{
@@ -284,6 +308,7 @@ func TestHasDifferentArguments(t *testing.T) {
 					fmt.Sprintf("-nginx-configmaps=%v/%v", namespace, name),
 					fmt.Sprintf("-default-server-tls-secret=%v/%v", namespace, name),
 					"-nginx-plus=false",
+					"-leader-election-lock-name=my-nginx-ingress-lock",
 				},
 			},
 			instance: &k8sv1alpha1.NginxIngressController{
@@ -303,6 +328,7 @@ func TestHasDifferentArguments(t *testing.T) {
 					fmt.Sprintf("-nginx-configmaps=%v/%v", namespace, name),
 					"-default-server-tls-secret=default/mysecret",
 					"-nginx-plus",
+					"-leader-election-lock-name=my-nginx-ingress-lock",
 				},
 			},
 			instance: &k8sv1alpha1.NginxIngressController{
@@ -323,6 +349,7 @@ func TestHasDifferentArguments(t *testing.T) {
 					"-nginx-configmaps=%v/%v", namespace, name),
 					"-default-server-tls-secret=default/mysecret",
 					"-nginx-plus",
+					"-leader-election-lock-name=my-nginx-ingress-lock",
 					"-enable-custom-resources=false",
 				},
 			},
@@ -342,8 +369,8 @@ func TestHasDifferentArguments(t *testing.T) {
 
 	for _, test := range tests {
 		result := hasDifferentArguments(test.container, test.instance)
-		if !reflect.DeepEqual(result, test.expected) {
-			t.Errorf("hasDifferentArguments(%+v, %+v) returned %v but expected %v", test.container, test.instance, result, test.expected)
+		if diff := cmp.Diff(test.expected, result); diff != "" {
+			t.Errorf("hasDifferentArguments(%+v, %+v) mismatch (-want +got):\n%s", test.container, test.instance, diff)
 		}
 	}
 }
