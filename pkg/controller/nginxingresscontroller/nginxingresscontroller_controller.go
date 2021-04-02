@@ -422,7 +422,17 @@ func (r *ReconcileNginxIngressController) Reconcile(request reconcile.Request) (
 		return reconcile.Result{}, err
 	}
 
-	err = r.handleFinalizers(reqLogger, instance)
+	if instance.GetDeletionTimestamp() != nil {
+		err = r.handleDeletion(reqLogger, instance)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+
+		reqLogger.Info("NginxIngressController was successfully deleted")
+		return reconcile.Result{}, nil
+	}
+
+	err = r.ensureFinalizer(reqLogger, instance)
 	if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -607,7 +617,7 @@ func (r *ReconcileNginxIngressController) finalizeNginxIngressController(reqLogg
 
 	var subjects []rbacv1.Subject
 	for _, s := range crb.Subjects {
-		if s.Name != instance.Name && s.Namespace != instance.Namespace {
+		if s.Name != instance.Name || s.Namespace != instance.Namespace {
 			subjects = append(subjects, s)
 		}
 	}
@@ -659,30 +669,24 @@ func (r *ReconcileNginxIngressController) addFinalizer(reqLogger logr.Logger, in
 	return nil
 }
 
-func (r *ReconcileNginxIngressController) handleFinalizers(reqLogger logr.Logger, instance *k8sv1alpha1.NginxIngressController) error {
-	// If instance has been marked to be deleted
-	if instance.GetDeletionTimestamp() != nil {
-		if contains(instance.GetFinalizers(), finalizer) {
-			err := r.finalizeNginxIngressController(reqLogger, instance)
-			if err != nil {
-				return err
-			}
-
-			instance.SetFinalizers(remove(instance.GetFinalizers(), finalizer))
-			err = r.client.Update(context.TODO(), instance)
-			if err != nil {
-				return err
-			}
-		}
+func (r *ReconcileNginxIngressController) handleDeletion(reqLogger logr.Logger, instance *k8sv1alpha1.NginxIngressController) error {
+	if !contains(instance.GetFinalizers(), finalizer) {
 		return nil
 	}
 
-	if !contains(instance.GetFinalizers(), finalizer) {
-		err := r.addFinalizer(reqLogger, instance)
-		if err != nil {
-			return err
-		}
+	err := r.finalizeNginxIngressController(reqLogger, instance)
+	if err != nil {
+		return err
 	}
 
-	return nil
+	instance.SetFinalizers(remove(instance.GetFinalizers(), finalizer))
+	return r.client.Update(context.TODO(), instance)
+}
+
+func (r *ReconcileNginxIngressController) ensureFinalizer(reqLogger logr.Logger, instance *k8sv1alpha1.NginxIngressController) error {
+	if contains(instance.GetFinalizers(), finalizer) {
+		return nil
+	}
+
+	return r.addFinalizer(reqLogger, instance)
 }
