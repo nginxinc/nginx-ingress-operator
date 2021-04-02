@@ -23,6 +23,7 @@ Note: The NGINX Ingress Operator works only for NGINX Ingress Controller version
 ## Getting Started
 
 1. Install the NGINX Ingress Operator. See [docs](./docs/installation.md).
+   <br> NOTE: To use TransportServers as part of your NGINX Ingress Controller configuration, a GlobalConfiguration resource must be created *before* starting the Operator - [see the notes](./examples/deployment-oss-min/README.md#TransportServers)
 1. Deploy a new NGINX Ingress Controller using the [NginxIngressController](docs/nginx-ingress-controller.md) Custom Resource:
     * For an NGINX installation see the [NGINX example](./examples/deployment-oss-min).
     * For an NGINX Plus installation see the [NGINX Plus example](./examples/deployment-plus-min).
