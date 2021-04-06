@@ -9,6 +9,8 @@ In this example we deploy the NGINX Ingress Controller (edge) as a [Deployment](
 [these instructions](https://docs.nginx.com/nginx-ingress-controller/installation/building-ingress-controller-image/#building-the-image-and-pushing-it-to-the-private-registry) 
 (**Note**: For the build process, if using Openshift, use the `DOCKERFILE=openshift/DockerfileForPlus` variable). 
 
+If you would like to use TransportServers, refer to [this section](README.md#TransportServers) for additional pre-requisites.
+
 ## Running the example
 
 1. Create a new namespace for our Ingress Controller instance:
@@ -54,3 +56,29 @@ For more information about how to configure the NGINX Ingress Controller, check 
     ```
     kubectl delete namespace my-nginx-ingress
     ```
+
+## TransportServers
+
+TransportServers provide support for TCP/UDP but are in active development and provided as a preview feature.
+A GlobalConfiguration resource is used to specify the TCP/UDP listeners and is required by TransportServers.
+To use TransportServers, you must create a GlobalConfiguration resource *after* creating the namespace and *before* starting the Operator.
+
+
+```
+Step 1. namespace
+Step 2. global configuration <--- in this order
+Step 3. ingress controller
+...
+```
+
+
+```
+kubectl apply -f global-configuration.yaml
+```
+
+Then update the NginxIngressController to use the GlobalConfiguration by adding the following config to `nginx-ingress-controller.yaml`
+```
+   globalConfiguration: my-nginx-ingress/nginx-configuration
+```
+
+For more information, check the official [documentation](https://docs.nginx.com/nginx-ingress-controller/configuration/transportserver-resource/).
