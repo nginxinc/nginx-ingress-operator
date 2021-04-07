@@ -13,16 +13,16 @@ build: binary
 	docker build -f build/Dockerfile -t $(IMAGE):$(TAG) .
 
 run-local:
-	operator-sdk run --local
+	go run github.com/operator-framework/operator-sdk/cmd/operator-sdk run local
 
 generate-crds:
-	operator-sdk generate k8s && operator-sdk generate crds --crd-version v1beta1
+	go run github.com/operator-framework/operator-sdk/cmd/operator-sdk generate k8s && operator-sdk generate crds --crd-version v1beta1
 
 lint:
-	golangci-lint run
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint run
 
 generate-metadata: generate-crds
-	operator-sdk generate csv --csv-version=$(TAG) --from-version=$(OLD_TAG) --make-manifests=false
+	go run github.com/operator-framework/operator-sdk/cmd/operator-sdk generate csv --csv-version=$(TAG) --from-version=$(OLD_TAG) --make-manifests=false
 	echo "Metadata generated, please make sure you add/update fields in nginx-ingress-operator.v$(TAG).clusterserviceversion.yaml"
 
 generate-bundle:
