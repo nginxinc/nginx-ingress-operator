@@ -25,20 +25,23 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  GOLANG_VERSION: 1.16
 
 jobs:
 
   binary:
     name: Build Binary
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Determine Go version from go.mod
+        run: echo "GO_VERSION=$(grep "go 1." go.mod | cut -d " " -f 2)" >> $GITHUB_ENV
+      - name: Setup Golang Environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
       - name: Build Binary
         run: make binary
-        env:
-          GOFLAGS: '-gcflags=-trimpath=${{ github.workspace }} -asmflags=-trimpath=${{ github.workspace }}'
       - name: Cache Artifacts
         uses: actions/cache@v2.1.4
         with:
@@ -47,20 +50,20 @@ jobs:
 
   unit-tests:
     name: Unit Tests
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Setup Golang Environment
         uses: actions/setup-go@v2
         with:
-          go-version: '${{ env.GOLANG_VERSION }}'
+          go-version: ${{ env.GO_VERSION }}
       - name: Run Tests
         run: make test
 
   build:
     name: Build Image
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [binary, unit-tests]
     steps:
       - name: Checkout Repository
@@ -93,7 +96,7 @@ jobs:
 
   release-docker:
     name: Release Image
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [build, unit-tests]
     if:
       github.repository == 'nginxinc/nginx-ingress-operator' &&
@@ -138,7 +141,7 @@ jobs:
 
   notify:
     name: Notify
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: release-docker
     if: always() && github.ref == 'refs/heads/master'
     steps:
