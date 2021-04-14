@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/go-logr/logr v0.1.0
+	github.com/golangci/golangci-lint v1.39.0
 	github.com/google/go-cmp v0.5.5
 	github.com/openshift/api v0.0.0-20200701144905-de5b010b2b38
 	github.com/operator-framework/operator-sdk v0.18.2
