@@ -7,7 +7,8 @@ test:
 	GO111MODULE=on go test ./...
 
 binary:
-	CGO_ENABLED=0 GO111MODULE=on GOOS=linux go build -trimpath -installsuffix cgo -o build/_output/bin/nginx-ingress-operator github.com/nginxinc/nginx-ingress-operator/cmd/manager
+	$(eval GOPATH=$(shell go env GOPATH))
+	CGO_ENABLED=0 GO111MODULE=on GOFLAGS="-gcflags=-trimpath=${GOPATH} -asmflags=-trimpath=${GOPATH}" GOOS=linux go build -trimpath -ldflags "-s -w" -o build/_output/bin/nginx-ingress-operator github.com/nginxinc/nginx-ingress-operator/cmd/manager
 
 build: binary
 	docker build -f build/Dockerfile -t $(IMAGE):$(TAG) .
