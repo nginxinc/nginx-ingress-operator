@@ -132,6 +132,7 @@ spec:
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 | `extraLabels` | `map[string]string` | Specifies extra labels of the service. | No |
+| `extraAnnotations` | `map[string]string` | Specifies extra annotations of the service. | No |
 
 ## NginxIngressController.ReportIngressStatus
 

@@ -11,15 +11,18 @@ import (
 
 func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *corev1.Service {
 	extraLabels := map[string]string{}
+	extraAnnotations := map[string]string{}
 	if instance.Spec.Service != nil {
 		extraLabels = instance.Spec.Service.ExtraLabels
+		extraAnnotations = instance.Spec.Service.ExtraAnnotations
 	}
 
 	return &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      instance.Name,
-			Namespace: instance.Namespace,
-			Labels:    extraLabels,
+			Name:        instance.Name,
+			Namespace:   instance.Namespace,
+			Labels:      extraLabels,
+			Annotations: extraAnnotations,
 		},
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{
@@ -55,15 +58,21 @@ func hasServiceChanged(svc *corev1.Service, instance *k8sv1alpha1.NginxIngressCo
 	if instance.Spec.Service != nil && !reflect.DeepEqual(svc.Labels, instance.Spec.Service.ExtraLabels) {
 		return true
 	}
-	return svc.Labels != nil && instance.Spec.Service == nil
+	if instance.Spec.Service != nil && !reflect.DeepEqual(svc.Annotations, instance.Spec.Service.ExtraAnnotations) {
+		return true
+	}
+
+	return (svc.Labels != nil || svc.Annotations != nil) && instance.Spec.Service == nil
 }
 
 func updateService(svc *corev1.Service, instance *k8sv1alpha1.NginxIngressController) *corev1.Service {
 	svc.Spec.Type = corev1.ServiceType(instance.Spec.ServiceType)
 	if instance.Spec.Service != nil {
 		svc.Labels = instance.Spec.Service.ExtraLabels
+		svc.Annotations = instance.Spec.Service.ExtraAnnotations
 	} else {
 		svc.Labels = nil
+		svc.Annotations = nil
 	}
 	return svc
 }

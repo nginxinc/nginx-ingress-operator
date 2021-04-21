@@ -230,6 +230,11 @@ spec:
               description: The service of the Ingress controller.
               nullable: true
               properties:
+                extraAnnotations:
+                  additionalProperties:
+                    type: string
+                  description: Specifies extra annotations of the service.
+                  type: object
                 extraLabels:
                   additionalProperties:
                     type: string

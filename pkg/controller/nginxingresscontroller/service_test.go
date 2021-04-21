@@ -14,25 +14,29 @@ func TestServiceForNginxIngressController(t *testing.T) {
 	name := "my-service"
 	namespace := "my-nginx-ingress"
 	extraLabels := map[string]string{"app": "my-nginx-ingress"}
+	extraAnnotations := map[string]string{"myannotation": "my-nginx-ingress-annotation"}
 
 	instance := &k8sv1alpha1.NginxIngressController{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-			Labels:    extraLabels,
+			Name:        name,
+			Namespace:   namespace,
+			Labels:      extraLabels,
+			Annotations: extraAnnotations,
 		},
 		Spec: k8sv1alpha1.NginxIngressControllerSpec{
 			ServiceType: string(corev1.ServiceTypeLoadBalancer),
 			Service: &k8sv1alpha1.Service{
-				ExtraLabels: extraLabels,
+				ExtraLabels:      extraLabels,
+				ExtraAnnotations: extraAnnotations,
 			},
 		},
 	}
 	expected := &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-			Labels:    extraLabels,
+			Name:        name,
+			Namespace:   namespace,
+			Labels:      extraLabels,
+			Annotations: extraAnnotations,
 		},
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{
@@ -70,6 +74,7 @@ func TestHasServiceChanged(t *testing.T) {
 	name := "my-service"
 	namespace := "my-nginx-ingress"
 	extraLabels := map[string]string{"app": "my-nginx-ingress"}
+	extraAnnotations := map[string]string{"myannotation": "my-nginx-ingress-annotation"}
 
 	tests := []struct {
 		svc      *corev1.Service
@@ -176,6 +181,58 @@ func TestHasServiceChanged(t *testing.T) {
 		{
 			&corev1.Service{
 				ObjectMeta: v1.ObjectMeta{
+					Name:        name,
+					Namespace:   namespace,
+					Annotations: extraAnnotations,
+				},
+				Spec: corev1.ServiceSpec{
+					Type: corev1.ServiceTypeLoadBalancer,
+				},
+			},
+			&k8sv1alpha1.NginxIngressController{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					ServiceType: string(corev1.ServiceTypeLoadBalancer),
+					Service: &k8sv1alpha1.Service{
+						ExtraAnnotations: map[string]string{"new": "annotation"},
+					},
+				},
+			},
+			true,
+			"different annotation",
+		},
+		{
+			&corev1.Service{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+					Labels:    extraAnnotations,
+				},
+				Spec: corev1.ServiceSpec{
+					Type: corev1.ServiceTypeLoadBalancer,
+				},
+			},
+			&k8sv1alpha1.NginxIngressController{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					ServiceType: string(corev1.ServiceTypeLoadBalancer),
+					Service: &k8sv1alpha1.Service{
+						ExtraAnnotations: nil,
+					},
+				},
+			},
+			true,
+			"remove annotation",
+		},
+		{
+			&corev1.Service{
+				ObjectMeta: v1.ObjectMeta{
 					Name:      name,
 					Namespace: namespace,
 					Labels:    extraLabels,
@@ -194,7 +251,30 @@ func TestHasServiceChanged(t *testing.T) {
 				},
 			},
 			true,
-			"remove service parameters",
+			"remove service parameters when exist labels",
+		},
+		{
+			&corev1.Service{
+				ObjectMeta: v1.ObjectMeta{
+					Name:        name,
+					Namespace:   namespace,
+					Annotations: extraAnnotations,
+				},
+				Spec: corev1.ServiceSpec{
+					Type: corev1.ServiceTypeLoadBalancer,
+				},
+			},
+			&k8sv1alpha1.NginxIngressController{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      name,
+					Namespace: namespace,
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					ServiceType: string(corev1.ServiceTypeLoadBalancer),
+				},
+			},
+			true,
+			"remove service parameters when exist annotations",
 		},
 	}
 	for _, test := range tests {

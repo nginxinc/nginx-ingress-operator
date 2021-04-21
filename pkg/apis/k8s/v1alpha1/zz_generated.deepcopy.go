@@ -270,6 +270,13 @@ func (in *Service) DeepCopyInto(out *Service) {
 			(*out)[key] = val
 		}
 	}
+	if in.ExtraAnnotations != nil {
+		in, out := &in.ExtraAnnotations, &out.ExtraAnnotations
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	return
 }
 
