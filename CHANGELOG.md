@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.0
+
+An automatically generated list of changes can be found on Github at: [0.2.0 Release](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.2.0)
+
 ### 0.1.0
 
 FEATURES:
