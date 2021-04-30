@@ -7,6 +7,7 @@ import (
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -253,6 +254,153 @@ func TestHasDeploymentChanged(t *testing.T) {
 			},
 			expected: true,
 			msg:      "pull policy update",
+		},
+		{
+			deployment: &appsv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: appsv1.DeploymentSpec{
+					Replicas: &tenReplicas, // Deployment with 10 replicas
+					Template: corev1.PodTemplateSpec{
+						ObjectMeta: v1.ObjectMeta{
+							Name:      "my-nginx-ingress-controller",
+							Namespace: "my-nginx-ingress-controller",
+						},
+						Spec: corev1.PodSpec{
+							Containers: []corev1.Container{
+								{
+									Name:  "my-nginx-ingress-controller",
+									Image: "nginx-ingress:edge",
+									Args:  generatePodArgs(instance),
+								},
+							},
+						},
+					},
+				},
+			},
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Replicas: &tenReplicas,
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-ingress",
+						Tag:        "edge",
+					},
+					Workload: &k8sv1alpha1.Workload{
+						ExtraLabels: map[string]string{
+							"key": "value",
+						},
+					},
+				},
+			},
+			expected: true,
+			msg:      "workload.ExtraLabels field add",
+		},
+		{
+			deployment: &appsv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: appsv1.DeploymentSpec{
+					Replicas: &tenReplicas, // Deployment with 10 replicas
+					Template: corev1.PodTemplateSpec{
+						ObjectMeta: v1.ObjectMeta{
+							Name:      "my-nginx-ingress-controller",
+							Namespace: "my-nginx-ingress-controller",
+						},
+						Spec: corev1.PodSpec{
+							Containers: []corev1.Container{
+								{
+									Name:  "my-nginx-ingress-controller",
+									Image: "nginx-ingress:edge",
+									Args:  generatePodArgs(instance),
+								},
+							},
+						},
+					},
+				},
+			},
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Replicas: &tenReplicas,
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-ingress",
+						Tag:        "edge",
+					},
+					Workload: &k8sv1alpha1.Workload{
+						Resources: corev1.ResourceRequirements{
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU: resource.MustParse("1"),
+							},
+						},
+					},
+				},
+			},
+			expected: true,
+			msg:      "workload.Resources field add",
+		},
+		{
+			deployment: &appsv1.Deployment{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: appsv1.DeploymentSpec{
+					Replicas: &tenReplicas, // Deployment with 10 replicas
+					Template: corev1.PodTemplateSpec{
+						ObjectMeta: v1.ObjectMeta{
+							Name:      "my-nginx-ingress-controller",
+							Namespace: "my-nginx-ingress-controller",
+						},
+						Spec: corev1.PodSpec{
+							Containers: []corev1.Container{
+								{
+									Name:  "my-nginx-ingress-controller",
+									Image: "nginx-ingress:edge",
+									Args:  generatePodArgs(instance),
+									Resources: corev1.ResourceRequirements{
+										Limits: corev1.ResourceList{
+											corev1.ResourceMemory: resource.MustParse("1Mi"),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			instance: &k8sv1alpha1.NginxIngressController{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
+				},
+				Spec: k8sv1alpha1.NginxIngressControllerSpec{
+					Replicas: &tenReplicas,
+					Image: k8sv1alpha1.Image{
+						Repository: "nginx-ingress",
+						Tag:        "edge",
+					},
+					Workload: &k8sv1alpha1.Workload{
+						Resources: corev1.ResourceRequirements{
+							Limits: corev1.ResourceList{
+								corev1.ResourceMemory: resource.MustParse("2Mi"),
+							},
+						},
+					},
+				},
+			},
+			expected: true,
+			msg:      "workload.Resources field diff",
 		},
 	}
 	for _, test := range tests {

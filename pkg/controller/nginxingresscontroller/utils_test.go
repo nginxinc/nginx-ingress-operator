@@ -2,6 +2,7 @@ package nginxingresscontroller
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -383,5 +384,24 @@ func TestGenerateImage(t *testing.T) {
 
 	if expected != result {
 		t.Errorf("generateImage(%v, %v) returned %v but expected %v", rep, version, result, expected)
+	}
+}
+
+func TestMergeLabels(t *testing.T) {
+	origin := map[string]string{
+		"app": "ngnix",
+	}
+	toadd := map[string]string{
+		"key": "value",
+	}
+	expected := map[string]string{
+		"app": "ngnix",
+		"key": "value",
+	}
+
+	result := mergeLabels(origin, toadd)
+
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("mergeLabels(%v, %v) returned %v but expected %v", origin, toadd, result, expected)
 	}
 }

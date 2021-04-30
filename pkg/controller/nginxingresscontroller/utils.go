@@ -210,3 +210,21 @@ func GetK8sVersion(client kubernetes.Interface) (v *version.Version, err error) 
 
 	return runningVersion, nil
 }
+
+func mergeLabels(origin, toadd map[string]string) map[string]string {
+	if len(origin) == 0 {
+		return toadd
+	}
+	for k, v := range toadd {
+		origin[k] = v
+	}
+	return origin
+}
+
+// only cpu and memory
+func HasDifferentResources(origin, newone corev1.ResourceRequirements) bool {
+	return !(origin.Requests.Cpu().Equal(newone.Requests.Cpu().DeepCopy()) &&
+		origin.Requests.Memory().Equal(newone.Requests.Memory().DeepCopy()) &&
+		origin.Limits.Cpu().Equal(newone.Limits.Cpu().DeepCopy()) &&
+		origin.Limits.Memory().Equal(newone.Limits.Memory().DeepCopy()))
+}

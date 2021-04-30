@@ -1,6 +1,8 @@
 package nginxingresscontroller
 
 import (
+	"reflect"
+
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/pkg/apis/k8s/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -12,11 +14,15 @@ func daemonSetForNginxIngressController(instance *k8sv1alpha1.NginxIngressContro
 	allowPrivilegeEscalation := new(bool)
 	*runAsUser = 101
 	*allowPrivilegeEscalation = true
+	if instance.Spec.Workload == nil {
+		instance.Spec.Workload = &k8sv1alpha1.Workload{}
+	}
 
 	return &appsv1.DaemonSet{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      instance.Name,
 			Namespace: instance.Namespace,
+			Labels:    instance.Spec.Workload.ExtraLabels,
 		},
 		Spec: appsv1.DaemonSetSpec{
 			Selector: &v1.LabelSelector{
@@ -26,7 +32,7 @@ func daemonSetForNginxIngressController(instance *k8sv1alpha1.NginxIngressContro
 				ObjectMeta: v1.ObjectMeta{
 					Name:      instance.Name,
 					Namespace: instance.Namespace,
-					Labels:    map[string]string{"app": instance.Name},
+					Labels:    mergeLabels(map[string]string{"app": instance.Name}, instance.Spec.Workload.ExtraLabels),
 				},
 				Spec: corev1.PodSpec{
 					ServiceAccountName: instance.Name,
@@ -72,6 +78,7 @@ func daemonSetForNginxIngressController(instance *k8sv1alpha1.NginxIngressContro
 									},
 								},
 							},
+							Resources: instance.Spec.Workload.Resources,
 						},
 					},
 				},
@@ -91,11 +98,25 @@ func hasDaemonSetChanged(ds *appsv1.DaemonSet, instance *k8sv1alpha1.NginxIngres
 		return true
 	}
 
+	if instance.Spec.Workload == nil {
+		instance.Spec.Workload = &k8sv1alpha1.Workload{}
+	}
+	if !reflect.DeepEqual(ds.Labels, instance.Spec.Workload.ExtraLabels) {
+		return true
+	}
+
+	if HasDifferentResources(container.Resources, instance.Spec.Workload.Resources) {
+		return true
+	}
+
 	return hasDifferentArguments(container, instance)
 }
 
 func updateDaemonSet(ds *appsv1.DaemonSet, instance *k8sv1alpha1.NginxIngressController) *appsv1.DaemonSet {
 	ds.Spec.Template.Spec.Containers[0].Image = generateImage(instance.Spec.Image.Repository, instance.Spec.Image.Tag)
 	ds.Spec.Template.Spec.Containers[0].Args = generatePodArgs(instance)
+	ds.Spec.Template.Spec.Containers[0].Resources = instance.Spec.Workload.Resources
+	ds.Labels = instance.Spec.Workload.ExtraLabels
+	ds.Spec.Template.Labels = mergeLabels(map[string]string{"app": instance.Name}, instance.Spec.Workload.ExtraLabels)
 	return ds
 }
