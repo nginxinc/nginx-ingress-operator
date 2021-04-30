@@ -73,6 +73,16 @@ spec:
    nginxReloadTimeout: 5000
    appProtect:
      enable: false
+   workload:
+     extraLabels:
+       nginx: my-nginx
+     resources:
+       limits:
+         cpu: 200m
+         memory: 200Mi
+       requests:
+         cpu: 100m
+         memory: 100Mi     
  ``` 
  
 | Field | Type | Description | Required |
@@ -103,6 +113,7 @@ spec:
 | `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires `enableCRDs` set to `true`. | No |
 | `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires `nginxPlus` set to `true`. | No |
 | `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
+| `workload` | [workload](#nginxingresscontrollerworkload) | The workload config of the Ingress Controller. | No |
 
 ## NginxIngressController.Image
 
@@ -154,3 +165,10 @@ spec:
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 | `enable` | `boolean` | Enable App Protect. | Yes |
+
+## NginxIngressController.Workload
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| `extraLabels` | `map[string]string` | Specifies extra labels of the workload(deployment or daemonset) of nginx. | No |
+| `resources` | `corev1.ResourceRequirements` | Specifies resource request and limit of the nginx container. | No |

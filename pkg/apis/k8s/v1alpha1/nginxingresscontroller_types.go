@@ -232,6 +232,7 @@ type AppProtect struct {
 	Enable bool `json:"enable"`
 }
 
+// Workload of the Ingress controller.
 type Workload struct {
 	// Specifies resource request and limit of the nginx container
 	// +kubebuilder:validation:Optional
