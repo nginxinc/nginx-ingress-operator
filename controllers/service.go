@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"reflect"
-
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -51,16 +49,6 @@ func (r *NginxIngressControllerReconciler) serviceForNginxIngressController(inst
 	ctrl.SetControllerReference(instance, svc, r.Scheme)
 
 	return svc
-}
-
-func hasServiceChanged(svc *corev1.Service, instance *k8sv1alpha1.NginxIngressController) bool {
-	if svc.Spec.Type != corev1.ServiceType(instance.Spec.ServiceType) {
-		return true
-	}
-	if instance.Spec.Service != nil && !reflect.DeepEqual(svc.Labels, instance.Spec.Service.ExtraLabels) {
-		return true
-	}
-	return svc.Labels != nil && instance.Spec.Service == nil
 }
 
 func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]string) controllerutil.MutateFn {

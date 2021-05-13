@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"reflect"
-
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -21,10 +19,6 @@ func (r *NginxIngressControllerReconciler) configMapForNginxIngressController(in
 	}
 	ctrl.SetControllerReference(instance, cm, r.Scheme)
 	return cm
-}
-
-func hasConfigMapChanged(cm *v1.ConfigMap, instance *k8sv1alpha1.NginxIngressController) bool {
-	return !reflect.DeepEqual(cm.Data, instance.Spec.ConfigMapData)
 }
 
 func configMapMutateFn(cm *v1.ConfigMap, configMapData map[string]string) controllerutil.MutateFn {
