@@ -9,7 +9,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
-func (r *NginxIngressControllerReconciler) configMapForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *v1.ConfigMap {
+func (r *NginxIngressControllerReconciler) configMapForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) (*v1.ConfigMap, error) {
 	cm := &v1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      instance.Name,
@@ -17,8 +17,10 @@ func (r *NginxIngressControllerReconciler) configMapForNginxIngressController(in
 		},
 		Data: instance.Spec.ConfigMapData,
 	}
-	ctrl.SetControllerReference(instance, cm, r.Scheme)
-	return cm
+	if err := ctrl.SetControllerReference(instance, cm, r.Scheme); err != nil {
+		return nil, err
+	}
+	return cm, nil
 }
 
 func configMapMutateFn(cm *v1.ConfigMap, configMapData map[string]string) controllerutil.MutateFn {

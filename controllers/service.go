@@ -58,13 +58,3 @@ func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]
 		return nil
 	}
 }
-
-func updateService(svc *corev1.Service, instance *k8sv1alpha1.NginxIngressController) *corev1.Service {
-	svc.Spec.Type = corev1.ServiceType(instance.Spec.ServiceType)
-	if instance.Spec.Service != nil {
-		svc.Labels = instance.Spec.Service.ExtraLabels
-	} else {
-		svc.Labels = nil
-	}
-	return svc
-}

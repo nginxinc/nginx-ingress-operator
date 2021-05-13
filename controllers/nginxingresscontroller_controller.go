@@ -230,7 +230,10 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		return ctrl.Result{}, err
 	}
 
-	cm := r.configMapForNginxIngressController(instance)
+	cm, err := r.configMapForNginxIngressController(instance)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 	res, err = controllerutil.CreateOrUpdate(ctx, r.Client, cm, configMapMutateFn(cm, instance.Spec.ConfigMapData))
 	log.Info(fmt.Sprintf("ConfigMap %s %s", svc.Name, res))
 	if err != nil {
