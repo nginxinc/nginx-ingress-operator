@@ -225,7 +225,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		extraLabels = instance.Spec.Service.ExtraLabels
 	}
 	res, err := controllerutil.CreateOrUpdate(ctx, r.Client, svc, serviceMutateFn(svc, instance.Spec.ServiceType, extraLabels))
-	log.Info(fmt.Sprintf("Service %s %s", svc.Name, res))
+	log.V(1).Info(fmt.Sprintf("Service %s %s", svc.Name, res))
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -235,7 +235,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		return ctrl.Result{}, err
 	}
 	res, err = controllerutil.CreateOrUpdate(ctx, r.Client, cm, configMapMutateFn(cm, instance.Spec.ConfigMapData))
-	log.Info(fmt.Sprintf("ConfigMap %s %s", svc.Name, res))
+	log.V(1).Info(fmt.Sprintf("ConfigMap %s %s", svc.Name, res))
 	if err != nil {
 		return ctrl.Result{}, err
 	}
