@@ -39,6 +39,7 @@ spec:
                         - arcsight
                         - default
                         - user-defined
+                        - grpc
                       type: string
                     format_string:
                       type: string
