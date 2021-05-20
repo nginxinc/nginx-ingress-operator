@@ -161,6 +161,12 @@ spec:
                                 type: string
                               name:
                                 enum:
+                                  - VIOL_GRPC_FORMAT
+                                  - VIOL_GRPC_MALFORMED
+                                  - VIOL_GRPC_METHOD
+                                  - VIOL_PARAMETER_ARRAY_VALUE
+                                  - VIOL_PARAMETER_VALUE_REGEXP
+                                  - VIOL_CSRF
                                   - VIOL_PARAMETER_VALUE_BASE64
                                   - VIOL_MANDATORY_HEADER
                                   - VIOL_HEADER_REPEATED
@@ -242,6 +248,31 @@ spec:
                                     type: string
                                 type: object
                               type: array
+                            browsers:
+                              items:
+                                properties:
+                                  $action:
+                                    enum:
+                                      - delete
+                                    type: string
+                                  action:
+                                    enum:
+                                      - alarm
+                                      - block
+                                      - detect
+                                    type: string
+                                  maxVersion:
+                                    maximum: 2147483647
+                                    minimum: 0
+                                    type: integer
+                                  minVersion:
+                                    maximum: 2147483647
+                                    minimum: 0
+                                    type: integer
+                                  name:
+                                    type: string
+                                type: object
+                              type: array
                             classes:
                               items:
                                 properties:
@@ -254,9 +285,11 @@ spec:
                                     type: string
                                   name:
                                     enum:
+                                      - browser
                                       - malicious-bot
                                       - suspicious-browser
                                       - trusted-bot
+                                      - unknown
                                       - untrusted-bot
                                     type: string
                                 type: object
@@ -282,6 +315,23 @@ spec:
                               type: boolean
                           type: object
                       type: object
+                    browser-definitions:
+                      items:
+                        properties:
+                          $action:
+                            enum:
+                              - delete
+                            type: string
+                          isUserDefined:
+                            type: boolean
+                          matchRegex:
+                            type: string
+                          matchString:
+                            type: string
+                          name:
+                            type: string
+                        type: object
+                      type: array
                     caseInsensitive:
                       type: boolean
                     character-sets:
@@ -377,6 +427,42 @@ spec:
                               - explicit
                               - wildcard
                             type: string
+                          wildcardOrder:
+                            type: integer
+                        type: object
+                      type: array
+                    csrf-protection:
+                      properties:
+                        enabled:
+                          type: boolean
+                        expirationTimeInSeconds:
+                          pattern: disabled|\d+
+                          type: string
+                        sslOnly:
+                          type: boolean
+                      type: object
+                    csrf-urls:
+                      items:
+                        properties:
+                          $action:
+                            enum:
+                              - delete
+                            type: string
+                          enforcementAction:
+                            enum:
+                              - verify-origin
+                              - none
+                            type: string
+                          method:
+                            enum:
+                              - GET
+                              - POST
+                              - any
+                            type: string
+                          url:
+                            type: string
+                          wildcardOrder:
+                            type: integer
                         type: object
                       type: array
                     data-guard:
@@ -427,6 +513,8 @@ spec:
                     filetypes:
                       items:
                         properties:
+                          action:
+                            type: string
                           allowed:
                             type: boolean
                           checkPostDataLength:
@@ -453,6 +541,8 @@ spec:
                               - wildcard
                             type: string
                           urlLength:
+                            type: integer
+                          wildcardOrder:
                             type: integer
                         type: object
                       type: array
@@ -482,6 +572,62 @@ spec:
                           pattern: ^http
                           type: string
                       type: object
+                    grpc-profiles:
+                      items:
+                        properties:
+                          associateUrls:
+                            type: boolean
+                          attackSignaturesCheck:
+                            type: boolean
+                          defenseAttributes:
+                            properties:
+                              allowUnknownFields:
+                                type: boolean
+                              maximumDataLength:
+                                pattern: any|\d+
+                                type: string
+                            type: object
+                          description:
+                            type: string
+                          hasIdlFiles:
+                            type: boolean
+                          idlFiles:
+                            items:
+                              properties:
+                                idlFile:
+                                  properties:
+                                    contents:
+                                      type: string
+                                    fileName:
+                                      type: string
+                                    isBase64:
+                                      type: boolean
+                                  type: object
+                                isPrimary:
+                                  type: boolean
+                                primaryIdlFileName:
+                                  type: string
+                              type: object
+                            type: array
+                          metacharElementCheck:
+                            type: boolean
+                          name:
+                            type: string
+                          signatureOverrides:
+                            items:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                name:
+                                  type: string
+                                signatureId:
+                                  type: integer
+                                tag:
+                                  type: string
+                              type: object
+                            type: array
+                        type: object
+                      type: array
                     header-settings:
                       properties:
                         maximumHttpHeaderLength:
@@ -503,6 +649,8 @@ spec:
                     headers:
                       items:
                         properties:
+                          allowRepeatedOccurrences:
+                            type: boolean
                           base64Decoding:
                             type: boolean
                           checkSignatures:
@@ -525,12 +673,51 @@ spec:
                             type: boolean
                           percentDecoding:
                             type: boolean
+                          signatureOverrides:
+                            items:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                name:
+                                  type: string
+                                signatureId:
+                                  type: integer
+                                tag:
+                                  type: string
+                              type: object
+                            type: array
                           type:
                             enum:
                               - explicit
                               - wildcard
                             type: string
                           urlNormalization:
+                            type: boolean
+                          wildcardOrder:
+                            type: integer
+                        type: object
+                      type: array
+                    host-names:
+                      items:
+                        properties:
+                          $action:
+                            enum:
+                              - delete
+                            type: string
+                          includeSubdomains:
+                            type: boolean
+                          name:
+                            type: string
+                        type: object
+                      type: array
+                    idl-files:
+                      items:
+                        properties:
+                          contents:
+                            type: string
+                          fileName:
+                            type: string
+                          isBase64:
                             type: boolean
                         type: object
                       type: array
@@ -558,6 +745,8 @@ spec:
                             type: object
                           description:
                             type: string
+                          handleJsonValuesAsParameters:
+                            type: boolean
                           hasValidationFiles:
                             type: boolean
                           metacharOverrides:
@@ -636,6 +825,8 @@ spec:
                     methods:
                       items:
                         properties:
+                          action:
+                            type: string
                           name:
                             type: string
                         type: object
@@ -719,6 +910,8 @@ spec:
                             type: boolean
                           exclusiveMin:
                             type: boolean
+                          isBase64:
+                            type: boolean
                           isCookie:
                             type: boolean
                           isHeader:
@@ -728,11 +921,19 @@ spec:
                               - global
                               - url
                             type: string
+                          mandatory:
+                            type: boolean
                           maximumLength:
+                            type: integer
+                          maximumValue:
                             type: integer
                           metacharsOnParameterValueCheck:
                             type: boolean
                           minimumLength:
+                            type: integer
+                          minimumValue:
+                            type: integer
+                          multipleOf:
                             type: integer
                           name:
                             type: string
@@ -784,6 +985,8 @@ spec:
                               - explicit
                               - wildcard
                             type: string
+                          url:
+                            type: object
                           valueMetacharOverrides:
                             items:
                               properties:
@@ -807,6 +1010,8 @@ spec:
                               - user-input
                               - xml
                             type: string
+                          wildcardOrder:
+                            type: integer
                         type: object
                       type: array
                     response-pages:
@@ -825,6 +1030,11 @@ spec:
                           ajaxPopupMessage:
                             type: string
                           ajaxRedirectUrl:
+                            type: string
+                          grpcStatusCode:
+                            pattern: ABORTED|ALREADY_EXISTS|CANCELLED|DATA_LOSS|DEADLINE_EXCEEDED|FAILED_PRECONDITION|INTERNAL|INVALID_ARGUMENT|NOT_FOUND|OK|OUT_OF_RANGE|PERMISSION_DENIED|RESOURCE_EXHAUSTED|UNAUTHENTICATED|UNAVAILABLE|UNIMPLEMENTED|UNKNOWN|d+
+                            type: string
+                          grpcStatusMessage:
                             type: string
                           responseActionType:
                             enum:
@@ -853,6 +1063,7 @@ spec:
                               - mobile
                               - persistent-flow
                               - xml
+                              - grpc
                             type: string
                           responseRedirectUrl:
                             type: string
@@ -1060,12 +1271,58 @@ spec:
                     urls:
                       items:
                         properties:
+                          $action:
+                            enum:
+                              - delete
+                            type: string
+                          allowRenderingInFrames:
+                            enum:
+                              - never
+                              - only-same
+                            type: string
+                          allowRenderingInFramesOnlyFrom:
+                            type: string
                           attackSignaturesCheck:
+                            type: boolean
+                          clickjackingProtection:
                             type: boolean
                           description:
                             type: string
                           disallowFileUploadOfExecutables:
                             type: boolean
+                          html5CrossOriginRequestsEnforcement:
+                            properties:
+                              allowOriginsEnforcementMode:
+                                enum:
+                                  - replace-with
+                                  - unmodified
+                                type: string
+                              checkAllowedMethods:
+                                type: boolean
+                              crossDomainAllowedOrigin:
+                                items:
+                                  properties:
+                                    includeSubDomains:
+                                      type: boolean
+                                    originName:
+                                      type: string
+                                    originPort:
+                                      pattern: any|\d+
+                                      type: string
+                                    originProtocol:
+                                      enum:
+                                        - http
+                                        - http/https
+                                        - https
+                                      type: string
+                                  type: object
+                                type: array
+                              enforcementMode:
+                                enum:
+                                  - disabled
+                                  - enforce
+                                type: string
+                            type: object
                           isAllowed:
                             type: boolean
                           mandatoryBody:
@@ -1177,6 +1434,8 @@ spec:
                             type: boolean
                           name:
                             type: string
+                          operationId:
+                            type: string
                           positionalParameters:
                             items:
                               properties:
@@ -1242,6 +1501,8 @@ spec:
                                       type: boolean
                                     exclusiveMin:
                                       type: boolean
+                                    isBase64:
+                                      type: boolean
                                     isCookie:
                                       type: boolean
                                     isHeader:
@@ -1251,11 +1512,19 @@ spec:
                                         - global
                                         - url
                                       type: string
+                                    mandatory:
+                                      type: boolean
                                     maximumLength:
+                                      type: integer
+                                    maximumValue:
                                       type: integer
                                     metacharsOnParameterValueCheck:
                                       type: boolean
                                     minimumLength:
+                                      type: integer
+                                    minimumValue:
+                                      type: integer
+                                    multipleOf:
                                       type: integer
                                     name:
                                       type: string
@@ -1307,6 +1576,8 @@ spec:
                                         - explicit
                                         - wildcard
                                       type: string
+                                    url:
+                                      type: object
                                     valueMetacharOverrides:
                                       items:
                                         properties:
@@ -1330,6 +1601,8 @@ spec:
                                         - user-input
                                         - xml
                                       type: string
+                                    wildcardOrder:
+                                      type: integer
                                   type: object
                                 urlSegmentIndex:
                                   type: integer
@@ -1361,6 +1634,11 @@ spec:
                           urlContentProfiles:
                             items:
                               properties:
+                                contentProfile:
+                                  properties:
+                                    name:
+                                      type: string
+                                  type: object
                                 headerName:
                                   type: string
                                 headerOrder:
@@ -1379,6 +1657,7 @@ spec:
                                     - gwt
                                     - json
                                     - xml
+                                    - grpc
                                   type: string
                               type: object
                             type: array
@@ -1466,6 +1745,19 @@ spec:
                             type: boolean
                           name:
                             type: string
+                          signatureOverrides:
+                            items:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                name:
+                                  type: string
+                                signatureId:
+                                  type: integer
+                                tag:
+                                  type: string
+                              type: object
+                            type: array
                         type: object
                       type: array
                     xml-validation-files:
