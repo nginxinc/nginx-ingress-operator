@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -149,6 +150,16 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
 	NginxReloadTimeout int `json:"nginxReloadTimeout"`
+	// Additional labels for the running pods in a labeled node.
+	// +kubebuilder:validation:Optional
+	// +nullable
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+	// Additional labels for running pods in tained nodes.
+	// +kubebuilder:validation:Optional
+	// +nullable
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	Tolerations []v1.Toleration `json:"tolerations,omitempty"`
 }
 
 // Image defines the Repository, Tag and ImagePullPolicy of the Ingress Controller Image.

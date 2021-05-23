@@ -46,6 +46,8 @@ func TestDeploymentForNginxIngressController(t *testing.T) {
 				},
 				Spec: corev1.PodSpec{
 					ServiceAccountName: "my-nginx-ingress-controller",
+					NodeSelector:       generateNodeSelector(instance),
+					Tolerations:        generateTolerations(instance),
 					Containers: []corev1.Container{
 						{
 							Name:  "my-nginx-ingress-controller",

@@ -210,3 +210,23 @@ func GetK8sVersion(client kubernetes.Interface) (v *version.Version, err error) 
 
 	return runningVersion, nil
 }
+
+func generateNodeSelector(instance *k8sv1alpha1.NginxIngressController) map[string]string {
+	var nodeSelector = map[string]string{}
+
+	if instance.Spec.NodeSelector != nil {
+		nodeSelector = instance.Spec.NodeSelector
+	}
+
+	return nodeSelector
+}
+
+func generateTolerations(instance *k8sv1alpha1.NginxIngressController) []corev1.Toleration {
+	tolerations := []corev1.Toleration{}
+
+	if instance.Spec.Tolerations != nil {
+		tolerations = append(tolerations, instance.Spec.Tolerations...)
+	}
+
+	return tolerations
+}

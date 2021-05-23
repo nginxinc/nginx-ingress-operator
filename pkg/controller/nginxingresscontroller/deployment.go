@@ -31,6 +31,8 @@ func deploymentForNginxIngressController(instance *k8sv1alpha1.NginxIngressContr
 				},
 				Spec: corev1.PodSpec{
 					ServiceAccountName: instance.Name,
+					NodeSelector:       generateNodeSelector(instance),
+					Tolerations:        generateTolerations(instance),
 					Containers: []corev1.Container{
 						{
 							Name:            instance.Name,
