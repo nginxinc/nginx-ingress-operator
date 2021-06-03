@@ -28,7 +28,6 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -36,7 +35,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	secv1 "github.com/openshift/api/security/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	"github.com/nginxinc/nginx-ingress-operator/controllers"
@@ -58,12 +56,8 @@ func printVersion() {
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
 	utilruntime.Must(k8sv1alpha1.AddToScheme(scheme))
 
-	// TODO check if this is a (better?) way to add CRDs
-	// utilruntime.Must(kicv1.AddToScheme(scheme))
-	// utilruntime.Must(kicv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -86,17 +80,17 @@ func main() {
 	// Get a config to talk to the apiserver
 	cfg, err := config.GetConfig()
 	if err != nil {
-		setupLog.Error(err, "")
+		setupLog.Error(err, "problem getting k8s config")
 		os.Exit(1)
 	}
 	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
-		setupLog.Error(err, "")
+		setupLog.Error(err, "problem creating clientset")
 		os.Exit(1)
 	}
 	controllers.RunningK8sVersion, err = controllers.GetK8sVersion(clientset)
 	if err != nil {
-		setupLog.Error(err, "")
+		setupLog.Error(err, "problem getting k8s version")
 		os.Exit(1)
 	}
 
@@ -118,24 +112,16 @@ func main() {
 	// Setup Scheme for SCC if deployed in OpenShift
 	sccAPIExists, err := controllers.VerifySCCAPIExists()
 	if err != nil {
-		setupLog.Error(err, "Could not check if SCC API exists")
+		setupLog.Error(err, "could not check if SCC API exists")
 		os.Exit(1)
 	}
 
 	if sccAPIExists {
-		gv := schema.GroupVersion{
-			Group:   secv1.GroupName,
-			Version: secv1.GroupVersion.Version,
-		}
-
-		mgr.GetScheme().AddKnownTypes(gv, &secv1.SecurityContextConstraints{})
-		mgr.GetScheme().AddKnownTypes(gv, &secv1.SecurityContextConstraintsList{})
-		metav1.AddToGroupVersion(mgr.GetScheme(), gv)
+		utilruntime.Must(secv1.AddToScheme(scheme))
 	}
 
 	if err = (&controllers.NginxIngressControllerReconciler{
 		Client:       mgr.GetClient(),
-		Log:          ctrl.Log.WithName("controllers").WithName("NginxIngressController"),
 		Scheme:       mgr.GetScheme(),
 		SccAPIExists: sccAPIExists,
 		Mgr:          mgr,

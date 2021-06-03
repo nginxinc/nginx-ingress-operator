@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -32,8 +31,10 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
+	"github.com/go-logr/logr"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 )
 
@@ -46,7 +47,6 @@ const (
 // NginxIngressControllerReconciler reconciles a NginxIngressController object
 type NginxIngressControllerReconciler struct {
 	client.Client
-	Log          logr.Logger
 	Scheme       *runtime.Scheme
 	SccAPIExists bool
 	Mgr          ctrl.Manager
@@ -79,8 +79,7 @@ type NginxIngressControllerReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
 func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := r.Log.WithValues("nginxingresscontroller", req.NamespacedName)
-	log.Info("Reconciling NginxIngressController")
+	log := ctrllog.FromContext(ctx)
 
 	instance := &k8sv1alpha1.NginxIngressController{}
 	err := r.Get(ctx, req.NamespacedName, instance)
