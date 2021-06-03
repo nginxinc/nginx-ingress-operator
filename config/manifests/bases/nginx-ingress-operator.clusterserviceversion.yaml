@@ -19,6 +19,138 @@ spec:
       displayName: Nginx Ingress Controller
       kind: NginxIngressController
       name: nginxingresscontrollers.k8s.nginx.org
+      specDescriptors:
+      - description: App Protect support configuration. Requires enableCRDs set to
+          true.
+        displayName: App Protect
+        path: appProtect
+      - description: Initial values of the Ingress Controller ConfigMap. Check https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/
+          for more information about possible values.
+        displayName: Config Map Data
+        path: configMapData
+      - description: The TLS Secret for TLS termination of the default server. The
+          format is namespace/name. The secret must be of the type kubernetes.io/tls.
+          If not specified, the operator will generate and deploy a TLS Secret with
+          a self-signed certificate and key.
+        displayName: Default Secret
+        path: defaultSecret
+      - description: Enables the use of NGINX Ingress Resource Definitions (VirtualServer
+          and VirtualServerRoute). Default is true.
+        displayName: Enable CRDs
+        path: enableCRDs
+      - description: Bucketed response times from when NGINX establishes a connection
+          to an upstream server to when the last byte of the response body is received
+          by NGINX. **Note** The metric for the upstream isn't available until traffic
+          is sent to the upstream.
+        displayName: Enable Latency Metrics
+        path: enableLatencyMetrics
+      - description: Enables Leader election to avoid multiple replicas of the controller
+          reporting the status of Ingress resources – only one replica will report
+          status. Default is true.
+        displayName: Enable Leader Election
+        path: enableLeaderElection
+      - description: Enables preview policies. Requires enableCRDs set to true.
+        displayName: Enable Preview Policies
+        path: enablePreviewPolicies
+      - description: Enable custom NGINX configuration snippets in VirtualServer,
+          VirtualServerRoute and TransportServer resources. Requires enableCRDs set
+          to true.
+        displayName: Enable Snippets
+        path: enableSnippets
+      - description: Enable TLS Passthrough on port 443. Requires enableCRDs set to
+          true.
+        displayName: Enable TLSPassthrough
+        path: enableTLSPassthrough
+      - description: The GlobalConfiguration resource for global configuration of
+          the Ingress Controller. Format is namespace/name. Requires enableCRDs set
+          to true.
+        displayName: Global Configuration
+        path: globalConfiguration
+      - description: Adds a new location to the default server. The location responds
+          with the 200 status code for any request. Useful for external health-checking
+          of the Ingress controller.
+        displayName: Health Status
+        path: healthStatus
+      - description: The image of the Ingress Controller.
+        displayName: Image
+        path: image
+      - description: A class of the Ingress controller. The Ingress controller only
+          processes Ingress resources that belong to its class (in other words, have
+          the annotation “kubernetes.io/ingress.class”). Additionally, the Ingress
+          controller processes Ingress resources that do not have that annotation,
+          which can be disabled by setting UseIngressClassOnly to true. Default is
+          `nginx`.
+        displayName: Ingress Class
+        path: ingressClass
+      - description: Log level for V logs. Format is 0 - 3
+        displayName: Log Level
+        path: logLevel
+      - description: 'Enable debugging for NGINX. Uses the nginx-debug binary. Requires
+          ‘error-log-level: debug’ in the ConfigMapData.'
+        displayName: Nginx Debug
+        path: nginxDebug
+      - description: Deploys the Ingress Controller for NGINX Plus. The default is
+          false meaning the Ingress Controller will be deployed for NGINX OSS.
+        displayName: Nginx Plus
+        path: nginxPlus
+      - description: Timeout in milliseconds which the Ingress Controller will wait
+          for a successful NGINX reload after a change or at the initial start.
+        displayName: Nginx Reload Timeout
+        path: nginxReloadTimeout
+      - description: NGINX stub_status, or the NGINX Plus API.
+        displayName: Nginx Status
+        path: nginxStatus
+      - description: NGINX or NGINX Plus metrics in the Prometheus format.
+        displayName: Prometheus
+        path: prometheus
+      - description: The number of replicas of the Ingress Controller pod. The default
+          is 1. Only applies if the type is set to deployment.
+        displayName: Replicas
+        path: replicas
+      - description: Update the address field in the status of Ingresses resources.
+        displayName: Report Ingress Status
+        path: reportIngressStatus
+      - description: 'Specifies the name of the IngressLink resource, which exposes
+          the Ingress Controller pods via a BIG-IP system. The IP of the BIG-IP system
+          is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute
+          resources. Requires reportIngressStatus.enable set to true. Note: If serviceType
+          is LoadBalancer or reportIngressStatus.externalService is set, the value
+          of this field will be ignored.'
+        displayName: Ingress Link
+        path: reportIngressStatus.ingressLink
+      - description: The service of the Ingress controller.
+        displayName: Service
+        path: service
+      - description: 'The type of the Service for the Ingress Controller. Valid Service
+          types are: NodePort and LoadBalancer.'
+        displayName: Service Type
+        path: serviceType
+      - description: The type of the Ingress Controller installation - deployment
+          or daemonset.
+        displayName: Type
+        path: type
+      - description: Ignore Ingress resources without the “kubernetes.io/ingress.class”
+          annotation.
+        displayName: Use Ingress Class Only
+        path: useIngressClassOnly
+      - description: Namespace to watch for Ingress resources. By default the Ingress
+          controller watches all namespaces.
+        displayName: Watch Namespace
+        path: watchNamespace
+      - description: A Secret with a TLS certificate and key for TLS termination of
+          every Ingress host for which TLS termination is enabled but the Secret is
+          not specified. The secret must be of the type kubernetes.io/tls. If the
+          argument is not set, for such Ingress hosts NGINX will break any attempt
+          to establish a TLS connection. If the argument is set, but the Ingress controller
+          is not able to fetch the Secret from Kubernetes API, the Ingress Controller
+          will fail to start. Format is namespace/name.
+        displayName: Wildcard TLS
+        path: wildcardTLS
+      statusDescriptors:
+      - description: Deployed is true if the Operator has finished the deployment
+          of the NginxIngressController.
+        displayName: Deployed
+        path: deployed
       version: v1alpha1
   description: The NGINX Ingress Operator is a Kubernetes/OpenShift component which
     deploys and manages one or more NGINX/NGINX Plus Ingress Controllers
