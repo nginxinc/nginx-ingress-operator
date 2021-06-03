@@ -5,10 +5,11 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
-func (r *NginxIngressControllerReconciler) deploymentForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) (*appsv1.Deployment, error) {
+func deploymentForNginxIngressController(instance *k8sv1alpha1.NginxIngressController, scheme *runtime.Scheme) (*appsv1.Deployment, error) {
 	runAsUser := new(int64)
 	allowPrivilegeEscalation := new(bool)
 	*runAsUser = 101
@@ -80,7 +81,7 @@ func (r *NginxIngressControllerReconciler) deploymentForNginxIngressController(i
 			},
 		},
 	}
-	if err := ctrl.SetControllerReference(instance, dep, r.Scheme); err != nil {
+	if err := ctrl.SetControllerReference(instance, dep, scheme); err != nil {
 		return nil, err
 	}
 	return dep, nil

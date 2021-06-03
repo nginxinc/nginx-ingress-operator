@@ -46,9 +46,8 @@ func TestSccForNginxIngressController(t *testing.T) {
 		DefaultAddCapabilities:   []corev1.Capability{"NET_BIND_SERVICE"},
 		AllowedCapabilities:      nil,
 	}
-	rec := &NginxIngressControllerReconciler{}
 
-	result := rec.sccForNginxIngressController(name)
+	result := sccForNginxIngressController(name)
 	if diff := cmp.Diff(expected, result); diff != "" {
 		t.Errorf("sccForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}

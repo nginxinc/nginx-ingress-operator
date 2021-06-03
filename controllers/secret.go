@@ -13,12 +13,13 @@ import (
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
 const sslHost = "example.com"
 
-func (r *NginxIngressControllerReconciler) defaultSecretForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) (*corev1.Secret, error) {
+func defaultSecretForNginxIngressController(instance *k8sv1alpha1.NginxIngressController, scheme *runtime.Scheme) (*corev1.Secret, error) {
 	crt, key, err := generateFakeCertAndKey()
 	if err != nil {
 		return nil, err
@@ -35,7 +36,7 @@ func (r *NginxIngressControllerReconciler) defaultSecretForNginxIngressControlle
 		},
 		Type: corev1.SecretTypeTLS,
 	}
-	err = ctrl.SetControllerReference(instance, secret, r.Scheme)
+	err = ctrl.SetControllerReference(instance, secret, scheme)
 	if err != nil {
 		return nil, err
 	}

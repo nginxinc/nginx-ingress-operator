@@ -24,9 +24,7 @@ func TestIngressClassForNginxIngressController(t *testing.T) {
 		},
 	}
 
-	rec := &NginxIngressControllerReconciler{}
-
-	result := rec.ingressClassForNginxIngressController(instance)
+	result := ingressClassForNginxIngressController(instance)
 	if diff := cmp.Diff(expected, result); diff != "" {
 		t.Errorf("ingressClassForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}

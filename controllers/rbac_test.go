@@ -73,9 +73,7 @@ func TestClusterRoleForNginxIngressController(t *testing.T) {
 		},
 	}
 
-	rec := &NginxIngressControllerReconciler{}
-
-	result := rec.clusterRoleForNginxIngressController(name)
+	result := clusterRoleForNginxIngressController(name)
 	if diff := cmp.Diff(expected, result); diff != "" {
 		t.Errorf("clusterRoleForNginxIngressController(%v) mismatch (-want +got):\n%s", name, diff)
 	}
@@ -109,9 +107,7 @@ func TestClusterRoleBindingForNginxIngressController(t *testing.T) {
 		},
 	}
 
-	rec := &NginxIngressControllerReconciler{}
-
-	result := rec.clusterRoleBindingForNginxIngressController(name)
+	result := clusterRoleBindingForNginxIngressController(name)
 	if diff := cmp.Diff(expected, result); diff != "" {
 		t.Errorf("clusterRoleBindingForNginxIngressController(%v) mismatch (-want +got):\n%s", name, diff)
 	}

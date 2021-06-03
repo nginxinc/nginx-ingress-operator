@@ -4,12 +4,13 @@ import (
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
-func (r *NginxIngressControllerReconciler) serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *corev1.Service {
+func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressController, scheme *runtime.Scheme) (*corev1.Service, error) {
 	extraLabels := map[string]string{}
 	if instance.Spec.Service != nil {
 		extraLabels = instance.Spec.Service.ExtraLabels
@@ -46,9 +47,12 @@ func (r *NginxIngressControllerReconciler) serviceForNginxIngressController(inst
 			Type:     corev1.ServiceType(instance.Spec.ServiceType),
 		},
 	}
-	ctrl.SetControllerReference(instance, svc, r.Scheme)
 
-	return svc
+	if err := ctrl.SetControllerReference(instance, svc, scheme); err != nil {
+		return nil, err
+	}
+
+	return svc, nil
 }
 
 func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]string) controllerutil.MutateFn {

@@ -1,24 +1,54 @@
 package controllers
 
 import (
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	ctrl "sigs.k8s.io/controller-runtime"
+	"k8s.io/client-go/kubernetes/scheme"
 )
 
-func daemonSetForNginxIngressController(instance *k8sv1alpha1.NginxIngressController, scheme *runtime.Scheme) (*appsv1.DaemonSet, error) {
+func TestDaemonSetForNginxIngressController(t *testing.T) {
+	boolPointer := func(b bool) *bool { return &b }
+	s := scheme.Scheme
+
+	if err := k8sv1alpha1.AddToScheme(s); err != nil {
+		t.Fatalf("Unable to add k8sv1alpha1 scheme: (%v)", err)
+	}
 	runAsUser := new(int64)
 	allowPrivilegeEscalation := new(bool)
 	*runAsUser = 101
 	*allowPrivilegeEscalation = true
 
-	dep := &appsv1.DaemonSet{
-		ObjectMeta: v1.ObjectMeta{
-			Name:      instance.Name,
-			Namespace: instance.Namespace,
+	instance := &k8sv1alpha1.NginxIngressController{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "my-nginx-ingress-controller",
+			Namespace: "my-nginx-ingress-controller",
+		},
+		Spec: k8sv1alpha1.NginxIngressControllerSpec{
+			Image: k8sv1alpha1.Image{
+				Repository: "nginx-ingress",
+				Tag:        "edge",
+			},
+		},
+	}
+	expected := &appsv1.DaemonSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "my-nginx-ingress-controller",
+			Namespace: "my-nginx-ingress-controller",
+			OwnerReferences: []v1.OwnerReference{
+				{
+					APIVersion:         "k8s.nginx.org/v1alpha1",
+					Name:               instance.Name,
+					Kind:               "NginxIngressController",
+					Controller:         boolPointer(true),
+					BlockOwnerDeletion: boolPointer(true),
+				},
+			},
 		},
 		Spec: appsv1.DaemonSetSpec{
 			Selector: &v1.LabelSelector{
@@ -26,18 +56,17 @@ func daemonSetForNginxIngressController(instance *k8sv1alpha1.NginxIngressContro
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: v1.ObjectMeta{
-					Name:      instance.Name,
-					Namespace: instance.Namespace,
+					Name:      "my-nginx-ingress-controller",
+					Namespace: "my-nginx-ingress-controller",
 					Labels:    map[string]string{"app": instance.Name},
 				},
 				Spec: corev1.PodSpec{
-					ServiceAccountName: instance.Name,
+					ServiceAccountName: "my-nginx-ingress-controller",
 					Containers: []corev1.Container{
 						{
-							Name:            instance.Name,
-							Image:           generateImage(instance.Spec.Image.Repository, instance.Spec.Image.Tag),
-							ImagePullPolicy: corev1.PullPolicy(instance.Spec.Image.PullPolicy),
-							Args:            generatePodArgs(instance),
+							Name:  "my-nginx-ingress-controller",
+							Image: "nginx-ingress:edge",
+							Args:  generatePodArgs(instance),
 							Ports: []corev1.ContainerPort{
 								{
 									Name:          "http",
@@ -80,28 +109,9 @@ func daemonSetForNginxIngressController(instance *k8sv1alpha1.NginxIngressContro
 			},
 		},
 	}
-	if err := ctrl.SetControllerReference(instance, dep, scheme); err != nil {
-		return nil, err
+
+	result, _ := daemonSetForNginxIngressController(instance, s)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("daemonSetForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}
-	return dep, nil
-}
-
-func hasDaemonSetChanged(ds *appsv1.DaemonSet, instance *k8sv1alpha1.NginxIngressController) bool {
-	// There is only 1 container in our template
-	container := ds.Spec.Template.Spec.Containers[0]
-	if container.Image != generateImage(instance.Spec.Image.Repository, instance.Spec.Image.Tag) {
-		return true
-	}
-
-	if container.ImagePullPolicy != corev1.PullPolicy(instance.Spec.Image.PullPolicy) {
-		return true
-	}
-
-	return hasDifferentArguments(container, instance)
-}
-
-func updateDaemonSet(ds *appsv1.DaemonSet, instance *k8sv1alpha1.NginxIngressController) *appsv1.DaemonSet {
-	ds.Spec.Template.Spec.Containers[0].Image = generateImage(instance.Spec.Image.Repository, instance.Spec.Image.Tag)
-	ds.Spec.Template.Spec.Containers[0].Args = generatePodArgs(instance)
-	return ds
 }

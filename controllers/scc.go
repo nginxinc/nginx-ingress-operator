@@ -8,7 +8,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (r *NginxIngressControllerReconciler) sccForNginxIngressController(name string) *secv1.SecurityContextConstraints {
+func sccForNginxIngressController(name string) *secv1.SecurityContextConstraints {
 	var uid int64 = 101
 
 	allowPrivilegeEscalation := true

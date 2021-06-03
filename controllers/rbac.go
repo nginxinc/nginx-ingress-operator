@@ -5,7 +5,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (r *NginxIngressControllerReconciler) clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
+func clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
 	rules := []rbacv1.PolicyRule{
 		{
 			Verbs:     []string{"get", "list", "watch"},
@@ -81,7 +81,7 @@ func subjectForServiceAccount(namespace string, name string) rbacv1.Subject {
 	return sa
 }
 
-func (r *NginxIngressControllerReconciler) clusterRoleBindingForNginxIngressController(name string) *rbacv1.ClusterRoleBinding {
+func clusterRoleBindingForNginxIngressController(name string) *rbacv1.ClusterRoleBinding {
 	crb := &rbacv1.ClusterRoleBinding{
 		ObjectMeta: v1.ObjectMeta{
 			Name: name,

@@ -6,7 +6,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (r *NginxIngressControllerReconciler) ingressClassForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *networking.IngressClass {
+func ingressClassForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *networking.IngressClass {
 	ic := &networking.IngressClass{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: instance.Spec.IngressClass,

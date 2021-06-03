@@ -32,7 +32,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	"github.com/go-logr/logr"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
@@ -148,7 +147,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 	}
 	if strings.ToLower(instance.Spec.Type) == "deployment" {
 		found := &appsv1.Deployment{}
-		dep, err := r.deploymentForNginxIngressController(instance)
+		dep, err := deploymentForNginxIngressController(instance, r.Scheme)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -169,21 +168,21 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 			updated := updateDeployment(found, instance)
 			err = r.Update(ctx, updated)
 			if err != nil {
-				return reconcile.Result{}, err
+				return ctrl.Result{}, err
 			}
 		}
 
 		// Remove possible DaemonSet
-		ds, err := r.daemonSetForNginxIngressController(instance)
+		ds, err := daemonSetForNginxIngressController(instance, r.Scheme)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 		if err := r.Delete(ctx, ds); client.IgnoreNotFound(err) != nil {
-			return reconcile.Result{}, err
+			return ctrl.Result{}, err
 		}
 	} else if strings.ToLower(instance.Spec.Type) == "daemonset" {
 		found := &appsv1.DaemonSet{}
-		ds, err := r.daemonSetForNginxIngressController(instance)
+		ds, err := daemonSetForNginxIngressController(instance, r.Scheme)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -203,22 +202,25 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 			updated := updateDaemonSet(found, instance)
 			err = r.Update(ctx, updated)
 			if err != nil {
-				return reconcile.Result{}, err
+				return ctrl.Result{}, err
 			}
 		}
 
 		// Remove possible Deployment
-		dep, err := r.deploymentForNginxIngressController(instance)
+		dep, err := deploymentForNginxIngressController(instance, r.Scheme)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 		if err := r.Delete(ctx, dep); client.IgnoreNotFound(err) != nil {
-			return reconcile.Result{}, err
+			return ctrl.Result{}, err
 		}
 
 	}
 
-	svc := r.serviceForNginxIngressController(instance)
+	svc, err := serviceForNginxIngressController(instance, r.Scheme)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 	var extraLabels map[string]string
 	if instance.Spec.Service != nil {
 		extraLabels = instance.Spec.Service.ExtraLabels
@@ -229,7 +231,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		return ctrl.Result{}, err
 	}
 
-	cm, err := r.configMapForNginxIngressController(instance)
+	cm, err := configMapForNginxIngressController(instance, r.Scheme)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -243,7 +245,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		instance.Status.Deployed = true
 		err := r.Status().Update(ctx, instance)
 		if err != nil {
-			return reconcile.Result{}, err
+			return ctrl.Result{}, err
 		}
 	}
 
@@ -261,7 +263,7 @@ func (r *NginxIngressControllerReconciler) createIfNotExists(object client.Objec
 }
 
 func (r *NginxIngressControllerReconciler) finalizeNginxIngressController(log logr.Logger, instance *k8sv1alpha1.NginxIngressController) error {
-	crb := r.clusterRoleBindingForNginxIngressController(clusterRoleName)
+	crb := clusterRoleBindingForNginxIngressController(clusterRoleName)
 
 	err := r.Get(context.TODO(), types.NamespacedName{Name: clusterRoleName, Namespace: v1.NamespaceAll}, crb)
 	if err != nil {
@@ -283,7 +285,7 @@ func (r *NginxIngressControllerReconciler) finalizeNginxIngressController(log lo
 	}
 
 	if r.SccAPIExists {
-		scc := r.sccForNginxIngressController(sccName)
+		scc := sccForNginxIngressController(sccName)
 
 		err := r.Get(context.TODO(), types.NamespacedName{Name: sccName, Namespace: v1.NamespaceAll}, scc)
 		if err != nil {
@@ -305,7 +307,7 @@ func (r *NginxIngressControllerReconciler) finalizeNginxIngressController(log lo
 		}
 	}
 
-	ic := r.ingressClassForNginxIngressController(instance)
+	ic := ingressClassForNginxIngressController(instance)
 	if err := r.Delete(context.TODO(), ic); client.IgnoreNotFound(err) != nil {
 		return err
 	}
