@@ -45,10 +45,11 @@ import (
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
+	version  string
 )
 
 func printVersion() {
-	// log.Info(fmt.Sprintf("Operator Version: %s", version.Version))
+	setupLog.Info(fmt.Sprintf("Operator Version: %s", version))
 	setupLog.Info(fmt.Sprintf("Go Version: %s", runt.Version()))
 	setupLog.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runt.GOOS, runt.GOARCH))
 	setupLog.Info(fmt.Sprintf("Version of kubernetes: %v", controllers.RunningK8sVersion))

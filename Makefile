@@ -94,13 +94,13 @@ test: manifests generate fmt vet ## Run tests.
 ##@ Build
 
 build: generate fmt vet ## Build manager binary.
-	go build -o bin/manager main.go
+	go build -ldflags "-X main.version=${VERSION}" -o bin/manager main.go
 
 run: manifests generate fmt vet ## Run a controller from your host.
-	go run ./main.go $(ARGS)
+	go run -ldflags "-X main.version=${VERSION}" ./main.go $(ARGS)
 
 docker-build: test ## Build docker image with the manager.
-	docker build -t ${IMG} .
+	docker build -t ${IMG} . --build-arg VERSION=${VERSION}
 
 docker-push: ## Push docker image with the manager.
 	docker push ${IMG}
