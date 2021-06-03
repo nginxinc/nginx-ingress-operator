@@ -127,7 +127,7 @@ func (r *NginxIngressControllerReconciler) checkPrerequisites(log logr.Logger, i
 }
 
 // create common resources shared by all the Ingress Controllers
-func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger, instance *k8sv1alpha1.NginxIngressController) error {
+func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger) error {
 	// Create ClusterRole and ClusterRoleBinding for all the NginxIngressController resources.
 	var err error
 

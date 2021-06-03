@@ -137,7 +137,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		return ctrl.Result{}, err
 	}
 
-	if err := r.createCommonResources(log, instance); err != nil {
+	if err := r.createCommonResources(log); err != nil {
 		return ctrl.Result{}, err
 	}
 
