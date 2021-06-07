@@ -249,6 +249,8 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		}
 	}
 
+	log.Info("Finish reconcile for NginxIngressController")
+
 	return ctrl.Result{}, nil
 }
 

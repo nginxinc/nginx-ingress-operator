@@ -84,7 +84,7 @@ func createKICCustomResourceDefinitions(log logr.Logger, mgr manager.Manager) er
 		oldCRD, err := crdsClient.Get(context.TODO(), crd.Name, metav1.GetOptions{})
 		if err != nil {
 			if errors.IsNotFound(err) {
-				log.Info(fmt.Sprintf("no previous CRD %v found, creating a new one.", crd.Name))
+				log.V(1).Info(fmt.Sprintf("no previous CRD %v found, creating a new one.", crd.Name))
 				_, err = crdsClient.Create(context.TODO(), crd, metav1.CreateOptions{})
 				if err != nil {
 					return fmt.Errorf("error creating CRD %v: %v", crd.Name, err)
@@ -94,7 +94,7 @@ func createKICCustomResourceDefinitions(log logr.Logger, mgr manager.Manager) er
 			}
 		} else {
 			// Update CRDs if they already exist
-			log.Info(fmt.Sprintf("previous CRD %v found, updating.", crd.Name))
+			log.V(1).Info(fmt.Sprintf("previous CRD %v found, updating.", crd.Name))
 			oldCRD.Spec = crd.Spec
 			_, err = crdsClient.Update(context.TODO(), oldCRD, metav1.UpdateOptions{})
 			if err != nil {
