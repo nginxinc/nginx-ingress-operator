@@ -2,11 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{ "apiVersion": "k8s.nginx.org/v1alpha1", "kind": "NginxIngressController",
-      "metadata": { "name": "my-nginx-ingress-controller" }, "spec": { " ingressClass":
-      "nginx", "image": { "pullPolicy": "Always", repository": "docker.io/nginx/nginx-ingress",
-      "tag": "1.11.1-ubi" }, "nginxPlus": false, "serviceType": "NodePort", "type":
-      "deployment" }}]'
+    alm-examples: '[]'
     capabilities: Basic Install
   name: nginx-ingress-operator.v0.0.0
   namespace: placeholder
@@ -180,11 +176,12 @@ spec:
   - openshift
   links:
   - name: Nginx Ingress Operator
-    url: https://nginx-ingress-operator.domain
+    url: https://github.com/nginxinc/nginx-ingress-operator
   maintainers:
   - email: kubernetes@nginx.com
     name: NGINX Inc
   maturity: alpha
   provider:
     name: NGINX Inc
+  replaces: nginx-ingress-operator.v0.2.0
   version: 0.0.0
