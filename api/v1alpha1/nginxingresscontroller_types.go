@@ -21,7 +21,6 @@ import (
 )
 
 // NginxIngressControllerSpec defines the desired state of NginxIngressController
-// +operator-sdk:csv:customresourcedefinitions:resources={Deployment,v1,nginx-ingress-operator}
 type NginxIngressControllerSpec struct {
 	// The type of the Ingress Controller installation - deployment or daemonset.
 	// +kubebuilder:validation:Enum=deployment;daemonset
@@ -179,6 +178,7 @@ type NginxIngressControllerStatus struct {
 //+kubebuilder:subresource:status
 
 // NginxIngressController is the Schema for the nginxingresscontrollers API
+// +operator-sdk:csv:customresourcedefinitions:displayName="Nginx Ingress Controller",resources={{Pod,v1,nic-runner},{Deployment,v1,nic-deployment},{ReplicaSet,v1beta2,nic-replicaset}}
 type NginxIngressController struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

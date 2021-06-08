@@ -37,6 +37,16 @@ spec:
       displayName: Nginx Ingress Controller
       kind: NginxIngressController
       name: nginxingresscontrollers.k8s.nginx.org
+      resources:
+      - kind: Deployment
+        name: nic-deployment
+        version: v1
+      - kind: ReplicaSet
+        name: nic-replicaset
+        version: v1beta2
+      - kind: Pod
+        name: nic-runner
+        version: v1
       specDescriptors:
       - description: App Protect support configuration. Requires enableCRDs set to
           true.
