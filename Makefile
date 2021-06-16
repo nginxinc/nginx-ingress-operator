@@ -40,6 +40,10 @@ IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true,preserveUnknownFields=false"
 
+# Change DOCKERFILE tp openshift.Dockerfile to build Openshift image
+DOCKERFILE ?= Dockerfile
+RH_RBAC_IMAGE ?= registry.redhat.io/openshift4/ose-kube-rbac-proxy:v4.7
+
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -100,7 +104,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 	go run -ldflags "-X main.version=${VERSION}" ./main.go $(ARGS)
 
 docker-build: test ## Build docker image with the manager.
-	docker build -t ${IMG} . --build-arg VERSION=${VERSION}
+	docker build -t ${IMG} -f ${DOCKERFILE} . --build-arg VERSION=${VERSION}
 
 docker-push: ## Push docker image with the manager.
 	docker push ${IMG}
@@ -114,6 +118,11 @@ uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified 
 	$(KUSTOMIZE) build config/crd | kubectl delete -f -
 
 deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	$(KUSTOMIZE) build config/default | kubectl apply -f -
+
+openshift-deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+	VAL="${RH_RBAC_IMAGE}" yq e '.spec.template.spec.containers[0].image = strenv(VAL)' -i config/default/manager_auth_proxy_patch.yaml
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
