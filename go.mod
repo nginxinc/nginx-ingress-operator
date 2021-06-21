@@ -12,6 +12,8 @@ require (
 	github.com/onsi/gomega v1.13.0
 	github.com/openshift/api v0.0.0-20201013121701-9d5ee23b507d
 	github.com/prometheus/client_golang v1.9.0 // indirect
+	github.com/prometheus/procfs v0.2.0 // indirect
+	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/mod v0.4.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	k8s.io/api v0.20.4
