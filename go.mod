@@ -14,9 +14,9 @@ require (
 	github.com/prometheus/client_golang v1.9.0 // indirect
 	golang.org/x/mod v0.4.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	k8s.io/api v0.20.4
+	k8s.io/api v0.20.8
 	k8s.io/apiextensions-apiserver v0.20.2
-	k8s.io/apimachinery v0.20.4
-	k8s.io/client-go v0.20.4
+	k8s.io/apimachinery v0.20.8
+	k8s.io/client-go v0.20.8
 	sigs.k8s.io/controller-runtime v0.8.3
 )
