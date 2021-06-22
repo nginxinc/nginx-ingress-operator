@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X main.versi
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 WORKDIR /
-COPY --from=builder --chown=65532:65532 /workspace/manager .
+COPY --from=builder /workspace/manager .
 COPY config/crd/kic ./config/crd/kic
 
 ENTRYPOINT ["/manager"]
