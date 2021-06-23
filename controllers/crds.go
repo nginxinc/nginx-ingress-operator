@@ -44,7 +44,7 @@ func kicCRDs() ([]*v1.CustomResourceDefinition, error) {
 	for _, path := range manifests {
 		f, err := os.Open(path)
 		if err != nil {
-			return nil, fmt.Errorf("failed to open the CRD manifest %v: %v", path, err)
+			return nil, fmt.Errorf("failed to open the CRD manifest %v: %w", path, err)
 		}
 
 		var crd v1.CustomResourceDefinition
@@ -52,12 +52,12 @@ func kicCRDs() ([]*v1.CustomResourceDefinition, error) {
 		err = yaml.NewYAMLOrJSONDecoder(f, decoderBufferSize).Decode(&crd)
 
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse the CRD manifest %v: %v", path, err)
+			return nil, fmt.Errorf("failed to parse the CRD manifest %v: %w", path, err)
 		}
 
 		err = f.Close()
 		if err != nil {
-			return nil, fmt.Errorf("failed to close the CRD manifest %v: %v", path, err)
+			return nil, fmt.Errorf("failed to close the CRD manifest %v: %w", path, err)
 		}
 
 		crds = append(crds, &crd)
@@ -87,10 +87,10 @@ func createKICCustomResourceDefinitions(log logr.Logger, mgr manager.Manager) er
 				log.V(1).Info(fmt.Sprintf("no previous CRD %v found, creating a new one.", crd.Name))
 				_, err = crdsClient.Create(context.TODO(), crd, metav1.CreateOptions{})
 				if err != nil {
-					return fmt.Errorf("error creating CRD %v: %v", crd.Name, err)
+					return fmt.Errorf("error creating CRD %v: %w", crd.Name, err)
 				}
 			} else {
-				return fmt.Errorf("error getting CRD %v: %v", crd.Name, err)
+				return fmt.Errorf("error getting CRD %v: %w", crd.Name, err)
 			}
 		} else {
 			// Update CRDs if they already exist
@@ -98,7 +98,7 @@ func createKICCustomResourceDefinitions(log logr.Logger, mgr manager.Manager) er
 			oldCRD.Spec = crd.Spec
 			_, err = crdsClient.Update(context.TODO(), oldCRD, metav1.UpdateOptions{})
 			if err != nil {
-				return fmt.Errorf("error updating CRD %v: %v", crd.Name, err)
+				return fmt.Errorf("error updating CRD %v: %w", crd.Name, err)
 			}
 		}
 	}

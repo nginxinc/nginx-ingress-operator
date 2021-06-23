@@ -140,10 +140,10 @@ func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger
 			log.Info("no previous ClusterRole found, creating a new one.")
 			err = r.Create(context.TODO(), cr)
 			if err != nil {
-				return fmt.Errorf("error creating ClusterRole: %v", err)
+				return fmt.Errorf("error creating ClusterRole: %w", err)
 			}
 		} else {
-			return fmt.Errorf("error getting ClusterRole: %v", err)
+			return fmt.Errorf("error getting ClusterRole: %w", err)
 		}
 	} else {
 		// For updates in the ClusterRole permissions (eg new CRDs of the Ingress Controller).
@@ -151,7 +151,7 @@ func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger
 		cr := clusterRoleForNginxIngressController(clusterRoleName)
 		err = r.Update(context.TODO(), cr)
 		if err != nil {
-			return fmt.Errorf("error updating ClusterRole: %v", err)
+			return fmt.Errorf("error updating ClusterRole: %w", err)
 		}
 	}
 
@@ -164,12 +164,12 @@ func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger
 	}
 
 	if err != nil {
-		return fmt.Errorf("error creating ClusterRoleBinding: %v", err)
+		return fmt.Errorf("error creating ClusterRoleBinding: %w", err)
 	}
 
 	err = createKICCustomResourceDefinitions(log, r.Mgr)
 	if err != nil {
-		return fmt.Errorf("error creating KIC CRDs: %v", err)
+		return fmt.Errorf("error creating KIC CRDs: %w", err)
 	}
 
 	if r.SccAPIExists {
@@ -184,7 +184,7 @@ func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger
 		}
 
 		if err != nil {
-			return fmt.Errorf("error creating SecurityContextConstraints: %v", err)
+			return fmt.Errorf("error creating SecurityContextConstraints: %w", err)
 		}
 	}
 
