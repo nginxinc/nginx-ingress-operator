@@ -255,13 +255,13 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 }
 
 // createIfNotExists creates a new object. If the object exists, does nothing. It returns whether the object existed before or not.
-func (r *NginxIngressControllerReconciler) createIfNotExists(object client.Object) (error, bool) {
+func (r *NginxIngressControllerReconciler) createIfNotExists(object client.Object) (bool, error) {
 	err := r.Create(context.TODO(), object)
 	if err != nil && errors.IsAlreadyExists(err) {
-		return nil, true
+		return true, nil
 	}
 
-	return err, false
+	return false, err
 }
 
 func (r *NginxIngressControllerReconciler) finalizeNginxIngressController(log logr.Logger, instance *k8sv1alpha1.NginxIngressController) error {
