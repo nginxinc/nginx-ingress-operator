@@ -18,7 +18,7 @@ func (r *NginxIngressControllerReconciler) checkPrerequisites(log logr.Logger, i
 	if err != nil {
 		return err
 	}
-	err, existed := r.createIfNotExists(sa)
+	existed, err := r.createIfNotExists(sa)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (r *NginxIngressControllerReconciler) checkPrerequisites(log logr.Logger, i
 		}
 		ic := ingressClassForNginxIngressController(instance)
 
-		err, existed = r.createIfNotExists(ic)
+		existed, err = r.createIfNotExists(ic)
 		if err != nil {
 			return err
 		}
