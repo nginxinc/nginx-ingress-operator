@@ -7,9 +7,13 @@ import (
 )
 
 func ingressClassForNginxIngressController(instance *k8sv1alpha1.NginxIngressController) *networking.IngressClass {
+	ingressClassName := "nginx"
+	if instance.Spec.IngressClass != "" {
+		ingressClassName = instance.Spec.IngressClass
+	}
 	ic := &networking.IngressClass{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: instance.Spec.IngressClass,
+			Name: ingressClassName,
 		},
 		Spec: networking.IngressClassSpec{
 			Controller: "nginx.org/ingress-controller",
