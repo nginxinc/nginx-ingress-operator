@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nginxinc/nginx-ingress-operator/controllers/scc"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -39,7 +41,6 @@ import (
 
 const (
 	clusterRoleName = "nginx-ingress-role"
-	sccName         = "nginx-ingress-scc"
 	finalizer       = "nginxingresscontroller.k8s.nginx.org/finalizer"
 )
 
@@ -287,31 +288,10 @@ func (r *NginxIngressControllerReconciler) finalizeNginxIngressController(log lo
 	}
 
 	if r.SccAPIExists {
-		scc := sccForNginxIngressController(sccName)
-
-		err := r.Get(context.TODO(), types.NamespacedName{Name: sccName, Namespace: v1.NamespaceAll}, scc)
+		err := scc.RemoveServiceAccount(r.Client, instance.Namespace, instance.Name)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to remove service account user from SCC: %w", err)
 		}
-
-		var users []string
-		for _, u := range scc.Users {
-			if u != userForSCC(instance.Namespace, instance.Name) {
-				users = append(users, u)
-			}
-		}
-
-		scc.Users = users
-
-		err = r.Update(context.TODO(), scc)
-		if err != nil {
-			return err
-		}
-	}
-
-	ic := ingressClassForNginxIngressController(instance)
-	if err := r.Delete(context.TODO(), ic); client.IgnoreNotFound(err) != nil {
-		return err
 	}
 
 	log.Info("Successfully finalized NginxIngressController")

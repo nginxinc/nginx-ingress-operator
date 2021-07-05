@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/nginxinc/nginx-ingress-operator/controllers/scc"
+
 	"github.com/go-logr/logr"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	v1 "k8s.io/api/core/v1"
@@ -56,12 +58,7 @@ func (r *NginxIngressControllerReconciler) checkPrerequisites(log logr.Logger, i
 	// IngressClass is available from k8s 1.18+
 	minVersion, _ := version.ParseGeneric("v1.18.0")
 	if RunningK8sVersion.AtLeast(minVersion) {
-		if instance.Spec.IngressClass == "" {
-			instance.Spec.IngressClass = "nginx"
-			log.Info("Warning! IngressClass not set, using default", "IngressClass.Name", instance.Spec.IngressClass)
-		}
 		ic := ingressClassForNginxIngressController(instance)
-
 		existed, err = r.createIfNotExists(ic)
 		if err != nil {
 			return err
@@ -96,30 +93,9 @@ func (r *NginxIngressControllerReconciler) checkPrerequisites(log logr.Logger, i
 	}
 
 	if r.SccAPIExists {
-		// Assign this new User to the SCC (if is not present already)
-		scc := sccForNginxIngressController(sccName)
-
-		err = r.Get(context.TODO(), types.NamespacedName{Name: sccName, Namespace: v1.NamespaceAll}, scc)
+		err := scc.AddServiceAccount(r.Client, sa.Namespace, sa.Name)
 		if err != nil {
-			return err
-		}
-
-		user := userForSCC(sa.Namespace, sa.Name)
-		found := false
-		for _, u := range scc.Users {
-			if u == user {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			scc.Users = append(scc.Users, user)
-
-			err = r.Update(context.TODO(), scc)
-			if err != nil {
-				return err
-			}
+			return fmt.Errorf("failed to add service account user to scc: %w", err)
 		}
 	}
 
@@ -175,16 +151,9 @@ func (r *NginxIngressControllerReconciler) createCommonResources(log logr.Logger
 	if r.SccAPIExists {
 		log.Info("OpenShift detected as platform.")
 
-		scc := sccForNginxIngressController(sccName)
-
-		err = r.Get(context.TODO(), types.NamespacedName{Name: sccName, Namespace: v1.NamespaceAll}, scc)
-		if err != nil && errors.IsNotFound(err) {
-			log.Info("no previous SecurityContextConstraints found, creating a new one.")
-			err = r.Create(context.TODO(), scc)
-		}
-
+		err := scc.Create(r.Client, log)
 		if err != nil {
-			return fmt.Errorf("error creating SecurityContextConstraints: %w", err)
+			return fmt.Errorf("failed to create SecurityContextConstraints: %w", err)
 		}
 	}
 

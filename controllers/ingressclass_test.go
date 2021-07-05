@@ -29,3 +29,22 @@ func TestIngressClassForNginxIngressController(t *testing.T) {
 		t.Errorf("ingressClassForNginxIngressController() mismatch (-want +got):\n%s", diff)
 	}
 }
+
+func TestIngressClassForNginxIngressControllerDefault(t *testing.T) {
+	instance := &k8sv1alpha1.NginxIngressController{
+		Spec: k8sv1alpha1.NginxIngressControllerSpec{},
+	}
+	expected := &networking.IngressClass{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "nginx",
+		},
+		Spec: networking.IngressClassSpec{
+			Controller: "nginx.org/ingress-controller",
+		},
+	}
+
+	result := ingressClassForNginxIngressController(instance)
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("ingressClassForNginxIngressController() mismatch (-want +got):\n%s", diff)
+	}
+}
