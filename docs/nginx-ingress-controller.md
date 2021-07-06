@@ -65,6 +65,7 @@ spec:
    prometheus:
      enable: true
      port: 9114
+     secret: my-nginx-ingress/prometheus-secret
    enableLatencyMetrics: false
    configMapData:
      error-log-level: debug
@@ -147,6 +148,7 @@ spec:
 | --- | --- | --- | --- |
 | `enable` | `boolean` | Enable Prometheus metrics. | Yes |
 | `port` | `int` | Sets the port where the Prometheus metrics are exposed. Default is 9113. Format is `1023 - 65535`. | No |
+| `secret` | `string` | Sets the namespace/name of a TLS Secret Resource to use to enable TLS for the Prometheus endpoint. | No |
 | `enableLatencyMetrics` | `boolean` | Bucketed response times from when NGINX establishes a connection to an upstream server to when the last byte of the response body is received by NGINX. **Note** The metric for the upstream isn't available until traffic is sent to the upstream. Requires prometheus set to true | No |
 
 ## NginxIngressController.AppProtect

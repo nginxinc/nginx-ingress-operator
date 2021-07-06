@@ -263,6 +263,8 @@ type Prometheus struct {
 	// +kubebuilder:validation:Optional
 	// +nullable
 	Port *uint16 `json:"port"`
+	// Specifies an TLS Secret in the format namespace/name to use to secure the Prometheus endpoint.
+	Secret string `json:"secret"`
 }
 
 // AppProtect support configuration.
