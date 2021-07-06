@@ -195,6 +195,13 @@ spec:
                     minimum: 1023
                     nullable: true
                     type: integer
+                  secret:
+                    description: A Secret with a TLS certificate and key for TLS termination
+                      of the Prometheus endpoint. If the argument is set,
+                      but the Ingress controller is not able to fetch the Secret from
+                      Kubernetes API, the Ingress Controller will fail to start. Format
+                      is namespace/name.
+                    type: string
                 required:
                 - enable
                 type: object

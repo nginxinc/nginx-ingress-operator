@@ -197,8 +197,13 @@ spec:
                     minimum: 1023
                     nullable: true
                     type: integer
+                  secret:
+                    description: Specifies an TLS Secret in the format namespace/name
+                      to use to secure the Prometheus endpoint.
+                    type: string
                 required:
                 - enable
+                - secret
                 type: object
               replicas:
                 description: The number of replicas of the Ingress Controller pod.

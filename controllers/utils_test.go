@@ -225,6 +225,7 @@ func TestGeneratePodArgs(t *testing.T) {
 					Prometheus: &k8sv1alpha1.Prometheus{
 						Enable: true,
 						Port:   &promPort,
+						Secret: "my-nginx-ingress/prometheus-secret",
 					},
 					EnableLatencyMetrics: true,
 					GlobalConfiguration:  "my-nginx-ingress/globalconfiguration",
@@ -260,6 +261,7 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-enable-prometheus-metrics",
 				"-prometheus-metrics-listen-port=9114",
 				"-enable-latency-metrics",
+				"-prometheus-tls-secret=my-nginx-ingress/prometheus-secret",
 				"-enable-custom-resources=false",
 				"-nginx-reload-timeout=5000",
 			},

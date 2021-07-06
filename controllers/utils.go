@@ -111,6 +111,10 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		if instance.Spec.EnableLatencyMetrics {
 			args = append(args, "-enable-latency-metrics")
 		}
+
+		if instance.Spec.Prometheus.Secret != "" {
+			args = append(args, fmt.Sprintf("-prometheus-tls-secret=%v", instance.Spec.Prometheus.Secret))
+		}
 	}
 
 	if instance.Spec.EnableCRDs != nil && !*instance.Spec.EnableCRDs {
