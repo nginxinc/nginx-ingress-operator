@@ -263,7 +263,12 @@ type Prometheus struct {
 	// +kubebuilder:validation:Optional
 	// +nullable
 	Port *uint16 `json:"port"`
-	// Specifies an TLS Secret in the format namespace/name to use to secure the Prometheus endpoint.
+	// A Secret with a TLS certificate and key for TLS termination of the Prometheus endpoint.
+	// The secret must be of the type kubernetes.io/tls.
+	// If specified, but the Ingress controller is not able to fetch the Secret from Kubernetes API,
+	// the Ingress Controller will fail to start.
+	// Format is namespace/name.
+	// +kubebuilder:validation:Optional
 	Secret string `json:"secret"`
 }
 
