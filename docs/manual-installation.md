@@ -2,37 +2,24 @@
 
 ### 1. Deploy the operator
 
-This will deploy the operator in the `default` namespace.
+This will deploy the operator in the `nginx-ingress-operator-system` namespace.
 
-1. Deploy the NginxIngressController Custom Resource Definition:
-    ```
-    kubectl apply -f deploy/crds/k8s.nginx.org_nginxingresscontrollers_crd.yaml
-    ```
 
-1. Deploy the ServiceAccount:
+1. Deploy the Operator and associated resources:
+   1. <Openshift> To deploy the Operator and associated resources to an OpenShift environment, run:
     ```
-    kubectl apply -f deploy/service_account.yaml
+    make openshift-deploy IMG=registry.connect.redhat.com/nginx/nginx-ingress-operator:0.3.0
     ```
 
-1. Deploy the Role:
+   2. To deploy the Operator and associated resources to all other environments:
     ```
-    kubectl apply -f deploy/role.yaml
-    ```
-
-1. Deploy the RoleBinding:
-    ```
-    kubectl apply -f deploy/role_binding.yaml
+    make deploy IMG=nginx/nginx-ingress-operator:0.3.0
     ```
 
-1. Deploy the Operator:
+2. Check that the Operator is running:
     ```
-    kubectl apply -f deploy/operator.yaml
-    ```
+    kubectl get deployments -n nginx-ingress-operator-system   
 
-1. Check that the Operator is running:
-    ```
-    kubectl get deployment nginx-ingress-operator
-
-    NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
-    nginx-ingress-operator   1/1     1            1           15s
+    NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+    nginx-ingress-operator-controller-manager   1/1     1            1           15s
     ```

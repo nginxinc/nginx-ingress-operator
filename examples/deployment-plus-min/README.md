@@ -7,7 +7,7 @@ In this example we deploy the NGINX Ingress Controller (edge) as a [Deployment](
 1. Have the NGINX Ingress Operator deployed in your cluster. Follow [installation](../../README.md#installation) steps.
 2. Build the NGINX Ingress Controller for Plus image and push it to a private repository following 
 [these instructions](https://docs.nginx.com/nginx-ingress-controller/installation/building-ingress-controller-image/#building-the-image-and-pushing-it-to-the-private-registry) 
-(**Note**: For the build process, if using Openshift, use the `DOCKERFILE=openshift/DockerfileForPlus` variable). 
+(**Note**: For the build process, if using Openshift, use the `openshift-image-plus` or `openshift-image-nap-plus` targets). 
 
 If you would like to use TransportServers, refer to [this section](README.md#TransportServers) for additional pre-requisites.
 
