@@ -170,7 +170,7 @@ bundle-build: ## Build the bundle image.
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 openshift-bundle-build: bundle ## Build the bundle image for OpenShift.
-	@printf "%s\n" '' 'LABEL com.redhat.openshift.versions="v4.6"' 'LABEL com.redhat.delivery.operator.bundle=true' 'LABEL com.redhat.delivery.backport=true' >> bundle.Dockerfile
+	@printf "%s\n" '' 'LABEL com.redhat.openshift.versions="v4.5"' 'LABEL com.redhat.delivery.operator.bundle=true' 'LABEL com.redhat.delivery.backport=true' >> bundle.Dockerfile
 
 .PHONY: bundle-push
 bundle-push: ## Push the bundle image.
