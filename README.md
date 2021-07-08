@@ -12,6 +12,7 @@ The following table shows the relation between the versions of the two projects:
 
 | NGINX Ingress Controller | NGINX Ingress Operator |
 | --- | --- |
+| 1.12.x | 0.3.0 |
 | 1.11.x | 0.2.0 |
 | 1.10.x | 0.1.0 |
 | 1.9.x | 0.0.7 |
@@ -29,10 +30,14 @@ Note: The NGINX Ingress Operator works only for NGINX Ingress Controller version
     * For an NGINX installation see the [NGINX example](./examples/deployment-oss-min).
     * For an NGINX Plus installation see the [NGINX Plus example](./examples/deployment-plus-min).
 
+## Upgrades
+
+See [upgrade docs](./docs/upgrades)
+
 ## NGINX Ingress Operator Releases
 We publish NGINX Ingress Operator releases on GitHub. See our [releases page](https://github.com/nginxinc/nginx-ingress-operator/releases).
 
-The latest stable release is [0.2.0](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.2.0). For production use, we recommend that you choose the latest stable release.
+The latest stable release is [0.3.0](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.3.0). For production use, we recommend that you choose the latest stable release.
 
 ## Development
 
@@ -41,28 +46,25 @@ It is possible to run the operator in your local machine. This is useful for tes
 ### Run Operator locally
 
 1. Have access to a Kubernetes/Openshift cluster.
-1. Apply the latest CRD:
+1. Apply the latest CRDs:
+   ```
+    make install
+    kubectl apply -f config/crd/kic/
     ```
-    kubectl apply -f deploy/crds/k8s.nginx.org_nginxingresscontrollers_crd.yaml
-    ```
-1. Apply the NGINX Ingress Controller CRDs:
-    ```
-    kubectl apply -f build/kic_crds
-    ```
-1. Run `make run-local`.
+2. Run `make run`.
 
-The operator will run in your local machine but will be communicating with the cluster. The operator will only watch the `default` namespace when deployed locally.
+The operator will run in your local machine but will be communicating with the cluster. 
 
 ### Update CRD
 
 If any change is made in the CRD in the go code, run the following commands to update the changes in the CRD yaml:
 
-1. `make generate-crds`
-1. Apply the new CRD definition again in your cluster `kubectl apply -f deploy/crds/k8s.nginx.org_nginxingresscontrollers_crd.yaml`.
+1. `make manifests`
+2. Apply the new CRD definition again in your cluster `make install`.
 
 ### Run tests
 
-Run `make test` to run unit tests locally.
+Run `make test` to run the full test suite including envtest, or `make unit-test` to run just the unit tests locally.
 
 ## Contributing
 

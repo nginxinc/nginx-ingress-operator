@@ -92,6 +92,8 @@ vet: ## Run go vet against code.
 lint: ## Run golangci-lint against code.
 	docker run --pull always --rm -v $(shell pwd):/nginx-ingress-operator -w /nginx-ingress-operator -v $(shell go env GOCACHE):/cache/go -e GOCACHE=/cache/go -e GOLANGCI_LINT_CACHE=/cache/go -v $(shell go env GOPATH)/pkg:/go/pkg golangci/golangci-lint:latest golangci-lint --color always run
 
+unit-test:
+	go test ./... -coverprofile cover.out
 
 ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
 test: manifests generate fmt vet ## Run tests.
