@@ -14,7 +14,7 @@ metadata:
             "image": {
               "pullPolicy": "Always",
               "repository": "docker.io/nginx/nginx-ingress",
-              "tag": "1.11.3-ubi"
+              "tag": "1.12.0-ubi"
             },
             "ingressClass": "nginx",
             "nginxPlus": false,
@@ -353,7 +353,7 @@ spec:
                 - --upstream=http://127.0.0.1:8080/
                 - --logtostderr=true
                 - --v=10
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+                image: registry.redhat.io/openshift4/ose-kube-rbac-proxy:v4.7
                 name: kube-rbac-proxy
                 ports:
                 - containerPort: 8443
@@ -365,7 +365,7 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: nginx/nginx-ingress-operator:0.3.0
+                image: registry.connect.redhat.com/nginx/nginx-ingress-operator:0.3.0
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -381,11 +381,11 @@ spec:
                   periodSeconds: 10
                 resources:
                   limits:
-                    cpu: 100m
-                    memory: 30Mi
+                    cpu: 500m
+                    memory: 128Mi
                   requests:
-                    cpu: 100m
-                    memory: 20Mi
+                    cpu: 250m
+                    memory: 64Mi
                 securityContext:
                   allowPrivilegeEscalation: false
               securityContext:
