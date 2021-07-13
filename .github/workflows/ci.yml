@@ -131,7 +131,7 @@ jobs:
       - name: Push to Dockerhub
         uses: docker/build-push-action@v2
         with:
-          file: build/Dockerfile
+          file: Dockerfile
           context: '.'
           tags: |
             nginx/nginx-ingress-operator:latest
