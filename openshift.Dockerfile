@@ -22,5 +22,13 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 WORKDIR /
 COPY --from=builder /workspace/manager .
 COPY config/crd/kic ./config/crd/kic
+COPY LICENSE /licenses/
+
+LABEL name="NGINX Ingress Operator" \
+      description="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers" \
+      summary="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers" \
+      io.openshift.tags="nginx,ingress-controller,ingress,controller,kubernetes,openshift" \
+      maintainer="NGINX Inc <kubernetes@nginx.com>" \
+      vendor="NGINX Inc <kubernetes@nginx.com>"
 
 ENTRYPOINT ["/manager"]
