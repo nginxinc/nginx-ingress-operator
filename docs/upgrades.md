@@ -5,7 +5,7 @@ Release 0.3.0 includes a major upgrade of the Operator-SDK which has resulted in
 
 ## OLM upgrade - 0.2.0 to 0.3.0
 
-**Note: The `nginx-ingress-operator` supports basic install only - we do not support auto-updates. When you are installing the Operator using the OLM, the auto-update feature should be disabled to avoid breaking changes being auto-applied.**
+**Note: The `nginx-ingress-operator` supports `Basic Install` only - we do not support auto-updates. When you are installing the Operator using the OLM, the auto-update feature should be disabled to avoid breaking changes being auto-applied. In OpenShift, this can be done by setting the `Approval Strategy` to `Manual`. Please see the [Operator SDK docs](https://sdk.operatorframework.io/docs/advanced-topics/operator-capabilities/operator-capabilities/) for more details on the Operator Capability Levels.**
 
 ### 1. Uninstall the existing 0.2.0 operator
 
