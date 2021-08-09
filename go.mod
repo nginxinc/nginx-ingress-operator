@@ -15,9 +15,9 @@ require (
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
 	golang.org/x/mod v0.4.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	k8s.io/api v0.20.4
+	k8s.io/api v0.20.9
 	k8s.io/apiextensions-apiserver v0.20.2
-	k8s.io/apimachinery v0.20.4
-	k8s.io/client-go v0.20.4
+	k8s.io/apimachinery v0.20.9
+	k8s.io/client-go v0.20.9
 	sigs.k8s.io/controller-runtime v0.8.3
 )
