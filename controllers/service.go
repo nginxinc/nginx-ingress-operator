@@ -58,10 +58,11 @@ func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressControll
 	return svc, nil
 }
 
-func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]string) controllerutil.MutateFn {
+func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]string, annotations map[string]string) controllerutil.MutateFn {
 	return func() error {
 		svc.Spec.Type = corev1.ServiceType(serviceType)
 		svc.Labels = labels
+		svc.Annotations = annotations
 		return nil
 	}
 }
