@@ -223,10 +223,12 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		return ctrl.Result{}, err
 	}
 	var extraLabels map[string]string
+	var extraAnnotations map[string]string
 	if instance.Spec.Service != nil {
 		extraLabels = instance.Spec.Service.ExtraLabels
+		extraAnnotations = instance.Spec.Service.ExtraAnnotations
 	}
-	res, err := controllerutil.CreateOrUpdate(ctx, r.Client, svc, serviceMutateFn(svc, instance.Spec.ServiceType, extraLabels))
+	res, err := controllerutil.CreateOrUpdate(ctx, r.Client, svc, serviceMutateFn(svc, instance.Spec.ServiceType, extraLabels, extraAnnotations))
 	log.V(1).Info(fmt.Sprintf("Service %s %s", svc.Name, res))
 	if err != nil {
 		return ctrl.Result{}, err

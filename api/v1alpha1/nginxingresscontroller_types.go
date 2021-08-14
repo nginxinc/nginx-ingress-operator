@@ -283,6 +283,9 @@ type Service struct {
 	// Specifies extra labels of the service.
 	// +kubebuilder:validation:Optional
 	ExtraLabels map[string]string `json:"extraLabels,omitempty"`
+	// Specifies extra annotations of the service.
+	// +kubebuilder:validation:Optional
+	ExtraAnnotations map[string]string `json:"extraAnnotations,omitempty"`
 }
 
 func init() {
