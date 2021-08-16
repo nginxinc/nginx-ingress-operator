@@ -44,10 +44,6 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		args = append(args, fmt.Sprintf("-ingress-class=%v", instance.Spec.IngressClass))
 	}
 
-	if instance.Spec.UseIngressClassOnly {
-		args = append(args, "-use-ingress-class-only")
-	}
-
 	if instance.Spec.WatchNamespace != "" {
 		args = append(args, fmt.Sprintf("-watch-namespace=%v", instance.Spec.WatchNamespace))
 	}

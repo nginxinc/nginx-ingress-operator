@@ -82,10 +82,7 @@ spec:
         path: image
       - description: A class of the Ingress controller. The Ingress controller only
           processes Ingress resources that belong to its class (in other words, have
-          the annotation “kubernetes.io/ingress.class”). Additionally, the Ingress
-          controller processes Ingress resources that do not have that annotation,
-          which can be disabled by setting UseIngressClassOnly to true. Default is
-          `nginx`.
+          the annotation “kubernetes.io/ingress.class”). Default is `nginx`.
         displayName: Ingress Class
         path: ingressClass
       - description: Log level for V logs. Format is 0 - 3
@@ -135,10 +132,6 @@ spec:
           or daemonset.
         displayName: Type
         path: type
-      - description: Ignore Ingress resources without the “kubernetes.io/ingress.class”
-          annotation.
-        displayName: Use Ingress Class Only
-        path: useIngressClassOnly
       - description: Namespace to watch for Ingress resources. By default the Ingress
           controller watches all namespaces.
         displayName: Watch Namespace
