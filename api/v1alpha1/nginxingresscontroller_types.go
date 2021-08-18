@@ -64,9 +64,7 @@ type NginxIngressControllerSpec struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
 	EnablePreviewPolicies bool `json:"enablePreviewPolicies"`
 	// A class of the Ingress controller. The Ingress controller only processes Ingress resources that belong to its
-	// class (in other words, have the annotation “kubernetes.io/ingress.class”).
-	// Additionally, the Ingress controller processes Ingress resources that do not have that annotation,
-	// which can be disabled by setting UseIngressClassOnly to true. Default is `nginx`.
+	// class (in other words, have the annotation “kubernetes.io/ingress.class”). Default is `nginx`.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
 	IngressClass string `json:"ingressClass"`
@@ -75,10 +73,6 @@ type NginxIngressControllerSpec struct {
 	// +nullable
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
 	Service *Service `json:"service"`
-	// Ignore Ingress resources without the “kubernetes.io/ingress.class” annotation.
-	// +kubebuilder:validation:Optional
-	// +operator-sdk:csv:customresourcedefinitions:type=spec
-	UseIngressClassOnly bool `json:"useIngressClassOnly"`
 	// Namespace to watch for Ingress resources. By default the Ingress controller watches all namespaces.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
