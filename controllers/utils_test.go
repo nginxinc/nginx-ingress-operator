@@ -199,11 +199,10 @@ func TestGeneratePodArgs(t *testing.T) {
 					Namespace: namespace,
 				},
 				Spec: k8sv1alpha1.NginxIngressControllerSpec{
-					NginxPlus:           true,
-					DefaultSecret:       "my-nginx-ingress/my-secret",
-					IngressClass:        "ingressClass",
-					UseIngressClassOnly: true,
-					WatchNamespace:      "default",
+					NginxPlus:      true,
+					DefaultSecret:  "my-nginx-ingress/my-secret",
+					IngressClass:   "ingressClass",
+					WatchNamespace: "default",
 					HealthStatus: &k8sv1alpha1.HealthStatus{
 						Enable: true,
 						URI:    "/healthz",
@@ -245,7 +244,6 @@ func TestGeneratePodArgs(t *testing.T) {
 				"-nginx-plus",
 				"-enable-app-protect",
 				"-ingress-class=ingressClass",
-				"-use-ingress-class-only",
 				"-watch-namespace=default",
 				"-health-status",
 				"-health-status-uri=/healthz",
