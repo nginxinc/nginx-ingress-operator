@@ -11,7 +11,7 @@ This will deploy the operator in the `nginx-ingress-operator-system` namespace.
     git checkout v0.3.0
     ```
 
-   2. <Openshift> To deploy the Operator and associated resources to an OpenShift environment, run:
+   2. `Openshift` To deploy the Operator and associated resources to an OpenShift environment, run:
     ```
     make openshift-deploy IMG=registry.connect.redhat.com/nginx/nginx-ingress-operator:0.3.0
     ```
