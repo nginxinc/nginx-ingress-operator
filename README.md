@@ -12,6 +12,7 @@ The following table shows the relation between the versions of the two projects:
 
 | NGINX Ingress Controller | NGINX Ingress Operator |
 | --- | --- |
+| 2.0.x | 0.4.0 |
 | 1.12.x | 0.3.0 |
 | 1.11.x | 0.2.0 |
 | 1.10.x | 0.1.0 |
@@ -37,7 +38,7 @@ See [upgrade docs](./docs/upgrades)
 ## NGINX Ingress Operator Releases
 We publish NGINX Ingress Operator releases on GitHub. See our [releases page](https://github.com/nginxinc/nginx-ingress-operator/releases).
 
-The latest stable release is [0.3.0](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.3.0). For production use, we recommend that you choose the latest stable release.
+The latest stable release is [0.4.0](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.4.0). For production use, we recommend that you choose the latest stable release.
 
 ## Development
 
