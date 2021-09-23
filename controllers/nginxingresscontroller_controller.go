@@ -164,7 +164,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		} else if err != nil {
 			log.Error(err, "Failed to get Deployment")
 			return ctrl.Result{}, err
-		} else if hasDeploymentChanged(dep, instance) {
+		} else if hasDeploymentChanged(found, instance) {
 			log.Info("NginxIngressController spec has changed, updating Deployment")
 			updated := updateDeployment(found, instance)
 			err = r.Update(ctx, updated)
@@ -198,7 +198,7 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 			}
 		} else if err != nil {
 			return ctrl.Result{}, err
-		} else if hasDaemonSetChanged(ds, instance) {
+		} else if hasDaemonSetChanged(found, instance) {
 			log.Info("NginxIngressController spec has changed, updating DaemonSet")
 			updated := updateDaemonSet(found, instance)
 			err = r.Update(ctx, updated)
