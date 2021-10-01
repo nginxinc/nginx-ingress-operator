@@ -135,7 +135,8 @@ spec:
               ingressClass:
                 description: A class of the Ingress controller. The Ingress controller
                   only processes Ingress resources that belong to its class (in other
-                  words, have the annotation “kubernetes.io/ingress.class”). Default is `nginx`.
+                  words, have the annotation “kubernetes.io/ingress.class”). Default
+                  is `nginx`.
                 type: string
               logLevel:
                 description: Log level for V logs. Format is 0 - 3
