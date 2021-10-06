@@ -111,7 +111,7 @@ jobs:
   release-docker:
     name: Release Image
     runs-on: ubuntu-20.04
-    needs: [build, unit-tests]
+    needs: [vars, build, unit-tests]
     if:
       github.repository == 'nginxinc/nginx-ingress-operator' &&
       github.event_name == 'create' &&
