@@ -14,7 +14,7 @@ updates:
     reviewers:
       - "nginxinc/kic"
   - package-ecosystem: "docker"
-    directory: "/build"
+    directory: "/"
     schedule:
       interval: weekly
     reviewers:
