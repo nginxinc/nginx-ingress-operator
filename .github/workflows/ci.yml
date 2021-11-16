@@ -65,7 +65,7 @@ jobs:
       - name: Build Binary
         run: make build
       - name: Cache Artifacts
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/bin/manager
           key: nginx-ingress-operator-${{ github.run_id }}-${{ github.run_number }}
@@ -92,7 +92,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Fetch Cached Artifacts
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/bin/manager
           key: nginx-ingress-operator-${{ github.run_id }}-${{ github.run_number }}
@@ -102,11 +102,33 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: '.'
-          # Disable cache until https://github.com/docker/buildx/issues/681 is fixed
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: nginx/nginx-ingress-operator:${{ github.sha }}
           push: false
+          pull: true
+          load: true
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.1.0
+        continue-on-error: true
+        with:
+          image-ref: nginx/nginx-ingress-operator:${{ github.sha }}
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          ignore-unfixed: 'true'
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        continue-on-error: true
+        with:
+          sarif_file: 'trivy-result.sarif'
+      - name: Upload Scan Results
+        uses: actions/upload-artifact@v2
+        continue-on-error: true
+        with:
+          name: 'trivy-results.sarif'
+          path: 'trivy-results.sarif'
+        if: always()
 
   release-docker:
     name: Release Image
@@ -120,7 +142,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Fetch Cached Artifacts
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/build/_output/bin/nginx-ingress-operator
           key: nginx-ingress-operator-${{ github.run_id }}-${{ github.run_number }}
@@ -136,15 +158,13 @@ jobs:
         with:
           file: Dockerfile
           context: '.'
-          # Disable cache until https://github.com/docker/buildx/issues/681 is fixed
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
             nginx/nginx-ingress-operator:latest
             nginx/nginx-ingress-operator:${{ needs.vars.outputs.git_tag }}
           push: true
+          pull: true
 
   notify:
     name: Notify
