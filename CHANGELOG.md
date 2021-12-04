@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.0
+
+An automatically generated list of changes can be found on Github at: [0.4.0 Release](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.4.0)
+
 ### 0.3.0
 
 An automatically generated list of changes can be found on Github at: [0.3.0 Release](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.3.0)

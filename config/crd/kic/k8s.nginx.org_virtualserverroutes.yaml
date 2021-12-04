@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.6.2
+    controller-gen.kubebuilder.io/version: v0.7.0
   creationTimestamp: null
   name: virtualserverroutes.k8s.nginx.org
 spec:
@@ -491,6 +491,10 @@ spec:
                             type: boolean
                           fails:
                             type: integer
+                          grpcService:
+                            type: string
+                          grpcStatus:
+                            type: integer
                           headers:
                             type: array
                             items:
@@ -539,6 +543,8 @@ spec:
                         type: string
                       next-upstream-tries:
                         type: integer
+                      ntlm:
+                        type: boolean
                       port:
                         type: integer
                       queue:
@@ -585,6 +591,8 @@ spec:
                         properties:
                           enable:
                             type: boolean
+                      type:
+                        type: string
                       use-cluster-ip:
                         type: boolean
             status:
