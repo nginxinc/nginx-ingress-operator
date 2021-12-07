@@ -346,7 +346,7 @@ spec:
                 - --upstream=http://127.0.0.1:8080/
                 - --logtostderr=true
                 - --v=10
-                image: registry.redhat.io/openshift4/ose-kube-rbac-proxy:v4.7
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
                 name: kube-rbac-proxy
                 ports:
                 - containerPort: 8443
@@ -359,7 +359,12 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: registry.connect.redhat.com/nginx/nginx-ingress-operator:0.4.0
+                env:
+                - name: WATCH_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.annotations['olm.targetNamespaces']
+                image: nginx/nginx-ingress-operator:0.4.0
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -422,11 +427,11 @@ spec:
         serviceAccountName: nginx-ingress-operator-controller-manager
     strategy: deployment
   installModes:
-  - supported: false
+  - supported: true
     type: OwnNamespace
-  - supported: false
+  - supported: true
     type: SingleNamespace
-  - supported: false
+  - supported: true
     type: MultiNamespace
   - supported: true
     type: AllNamespaces
