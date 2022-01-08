@@ -62,6 +62,11 @@ func clusterRoleForNginxIngressController(name string) *rbacv1.ClusterRole {
 			APIGroups: []string{"appprotect.f5.com"},
 			Resources: []string{"aplogconfs", "appolicies", "apusersigs"},
 		},
+		{
+			Verbs:     []string{"get", "list", "watch"},
+			APIGroups: []string{"appprotectdos.f5.com"},
+			Resources: []string{"apdoslogconfs", "apdospolicies", "dosprotectedresources"},
+		},
 	}
 	rbac := &rbacv1.ClusterRole{
 		ObjectMeta: v1.ObjectMeta{

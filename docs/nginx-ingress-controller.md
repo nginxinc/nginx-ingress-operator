@@ -1,7 +1,7 @@
 # NginxIngressController Custom Resource
 
-The `NginxIngressController` Custom Resource is the definition of a deployment of the Ingress Controller. 
-With this Custom Resource, the NGINX Ingress Operator will be able to deploy and configure instances of the Ingress Controller in your cluster.  
+The `NginxIngressController` Custom Resource is the definition of a deployment of the Ingress Controller.
+With this Custom Resource, the NGINX Ingress Operator will be able to deploy and configure instances of the Ingress Controller in your cluster.
 
 ## Configuration
 
@@ -25,7 +25,7 @@ spec:
 ```
 
  The following example shows the usage of all fields (required and optional):
- 
+
 ```yaml
  apiVersion: k8s.nginx.org/v1alpha1
  kind: NginxIngressController
@@ -73,8 +73,8 @@ spec:
    nginxReloadTimeout: 5000
    appProtect:
      enable: false
- ``` 
- 
+ ```
+
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 | `type` | `string` | The type of the Ingress Controller installation - `deployment` or `daemonset`. | Yes |
@@ -153,4 +153,14 @@ spec:
 
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
-| `enable` | `boolean` | Enable App Protect. | Yes |
+| `enable` | `boolean` | Enable App Protect WAF. | Yes |
+
+## NginxIngressController.AppProtectDos
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| `enable` | `boolean` | Enable App Protect DoS. | Yes |
+| `debug` | `boolean` | Enable debug mode. | No |
+| `maxDaemons` | `int` | Maximum number of ADMD instances. | No |
+| `maxWorkers` | `int` | Max number of nginx processes to support. | No |
+| `memory` | `int` | RAM memory size to consume in MB. | No |
