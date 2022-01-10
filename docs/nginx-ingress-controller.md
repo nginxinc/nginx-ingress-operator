@@ -100,7 +100,8 @@ spec:
 | `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
 | `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires `enableCRDs` set to `true`. | No |
 | `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires `enableCRDs` set to `true`. | No |
-| `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires `nginxPlus` set to `true`. | No |
+| `appProtect` | [appProtect](#nginxingresscontrollerappprotect) | App Protect WAF support configuration. Requires `nginxPlus` set to `true`. | No |
+| `appProtectDos` | [appProtectDos](#nginxingresscontrollerappprotectdos) | App Protect DoS support configuration. Requires `nginxPlus` set to `true`. | No |
 | `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
 
 ## NginxIngressController.Image
