@@ -26,6 +26,10 @@ on:
 env:
   DOCKER_BUILDKIT: 1
 
+concurrency:
+  group: ${{ github.ref_name }}-ci
+  cancel-in-progress: true
+
 jobs:
 
   vars:
@@ -37,10 +41,6 @@ jobs:
       git_tag: ${{ steps.vars.outputs.git_tag }}
       repo_name: ${{ steps.vars.outputs.repo }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Output Variables

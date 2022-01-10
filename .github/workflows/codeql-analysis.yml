@@ -9,6 +9,10 @@ on:
   schedule:
     - cron: '45 2 * * 4'
 
+concurrency:
+  group: ${{ github.ref_name }}-codeql
+  cancel-in-progress: true
+
 jobs:
   analyze:
     name: Analyze
@@ -23,10 +27,6 @@ jobs:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
     steps:
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Checkout repository
       uses: actions/checkout@v2
 
