@@ -55,7 +55,7 @@ type NginxIngressControllerReconciler struct {
 //+kubebuilder:rbac:groups=k8s.nginx.org,resources=nginxingresscontrollers,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=k8s.nginx.org,resources=nginxingresscontrollers/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=k8s.nginx.org,resources=nginxingresscontrollers/finalizers,verbs=update
-//+kubebuilder:rbac:groups=k8s.nginx.org;appprotect.f5.com,resources=*,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=k8s.nginx.org;appprotect.f5.com;appprotectdos.f5.com,resources=*,verbs=get;list;watch;create;update;patch;delete
 
 //+kubebuilder:rbac:groups=apps,resources=deployments;daemonsets;replicasets;statefulsets,verbs=get;list;watch;create;update;patch;delete
 

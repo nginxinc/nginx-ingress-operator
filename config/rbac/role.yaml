@@ -38,6 +38,7 @@ rules:
   - update
 - apiGroups:
   - appprotect.f5.com
+  - appprotectdos.f5.com
   - k8s.nginx.org
   resources:
   - '*'
