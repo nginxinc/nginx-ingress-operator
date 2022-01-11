@@ -38,6 +38,21 @@ func generatePodArgs(instance *k8sv1alpha1.NginxIngressController) []string {
 		if instance.Spec.AppProtect != nil && instance.Spec.AppProtect.Enable {
 			args = append(args, "-enable-app-protect")
 		}
+		if instance.Spec.AppProtectDos != nil && instance.Spec.AppProtectDos.Enable {
+			args = append(args, "-enable-app-protect-dos")
+			if instance.Spec.AppProtectDos.Debug {
+				args = append(args, "-app-protect-dos-debug")
+			}
+			if instance.Spec.AppProtectDos.MaxDaemons != 0 {
+				args = append(args, fmt.Sprintf("-app-protect-dos-max-daemons=%v", instance.Spec.AppProtectDos.MaxDaemons))
+			}
+			if instance.Spec.AppProtectDos.MaxWorkers != 0 {
+				args = append(args, fmt.Sprintf("-app-protect-dos-max-workers=%v", instance.Spec.AppProtectDos.MaxWorkers))
+			}
+			if instance.Spec.AppProtectDos.Memory != 0 {
+				args = append(args, fmt.Sprintf("-app-protect-dos-memory=%v", instance.Spec.AppProtectDos.Memory))
+			}
+		}
 	}
 
 	if instance.Spec.IngressClass != "" {

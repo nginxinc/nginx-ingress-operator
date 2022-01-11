@@ -1,7 +1,7 @@
 # NginxIngressController Custom Resource
 
-The `NginxIngressController` Custom Resource is the definition of a deployment of the Ingress Controller. 
-With this Custom Resource, the NGINX Ingress Operator will be able to deploy and configure instances of the Ingress Controller in your cluster.  
+The `NginxIngressController` Custom Resource is the definition of a deployment of the Ingress Controller.
+With this Custom Resource, the NGINX Ingress Operator will be able to deploy and configure instances of the Ingress Controller in your cluster.
 
 ## Configuration
 
@@ -25,7 +25,7 @@ spec:
 ```
 
  The following example shows the usage of all fields (required and optional):
- 
+
 ```yaml
  apiVersion: k8s.nginx.org/v1alpha1
  kind: NginxIngressController
@@ -73,8 +73,8 @@ spec:
    nginxReloadTimeout: 5000
    appProtect:
      enable: false
- ``` 
- 
+ ```
+
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 | `type` | `string` | The type of the Ingress Controller installation - `deployment` or `daemonset`. | Yes |
@@ -100,7 +100,8 @@ spec:
 | `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
 | `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires `enableCRDs` set to `true`. | No |
 | `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires `enableCRDs` set to `true`. | No |
-| `appprotect` | [appprotect](#nginxingresscontrollerappprotect) | App Protect support configuration. Requires `nginxPlus` set to `true`. | No |
+| `appProtect` | [appProtect](#nginxingresscontrollerappprotect) | App Protect WAF support configuration. Requires `nginxPlus` set to `true`. | No |
+| `appProtectDos` | [appProtectDos](#nginxingresscontrollerappprotectdos) | App Protect DoS support configuration. Requires `nginxPlus` set to `true`. | No |
 | `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
 
 ## NginxIngressController.Image
@@ -154,4 +155,14 @@ spec:
 
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
-| `enable` | `boolean` | Enable App Protect. | Yes |
+| `enable` | `boolean` | Enable App Protect WAF. | Yes |
+
+## NginxIngressController.AppProtectDos
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| `enable` | `boolean` | Enable App Protect DoS. | Yes |
+| `debug` | `boolean` | Enable debug mode. | No |
+| `maxDaemons` | `int` | Maximum number of ADMD instances. | No |
+| `maxWorkers` | `int` | Max number of nginx processes to support. | No |
+| `memory` | `int` | RAM memory size to consume in MB. | No |

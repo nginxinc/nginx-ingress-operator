@@ -24,6 +24,9 @@ COPY --from=builder /workspace/manager .
 COPY config/crd/kic ./config/crd/kic
 COPY LICENSE /licenses/
 
+# temporary fix for CVE-2021-42574
+RUN microdnf upgrade -y libgcc libstdc++
+
 LABEL name="NGINX Ingress Operator" \
       description="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers" \
       summary="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers" \
