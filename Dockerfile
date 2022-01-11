@@ -18,12 +18,20 @@ COPY controllers/ controllers/
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X main.version=${VERSION}" -a -o manager main.go
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+ARG VERSION
 WORKDIR /
-COPY --from=builder --chown=65532:65532 /workspace/manager .
+COPY --from=builder /workspace/manager .
 COPY config/crd/kic ./config/crd/kic
-USER 65532:65532
+COPY LICENSE /licenses/
+
+LABEL name="NGINX Ingress Operator" \
+      vendor="NGINX Inc <kubernetes@nginx.com" \
+      version="v${VERSION}" \
+      release="1" \
+      summary="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers" \
+      description="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers"
 
 ENTRYPOINT ["/manager"]
+
+USER 1001
