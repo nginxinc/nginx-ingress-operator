@@ -18,10 +18,9 @@ COPY controllers/ controllers/
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X main.version=${VERSION}" -a -o manager main.go
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest as base
 ARG VERSION
 WORKDIR /
-COPY --from=builder /workspace/manager .
 COPY config/crd/kic ./config/crd/kic
 COPY LICENSE /licenses/
 
@@ -35,3 +34,17 @@ LABEL name="NGINX Ingress Operator" \
 ENTRYPOINT ["/manager"]
 
 USER 1001
+
+FROM base as goreleaser
+ARG TARGETARCH
+ARG TARGETVARIANT
+
+LABEL org.nginx.kic.image.build.version="goreleaser"
+
+COPY ./dist/nginx-ingress-operator_linux_$TARGETARCH/manager /
+
+FROM base as local
+
+LABEL org.nginx.kic.image.build.version="local"
+
+COPY --from=builder /workspace/manager .
