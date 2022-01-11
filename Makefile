@@ -41,7 +41,6 @@ IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.22
 
-# Change DOCKERFILE tp openshift.Dockerfile to build Openshift image
 DOCKERFILE ?= Dockerfile
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
