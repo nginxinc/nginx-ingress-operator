@@ -14,7 +14,7 @@ metadata:
             "image": {
               "pullPolicy": "Always",
               "repository": "docker.io/nginx/nginx-ingress",
-              "tag": "2.0.0-ubi"
+              "tag": "2.1.0-ubi"
             },
             "ingressClass": "nginx",
             "nginxPlus": false,
@@ -24,9 +24,16 @@ metadata:
         }
       ]
     capabilities: Basic Install
+    categories: Monitoring, Networking
+    certified: "true"
+    containerImage: nginx/nginx-ingress-operator:0.5.0
+    description: The NGINX Ingress Operator is a Kubernetes/OpenShift component which
+      deploys and manages one or more NGINX/NGINX Plus Ingress Controllers
     operators.operatorframework.io/builder: operator-sdk-v1.15.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
-  name: nginx-ingress-operator.v0.4.0
+    repository: https://github.com/nginxinc/nginx-ingress-operator
+    support: NGINX Inc.
+  name: nginx-ingress-operator.v0.5.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -52,6 +59,10 @@ spec:
           true.
         displayName: App Protect
         path: appProtect
+      - description: App Protect Dos support configuration. Requires enableCRDs set
+          to true.
+        displayName: App Protect Dos
+        path: appProtectDos
       - description: Initial values of the Ingress Controller ConfigMap. Check https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/
           for more information about possible values.
         displayName: Config Map Data
@@ -215,6 +226,7 @@ spec:
           - update
         - apiGroups:
           - appprotect.f5.com
+          - appprotectdos.f5.com
           - k8s.nginx.org
           resources:
           - '*'
@@ -364,7 +376,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.annotations['olm.targetNamespaces']
-                image: nginx/nginx-ingress-operator:0.4.0
+                image: nginx/nginx-ingress-operator:0.5.0
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -449,7 +461,8 @@ spec:
   - email: kubernetes@nginx.com
     name: NGINX Inc
   maturity: alpha
+  minKubeVersion: 1.19.0
   provider:
     name: NGINX Inc
-  replaces: nginx-ingress-operator.v0.2.0
-  version: 0.4.0
+  replaces: nginx-ingress-operator.v0.4.0
+  version: 0.5.0
