@@ -4,6 +4,13 @@ metadata:
   annotations:
     alm-examples: '[]'
     capabilities: Basic Install
+    categories: Monitoring, Networking
+    certified: "true"
+    containerImage: nginx/nginx-ingress-operator:0.5.0
+    description: The NGINX Ingress Operator is a Kubernetes/OpenShift component which
+      deploys and manages one or more NGINX/NGINX Plus Ingress Controllers
+    repository: https://github.com/nginxinc/nginx-ingress-operator
+    support: NGINX Inc.
   name: nginx-ingress-operator.v0.0.0
   namespace: placeholder
 spec:
@@ -30,6 +37,10 @@ spec:
           true.
         displayName: App Protect
         path: appProtect
+      - description: App Protect Dos support configuration. Requires enableCRDs set
+          to true.
+        displayName: App Protect Dos
+        path: appProtectDos
       - description: Initial values of the Ingress Controller ConfigMap. Check https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/
           for more information about possible values.
         displayName: Config Map Data
@@ -184,7 +195,8 @@ spec:
   - email: kubernetes@nginx.com
     name: NGINX Inc
   maturity: alpha
+  minKubeVersion: 1.19.0
   provider:
     name: NGINX Inc
-  replaces: nginx-ingress-operator.v0.2.0
+  replaces: nginx-ingress-operator.v0.4.0
   version: 0.0.0

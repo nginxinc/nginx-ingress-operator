@@ -69,11 +69,7 @@ spec:
                     description: RAM memory size in MB.
                     type: integer
                 required:
-                - debug
                 - enable
-                - maxDaemons
-                - maxWorkers
-                - memory
                 type: object
               configMapData:
                 additionalProperties:

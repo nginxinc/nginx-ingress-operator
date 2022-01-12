@@ -283,13 +283,13 @@ type AppProtectDos struct {
 	// Enable App Protect Dos.
 	Enable bool `json:"enable"`
 	// Enable debug mode.
-	Debug bool `json:"debug"`
+	Debug bool `json:"debug,omitempty"`
 	// Max number of ADMD instances.
-	MaxDaemons int `json:"maxDaemons"`
+	MaxDaemons int `json:"maxDaemons,omitempty"`
 	// Max number of nginx processes to support.
-	MaxWorkers int `json:"maxWorkers"`
+	MaxWorkers int `json:"maxWorkers,omitempty"`
 	// RAM memory size in MB.
-	Memory int `json:"memory"`
+	Memory int `json:"memory,omitempty"`
 }
 
 // Service defines the Service for the Ingress Controller.

@@ -41,8 +41,31 @@ spec:
                 nullable: true
                 properties:
                   enable:
-                    description: Enable App Protect.
+                    description: Enable App Protect WAF.
                     type: boolean
+                required:
+                - enable
+                type: object
+              appProtectDos:
+                description: App Protect Dos support configuration. Requires enableCRDs
+                  set to true.
+                nullable: true
+                properties:
+                  debug:
+                    description: Enable debug mode.
+                    type: boolean
+                  enable:
+                    description: Enable App Protect Dos.
+                    type: boolean
+                  maxDaemons:
+                    description: Max number of ADMD instances.
+                    type: integer
+                  maxWorkers:
+                    description: Max number of nginx processes to support.
+                    type: integer
+                  memory:
+                    description: RAM memory size in MB.
+                    type: integer
                 required:
                 - enable
                 type: object
@@ -241,15 +264,15 @@ spec:
                 description: The service of the Ingress controller.
                 nullable: true
                 properties:
-                  extraLabels:
-                    additionalProperties:
-                      type: string
-                    description: Specifies extra labels of the service.
-                    type: object
                   extraAnnotations:
                     additionalProperties:
                       type: string
                     description: Specifies extra annotations of the service.
+                    type: object
+                  extraLabels:
+                    additionalProperties:
+                      type: string
+                    description: Specifies extra labels of the service.
                     type: object
                 type: object
               serviceType:
