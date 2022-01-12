@@ -55,7 +55,7 @@ type NginxIngressControllerReconciler struct {
 //+kubebuilder:rbac:groups=k8s.nginx.org,resources=nginxingresscontrollers,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=k8s.nginx.org,resources=nginxingresscontrollers/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=k8s.nginx.org,resources=nginxingresscontrollers/finalizers,verbs=update
-//+kubebuilder:rbac:groups=k8s.nginx.org;appprotect.f5.com,resources=*,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=k8s.nginx.org;appprotect.f5.com;appprotectdos.f5.com,resources=*,verbs=get;list;watch;create;update;patch;delete
 
 //+kubebuilder:rbac:groups=apps,resources=deployments;daemonsets;replicasets;statefulsets,verbs=get;list;watch;create;update;patch;delete
 
@@ -223,10 +223,12 @@ func (r *NginxIngressControllerReconciler) Reconcile(ctx context.Context, req ct
 		return ctrl.Result{}, err
 	}
 	var extraLabels map[string]string
+	var extraAnnotations map[string]string
 	if instance.Spec.Service != nil {
 		extraLabels = instance.Spec.Service.ExtraLabels
+		extraAnnotations = instance.Spec.Service.ExtraAnnotations
 	}
-	res, err := controllerutil.CreateOrUpdate(ctx, r.Client, svc, serviceMutateFn(svc, instance.Spec.ServiceType, extraLabels))
+	res, err := controllerutil.CreateOrUpdate(ctx, r.Client, svc, serviceMutateFn(svc, instance.Spec.ServiceType, extraLabels, extraAnnotations))
 	log.V(1).Info(fmt.Sprintf("Service %s %s", svc.Name, res))
 	if err != nil {
 		return ctrl.Result{}, err

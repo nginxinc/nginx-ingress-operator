@@ -8,6 +8,8 @@ on:
       - 'docs/**'
       - 'examples/**'
       - '**.md'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
       - master
@@ -19,12 +21,13 @@ on:
       - 'docs/**'
       - 'examples/**'
       - '**.md'
-  create:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 env:
   DOCKER_BUILDKIT: 1
+
+concurrency:
+  group: ${{ github.ref_name }}-ci
+  cancel-in-progress: true
 
 jobs:
 
@@ -34,13 +37,8 @@ jobs:
     outputs:
       sha_short: ${{ steps.vars.outputs.sha }}
       go_version: ${{ steps.vars.outputs.go_version }}
-      git_tag: ${{ steps.vars.outputs.git_tag }}
       repo_name: ${{ steps.vars.outputs.repo }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Output Variables
@@ -48,7 +46,6 @@ jobs:
         run: |
           echo "::set-output name=sha::$(echo ${GITHUB_SHA} | cut -c1-7)"
           echo "::set-output name=go_version::$(grep "go 1." go.mod | cut -d " " -f 2)"
-          echo "::set-output name=git_tag::$(echo ${GITHUB_REF/refs\/tags\//} | tr -d v)"
           echo "::set-output name=repo::$(echo ${GITHUB_REPOSITORY} | cut -d '/' -f 2)"
 
   binary:
@@ -96,23 +93,43 @@ jobs:
         with:
           path: ${{ github.workspace }}/bin/manager
           key: nginx-ingress-operator-${{ github.run_id }}-${{ github.run_number }}
+      - name: DockerHub Login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        if: github.event_name != 'pull_request'
       - name: Docker Buildx
         uses: docker/setup-buildx-action@v1
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            nginx/nginx-ingress-operator
+          tags: |
+            type=edge
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+          labels: |
+            org.opencontainers.image.documentation=https://docs.nginx.com/nginx-ingress-controller
+            org.opencontainers.image.vendor=NGINX Inc <kubernetes@nginx.com>
       - name: Build Image
         uses: docker/build-push-action@v2
         with:
           context: '.'
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: nginx/nginx-ingress-operator:${{ github.sha }}
-          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          load: ${{ github.event_name == 'pull_request' }}
+          push: ${{ github.event_name != 'pull_request' }}
           pull: true
-          load: true
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.2.0
+        uses: aquasecurity/trivy-action@0.2.1
         continue-on-error: true
         with:
-          image-ref: nginx/nginx-ingress-operator:${{ github.sha }}
+          image-ref: nginx/nginx-ingress-operator:${{ steps.meta.outputs.version }}
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
@@ -121,7 +138,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         continue-on-error: true
         with:
-          sarif_file: 'trivy-result.sarif'
+          sarif_file: 'trivy-results.sarif'
       - name: Upload Scan Results
         uses: actions/upload-artifact@v2
         continue-on-error: true
@@ -130,46 +147,11 @@ jobs:
           path: 'trivy-results.sarif'
         if: always()
 
-  release-docker:
-    name: Release Image
-    runs-on: ubuntu-20.04
-    needs: [vars, build, unit-tests]
-    if:
-      github.repository == 'nginxinc/nginx-ingress-operator' &&
-      github.event_name == 'create' &&
-      contains(github.ref, 'refs/tags/')
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Fetch Cached Artifacts
-        uses: actions/cache@v2
-        with:
-          path: ${{ github.workspace }}/build/_output/bin/nginx-ingress-operator
-          key: nginx-ingress-operator-${{ github.run_id }}-${{ github.run_number }}
-      - name: Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: DockerHub Login
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to Dockerhub
-        uses: docker/build-push-action@v2
-        with:
-          file: Dockerfile
-          context: '.'
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: |
-            nginx/nginx-ingress-operator:latest
-            nginx/nginx-ingress-operator:${{ needs.vars.outputs.git_tag }}
-          push: true
-          pull: true
 
   notify:
     name: Notify
     runs-on: ubuntu-20.04
-    needs: [vars, release-docker]
+    needs: [vars, build]
     if: always() && github.ref == 'refs/heads/master'
     steps:
       - name: Workflow Status

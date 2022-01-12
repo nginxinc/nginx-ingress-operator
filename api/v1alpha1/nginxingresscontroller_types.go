@@ -154,6 +154,12 @@ type NginxIngressControllerSpec struct {
 	// +nullable
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
 	AppProtect *AppProtect `json:"appProtect"`
+	// App Protect Dos support configuration.
+	// Requires enableCRDs set to true.
+	// +kubebuilder:validation:Optional
+	// +nullable
+	// +operator-sdk:csv:customresourcedefinitions:type=spec
+	AppProtectDos *AppProtectDos `json:"appProtectDos"`
 	// Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start.
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
@@ -268,8 +274,22 @@ type Prometheus struct {
 
 // AppProtect support configuration.
 type AppProtect struct {
-	// Enable App Protect.
+	// Enable App Protect WAF.
 	Enable bool `json:"enable"`
+}
+
+// AppProtectDos support configuration.
+type AppProtectDos struct {
+	// Enable App Protect Dos.
+	Enable bool `json:"enable"`
+	// Enable debug mode.
+	Debug bool `json:"debug"`
+	// Max number of ADMD instances.
+	MaxDaemons int `json:"maxDaemons"`
+	// Max number of nginx processes to support.
+	MaxWorkers int `json:"maxWorkers"`
+	// RAM memory size in MB.
+	Memory int `json:"memory"`
 }
 
 // Service defines the Service for the Ingress Controller.
@@ -277,6 +297,9 @@ type Service struct {
 	// Specifies extra labels of the service.
 	// +kubebuilder:validation:Optional
 	ExtraLabels map[string]string `json:"extraLabels,omitempty"`
+	// Specifies extra annotations of the service.
+	// +kubebuilder:validation:Optional
+	ExtraAnnotations map[string]string `json:"extraAnnotations,omitempty"`
 }
 
 func init() {
