@@ -1,0 +1,23 @@
+env:
+  - CGO_ENABLED=0
+builds:
+  - id: nginx-ingress-operator
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - ppc64le
+      - s390x
+    flags:
+      - -trimpath
+    gcflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    asmflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    binary: manager
+
+archives:
+- format: binary
+changelog:
+  skip: true
