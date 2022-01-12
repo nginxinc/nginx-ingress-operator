@@ -21,25 +21,29 @@ func TestServiceForNginxIngressController(t *testing.T) {
 	name := "my-service"
 	namespace := "my-nginx-ingress"
 	extraLabels := map[string]string{"app": "my-nginx-ingress"}
+	extraAnnotations := map[string]string{"app": "my-nginx-ingress"}
 
 	instance := &k8sv1alpha1.NginxIngressController{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-			Labels:    extraLabels,
+			Name:        name,
+			Namespace:   namespace,
+			Labels:      extraLabels,
+			Annotations: extraAnnotations,
 		},
 		Spec: k8sv1alpha1.NginxIngressControllerSpec{
 			ServiceType: string(corev1.ServiceTypeLoadBalancer),
 			Service: &k8sv1alpha1.Service{
-				ExtraLabels: extraLabels,
+				ExtraLabels:      extraLabels,
+				ExtraAnnotations: extraAnnotations,
 			},
 		},
 	}
 	expected := &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-			Labels:    extraLabels,
+			Name:        name,
+			Namespace:   namespace,
+			Labels:      extraLabels,
+			Annotations: extraAnnotations,
 			OwnerReferences: []v1.OwnerReference{
 				{
 					APIVersion:         "k8s.nginx.org/v1alpha1",

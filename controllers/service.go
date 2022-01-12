@@ -12,15 +12,18 @@ import (
 
 func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressController, scheme *runtime.Scheme) (*corev1.Service, error) {
 	extraLabels := map[string]string{}
+	extraAnnotations := map[string]string{}
 	if instance.Spec.Service != nil {
 		extraLabels = instance.Spec.Service.ExtraLabels
+		extraAnnotations = instance.Spec.Service.ExtraAnnotations
 	}
 
 	svc := &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
-			Name:      instance.Name,
-			Namespace: instance.Namespace,
-			Labels:    extraLabels,
+			Name:        instance.Name,
+			Namespace:   instance.Namespace,
+			Labels:      extraLabels,
+			Annotations: extraAnnotations,
 		},
 		Spec: corev1.ServiceSpec{
 			Ports: []corev1.ServicePort{
@@ -55,10 +58,11 @@ func serviceForNginxIngressController(instance *k8sv1alpha1.NginxIngressControll
 	return svc, nil
 }
 
-func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]string) controllerutil.MutateFn {
+func serviceMutateFn(svc *corev1.Service, serviceType string, labels map[string]string, annotations map[string]string) controllerutil.MutateFn {
 	return func() error {
 		svc.Spec.Type = corev1.ServiceType(serviceType)
 		svc.Labels = labels
+		svc.Annotations = annotations
 		return nil
 	}
 }
