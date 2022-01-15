@@ -10,6 +10,7 @@ VERSION ?= 0.5.0
 # To re-generate a bundle for other specific channels without changing the standard setup, you can:
 # - use the CHANNELS as arg of the bundle target (e.g make bundle CHANNELS=preview,fast,stable)
 # - use environment variables to overwrite this value (e.g export CHANNELS="preview,fast,stable")
+CHANNELS = "alpha"
 ifneq ($(origin CHANNELS), undefined)
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
 endif
@@ -19,6 +20,7 @@ endif
 # To re-generate a bundle for any other default channel without changing the default setup, you can:
 # - use the DEFAULT_CHANNEL as arg of the bundle target (e.g make bundle DEFAULT_CHANNEL=stable)
 # - use environment variables to overwrite this value (e.g export DEFAULT_CHANNEL="stable")
+DEFAULT_CHANNEL = "alpha"
 ifneq ($(origin DEFAULT_CHANNEL), undefined)
 BUNDLE_DEFAULT_CHANNEL := --default-channel=$(DEFAULT_CHANNEL)
 endif
@@ -159,7 +161,8 @@ bundle: manifests kustomize ## Generate bundle manifests and metadata, then vali
 	operator-sdk generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
-	@printf "%s\n" '' 'LABEL com.redhat.openshift.versions="v4.5"' 'LABEL com.redhat.delivery.operator.bundle=true' 'LABEL com.redhat.delivery.backport=true' >> bundle.Dockerfile
+	@printf "%s\n" '' 'LABEL com.redhat.openshift.versions="v4.6"' 'LABEL com.redhat.delivery.operator.bundle=true' 'LABEL com.redhat.delivery.backport=true' >> bundle.Dockerfile
+	@printf "%s\n" '' '  # OpenShift annotations.' '  com.redhat.openshift.versions: v4.6' >> bundle/metadata/annotations.yaml
 	operator-sdk bundle validate ./bundle
 
 .PHONY: bundle-build
@@ -210,3 +213,8 @@ catalog-build: opm ## Build a catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+# Get medatada to prepare the bundle to be submitted at https://github.com/redhat-openshift-ecosystem/certified-operators/
+.PHONY: get-metadata-certification
+get-metadata-certification:
+	@./hack/get_image_info.sh ${IMAGE_TAG_BASE} ${VERSION}
