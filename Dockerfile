@@ -27,7 +27,7 @@ COPY LICENSE /licenses/
 LABEL name="NGINX Ingress Operator" \
       maintainer="kubernetes@nginx.com" \
       vendor="NGINX Inc" \
-      version="v${VERSION}" \
+      version="${VERSION}" \
       release="1" \
       summary="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers" \
       description="The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more NGINX/NGINX Plus Ingress Controllers"

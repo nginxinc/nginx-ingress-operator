@@ -27,12 +27,17 @@ metadata:
     categories: Monitoring, Networking
     certified: "true"
     containerImage: nginx/nginx-ingress-operator:0.5.0
+    createdAt: placeholder
     description: The NGINX Ingress Operator is a Kubernetes/OpenShift component which
       deploys and manages one or more NGINX/NGINX Plus Ingress Controllers
     operators.operatorframework.io/builder: operator-sdk-v1.15.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/nginxinc/nginx-ingress-operator
     support: NGINX Inc.
+  labels:
+    operatorframework.io/arch.amd64: supported
+    operatorframework.io/arch.ppc64le: supported
+    operatorframework.io/arch.s390x: supported
   name: nginx-ingress-operator.v0.5.0
   namespace: placeholder
 spec:
