@@ -25,5 +25,5 @@ kube_digest=$(curl -sSfL -I -H "Accept: application/vnd.docker.distribution.mani
 printf "%s\n\n" "Manually repleace the following values in bundle/manifests/nginx-ingress-operator.clusterserviceversion.yaml"
 printf "%s\n" "metadata.annotations.createdAt: ${created}"
 printf "%s\n" "metadata.annotations.containerImage: docker.io/${image}@${image_digest}"
-printf "%s\n" ".spec.install.spec.deployments[0].spec.template.spec.containers[1].image (nginx-ingress-operator): docker.io/${image}@${image_digest}"
-printf "%s\n" ".spec.install.spec.deployments[0].spec.template.spec.containers[0].image (kube-rbac-proxy): ${full_image}@${kube_digest}"
+printf "%s\n" "spec.install.spec.deployments[0].spec.template.spec.containers[1].image (nginx-ingress-operator): docker.io/${image}@${image_digest}"
+printf "%s\n" "spec.install.spec.deployments[0].spec.template.spec.containers[0].image (kube-rbac-proxy): ${full_image}@${kube_digest}"
