@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/go-logr/logr v1.2.0
-	github.com/google/go-cmp v0.5.6
+	github.com/google/go-cmp v0.5.7
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
 	github.com/openshift/api v0.0.0-20201013121701-9d5ee23b507d
