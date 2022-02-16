@@ -185,7 +185,7 @@ jobs:
           build-args: |
             VERSION=${{ steps.var.outputs.version }}
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.2.1
+        uses: aquasecurity/trivy-action@0.2.2
         continue-on-error: true
         with:
           image-ref: nginx/nginx-ingress-operator:${{ steps.meta.outputs.version }}
