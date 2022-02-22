@@ -1,4 +1,4 @@
-# Installation in an Openshift cluster the OLM
+# Installation in an Openshift cluster using the OLM
 
 This installation method is the recommended way for Openshift users. **Note**: Openshift version must be 4.2 or higher.
 
@@ -17,4 +17,10 @@ Openshift will install the NGINX Ingress Operator:
 
 ![alt text](./images/openshift4.png "NGINX Ingress Operator Subscribe")
 
-You can now deploy the NGINX Ingress Controller instances following the [examples](../examples).
+Additional steps:
+
+In order to deploy NGINX Ingress Controller instances into OpenShift environments, a new SCC is required to be created on the cluster which will be used to bind the specific required capabilities to the NGINX Ingress service account(s). To do so, please run the following command (assuming you are logged in with administrator access to the cluster):
+
+`kubectl -f https://github.com/nginxinc/nginx-ingress-operator/v1.0.0/resources/scc.yaml`
+
+You can now deploy the NGINX Ingress Controller instances.

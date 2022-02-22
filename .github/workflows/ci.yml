@@ -22,9 +22,6 @@ on:
       - 'examples/**'
       - '**.md'
 
-env:
-  platforms: "linux/amd64,linux/arm64,linux/ppc64le,linux/s390x"
-
 concurrency:
   group: ${{ github.ref_name }}-ci
   cancel-in-progress: true
@@ -48,82 +45,15 @@ jobs:
           echo "::set-output name=go_version::$(grep "go 1." go.mod | cut -d " " -f 2)"
           echo "::set-output name=repo::$(echo ${GITHUB_REPOSITORY} | cut -d '/' -f 2)"
 
-  binary:
-    name: Build Binary
-    runs-on: ubuntu-20.04
-    needs: vars
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Cache Go build
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-local-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-local-build-
-      - name: Setup Golang Environment
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ needs.vars.outputs.go_version }}
-      - name: Build Binary
-        run: make build
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-20.04
-    needs: vars
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Golang Environment
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ needs.vars.outputs.go_version }}
-      - name: Cache Go tests
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-tests-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-tests-
-      - name: Run Tests
-        run: make test
-
   build:
     name: Build Image
     runs-on: ubuntu-20.04
-    needs: [binary, vars, unit-tests]
+    needs: vars
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Cache Go build
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-build-
-      - name: Setup Golang Environment
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ needs.vars.outputs.go_version }}
-      - name: Build binaries
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: latest
-          args: ${{ !startsWith(github.ref, 'refs/tags/') && 'build --snapshot' || 'release' }} ${{ github.event_name == 'pull_request' && '--single-target' || '' }} --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GOPATH: ${{ needs.check.outputs.go_path }}
       - name: DockerHub Login
         uses: docker/login-action@v1
         with:
@@ -137,11 +67,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         if: github.event_name != 'pull_request'
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v1
+      - name: RedHat Registry Login
+        uses: docker/login-action@v1
         with:
-          platforms: arm64,ppc64le,s390x
-        if: github.event_name != 'pull_request'
+          registry: registry.redhat.io
+          username: ${{ secrets.RH_DOCKER_USERNAME }}
+          password: ${{ secrets.RH_DOCKER_PASSWORD }}
       - name: Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Docker meta
@@ -150,7 +81,6 @@ jobs:
         with:
           images: |
             nginx/nginx-ingress-operator
-            ghcr.io/nginxinc/nginx-ingress-operator
           tags: |
             type=edge
             type=ref,event=pr
@@ -175,17 +105,16 @@ jobs:
           context: '.'
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          target: goreleaser
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ github.event_name != 'pull_request' && env.platforms || '' }}
           load: ${{ github.event_name == 'pull_request' }}
           push: ${{ github.event_name != 'pull_request' }}
+          platforms: "linux/amd64,linux/arm64,linux/ppc64le, linux/s390x"
           pull: true
           build-args: |
             VERSION=${{ steps.var.outputs.version }}
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.2.2
+        uses: aquasecurity/trivy-action@0.2.1
         continue-on-error: true
         with:
           image-ref: nginx/nginx-ingress-operator:${{ steps.meta.outputs.version }}

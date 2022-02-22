@@ -1,168 +1,204 @@
-# NginxIngressController Custom Resource
+# NginxIngress Custom Resource
 
-The `NginxIngressController` Custom Resource is the definition of a deployment of the Ingress Controller.
+The `NginxIngress` Custom Resource is the definition of a deployment of the Ingress Controller.
 With this Custom Resource, the NGINX Ingress Operator will be able to deploy and configure instances of the Ingress Controller in your cluster.
 
 ## Configuration
 
 There are several fields to configure the deployment of an Ingress Controller.
 
-The following example shows the minimum configuration using only required fields:
-
-```yaml
-apiVersion: k8s.nginx.org/v1alpha1
-kind: NginxIngressController
-metadata:
-  name: my-nginx-ingress-controller
-  namespace: my-nginx-ingress
-spec:
-  type: deployment
-  image:
-    repository: nginx/nginx-ingress
-    tag: edge
-    pullPolicy: Always
-  serviceType: NodePort
-```
-
  The following example shows the usage of all fields (required and optional):
 
 ```yaml
- apiVersion: k8s.nginx.org/v1alpha1
- kind: NginxIngressController
- metadata:
-   name: my-nginx-ingress-controller
-   namespace: my-nginx-ingress
- spec:
-   type: deployment
-   nginxPlus: false
-   image:
-     repository: nginx/nginx-ingress
-     tag: edge
-     pullPolicy: Always
-   replicas: 3
-   serviceType: NodePort
-   enableCRDs: true
-   enableSnippets: false
-   enablePreviewPolicies: false
-   defaultSecret: my-nginx-ingress/default-secret
-   ingressClass: my-nginx-ingress
-   watchNamespace: default
-   healthStatus:
-     enable: true
-     uri: "/my-health"
-   nginxDebug: true
-   logLevel: 3
-   nginxStatus:
-     enable: true
-     port: 9090
-     allowCidrs: "127.0.0.1"
-   enableLeaderElection: true
-   wildcardTLS: my-nginx-ingress/wildcard-secret
-   reportIngressStatus:
-     enable: true
-     externalService: my-nginx-ingress
-   prometheus:
-     enable: true
-     port: 9114
-     secret: my-nginx-ingress/prometheus-secret
-   enableLatencyMetrics: false
-   configMapData:
-     error-log-level: debug
-   enableTLSPassthrough: true
-   globalConfiguration: my-nginx-ingress/nginx-configuration
-   nginxReloadTimeout: 5000
-   appProtect:
-     enable: false
+apiVersion: charts.nginx.org/v1alpha1
+kind: NginxIngress
+metadata:
+  name: nginxingress-sample
+spec:
+  controller:
+    affinity: {}
+    appprotect:
+      enable: false
+    appprotectdos:
+      debug: false
+      enable: false
+      maxDaemons: 0
+      maxWorkers: 0
+      memory: 0
+    config:
+      annotations: {}
+      entries: {}
+    customPorts: []
+    defaultTLS:
+      secret: null
+    enableCustomResources: true
+    enableLatencyMetrics: false
+    enablePreviewPolicies: false
+    enableSnippets: false
+    enableTLSPassthrough: false
+    globalConfiguration:
+      create: false
+      spec: {}
+    healthStatus: false
+    healthStatusURI: /nginx-health
+    hostNetwork: false
+    image:
+      pullPolicy: IfNotPresent
+      repository: nginx/nginx-ingress
+      tag: 2.1.0-ubi
+    ingressClass: nginx
+    initContainers: []
+    kind: deployment
+    logLevel: 1
+    nginxDebug: false
+    nginxReloadTimeout: 60000
+    nginxStatus:
+      allowCidrs: 127.0.0.1
+      enable: true
+      port: 8080
+    nginxplus: false
+    nodeSelector: {}
+    pod:
+      annotations: {}
+      extraLabels: {}
+    priorityClassName: null
+    readyStatus:
+      enable: true
+      port: 8081
+    replicaCount: 1
+    reportIngressStatus:
+      annotations: {}
+      enable: true
+      enableLeaderElection: true
+      ingressLink: ""
+    resources: {}
+    service:
+      annotations: {}
+      create: true
+      customPorts: []
+      externalIPs: []
+      externalTrafficPolicy: Local
+      extraLabels: {}
+      httpPort:
+        enable: true
+        nodePort: ""
+        port: 80
+        targetPort: 80
+      httpsPort:
+        enable: true
+        nodePort: ""
+        port: 443
+        targetPort: 443
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      type: NodePort
+    serviceAccount:
+      imagePullSecretName: ""
+    setAsDefaultIngress: false
+    terminationGracePeriodSeconds: 30
+    tolerations: []
+    volumeMounts: []
+    volumes: []
+    watchNamespace: ""
+    wildcardTLS:
+      secret: null
+  prometheus:
+    create: true
+    port: 9113
+    scheme: http
+    secret: ""
+  rbac:
+    create: true
  ```
 
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `type` | `string` | The type of the Ingress Controller installation - `deployment` or `daemonset`. | Yes |
-| `nginxPlus` | `boolean` | Deploys the Ingress Controller for NGINX Plus. The default is `false` meaning the Ingress Controller will be deployed for NGINX OSS. | No |
-| `image` | [image](#nginxingresscontrollerimage) | The image of the Ingress Controller. | Yes |
-| `replicas` | `int` | The number of replicas of the Ingress Controller pod. The default is 1. Only applies if the `type` is set to deployment. | No |
-| `defaultSecret` | `string` | The TLS Secret for TLS termination of the default server. The format is namespace/name. The secret must be of the type kubernetes.io/tls. If not specified, the operator will generate and deploy a TLS Secret with a self-signed certificate and key. | No |
-| `serviceType` | `string` | The type of the Service for the Ingress Controller. Valid Service types are `NodePort` or `LoadBalancer`. | Yes |
-| `enableCRDs` | `boolean` | Enables the use of NGINX Ingress Resource Definitions (VirtualServer and VirtualServerRoute). Default is `true`. | No |
-| `enableSnippets` | `boolean` | Enable custom NGINX configuration snippets in VirtualServer, VirtualServerRoute and TransportServer resources. Requires `enableCRDs` set to `true`. | No |
-| `enablePreviewPolicies` | `boolean` | Enables preview policies. Requires `enableCRDs` set to `true`. | No |
-| `ingressClass` | `string` | A class of the Ingress controller. The Ingress controller only processes resources that belong to its class - i.e. have the "ingressClassName" field resource equal to the class. Additionally the Ingress Controller processes all the VirtualServer/VirtualServerRoute resources that do not have the "ingressClassName" field. Additionally, the Ingress Controller processes resources that do not have the class set. Default is `nginx`. | No |
-| `service` | [service](#nginxingresscontrollerservice) | The service of the Ingress Controller. | No |
-| `watchNamespace` | `boolean` | Namespace to watch for Ingress resources. By default the Ingress controller watches all namespaces. | No |
-| `healthStatus` | [healthStatus](#nginxingresscontrollerhealthstatus) | Adds a new location to the default server. The location responds with the 200 status code for any request. Useful for external health-checking of the Ingress Controller. | No |
-| `nginxDebug` | `boolean` | Enable debugging for NGINX. Uses the nginx-debug binary. Requires `error-log-level: debug` in the configMapData. | No |
-| `logLevel` | `int` | Log level for V logs. Format is `0 - 3` | No |
-| `nginxStatus` | [nginxStatus](#nginxingresscontrollernginxstatus) | Configures NGINX stub_status, or the NGINX Plus API. | No |
-| `reportIngressStatus` | [reportIngressStatus](#nginxingresscontrollerreportingressstatus) | Update the address field in the status of Ingresses resources. | No |
-| `enableLeaderElection` | `boolean` | Enables Leader election to avoid multiple replicas of the controller reporting the status of Ingress resources – only one replica will report status. Default is `true`. | No |
-| `wildcardTLS` | `string` | A Secret with a TLS certificate and key for TLS termination of every Ingress host for which TLS termination is enabled but the Secret is not specified. The secret must be of the type kubernetes.io/tls. If the argument is not set, for such Ingress hosts NGINX will break any attempt to establish a TLS connection. If the argument is set, but the Ingress controller is not able to fetch the Secret from Kubernetes API, the Ingress Controller will fail to start. Format is `namespace/name`. | No |
-| `prometheus` | [prometheus](#nginxingresscontrollerprometheus) | Configures NGINX or NGINX Plus metrics in the Prometheus format. | No |
-| `configMapData` | `map[string]string` | Initial values of the Ingress Controller ConfigMap. Check the [ConfigMap docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for more information about possible values. | No |
-| `globalConfiguration` | `string` | The GlobalConfiguration resource for global configuration of the Ingress Controller. Format is namespace/name. Requires `enableCRDs` set to `true`. | No |
-| `enableTLSPassthrough` | `boolean` | Enable TLS Passthrough on port 443. Requires `enableCRDs` set to `true`. | No |
-| `appProtect` | [appProtect](#nginxingresscontrollerappprotect) | App Protect WAF support configuration. Requires `nginxPlus` set to `true`. | No |
-| `appProtectDos` | [appProtectDos](#nginxingresscontrollerappprotectdos) | App Protect DoS support configuration. Requires `nginxPlus` set to `true`. | No |
-| `nginxReloadTimeout` | `int`| Timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. (default is 4000. Default is 20000 instead if `enable-app-protect` is true) | No |
+Parameter | Description | Default
+--- | --- | ---
+`controller.name` | The name of the Ingress controller daemonset or deployment. | Autogenerated
+`controller.kind` | The kind of the Ingress controller installation - deployment or daemonset. | deployment
+`controller.nginxplus` | Deploys the Ingress controller for NGINX Plus. | false
+`controller.nginxReloadTimeout` | The timeout in milliseconds which the Ingress Controller will wait for a successful NGINX reload after a change or at the initial start. | 60000
+`controller.hostNetwork` | Enables the Ingress controller pods to use the host's network namespace. | false
+`controller.nginxDebug` | Enables debugging for NGINX. Uses the `nginx-debug` binary. Requires `error-log-level: debug` in the ConfigMap via `controller.config.entries`. | false
+`controller.logLevel` | The log level of the Ingress Controller. | 1
+`controller.image.repository` | The image repository of the Ingress controller. | nginx/nginx-ingress
+`controller.image.tag` | The tag of the Ingress controller image. | 2.1.0
+`controller.image.pullPolicy` | The pull policy for the Ingress controller image. | IfNotPresent
+`controller.config.name` | The name of the ConfigMap used by the Ingress controller. | Autogenerated
+`controller.config.annotations` | The annotations of the Ingress controller configmap. | {}
+`controller.config.entries` | The entries of the ConfigMap for customizing NGINX configuration. See [ConfigMap resource docs](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/) for the list of supported ConfigMap keys. | {}
+`controller.customPorts` | A list of custom ports to expose on the NGINX ingress controller pod. Follows the conventional Kubernetes yaml syntax for container ports. | []
+`controller.defaultTLS.secret` | The secret with a TLS certificate and key for the default HTTPS server. The value must follow the following format: `<namespace>/<name>`. Please note that specifying a certificate and key using  `controller.defaultTLS.cert` and `controller.defaultTLS.key` parameters is NOT supported using nginx-ingress-operator. | None
+`controller.wildcardTLS.secret` | The secret with a TLS certificate and key for every Ingress/VirtualServer host that has TLS enabled but no secret specified. The value must follow the following format: `<namespace>/<name>`. Please note that specifying a certificate and key using `controller.wildcardTLS.cert` and `controller.wildcardTLS.key` parameters is NOT supported using nginx-ingress-operator. | None
+`controller.nodeSelector` | The node selector for pod assignment for the Ingress controller pods. | {}
+`controller.terminationGracePeriodSeconds` | The termination grace period of the Ingress controller pod. | 30
+`controller.tolerations` | The tolerations of the Ingress controller pods. | []
+`controller.affinity` | The affinity of the Ingress controller pods. | {}
+`controller.volumes` | The volumes of the Ingress controller pods. | []
+`controller.volumeMounts` | The volumeMounts of the Ingress controller pods. | []
+`controller.initContainers` | InitContainers for the Ingress controller pods. | []
+`controller.resources` | The resources of the Ingress controller pods. | {}
+`controller.replicaCount` | The number of replicas of the Ingress controller deployment. | 1
+`controller.ingressClass` | A class of the Ingress controller. An IngressClass resource with the name equal to the class must be deployed. Otherwise, the Ingress Controller will fail to start. The Ingress controller only processes resources that belong to its class - i.e. have the "ingressClassName" field resource equal to the class. The Ingress Controller processes all the VirtualServer/VirtualServerRoute/TransportServer resources that do not have the "ingressClassName" field for all versions of kubernetes. | nginx
+`controller.setAsDefaultIngress` | New Ingresses without an `"ingressClassName"` field specified will be assigned the class specified in `controller.ingressClass`. | false
+`controller.watchNamespace` | Namespace to watch for Ingress resources. By default the Ingress controller watches all namespaces. | ""
+`controller.enableCustomResources` | Enable the custom resources. | true
+`controller.enablePreviewPolicies` | Enable preview policies. | false
+`controller.enableTLSPassthrough` | Enable TLS Passthrough on port 443. Requires `controller.enableCustomResources`. | false
+`controller.globalConfiguration.create` | Creates the GlobalConfiguration custom resource. Requires `controller.enableCustomResources`. | false
+`controller.globalConfiguration.spec` | The spec of the GlobalConfiguration for defining the global configuration parameters of the Ingress Controller. | {}
+`controller.enableSnippets` | Enable custom NGINX configuration snippets in Ingress, VirtualServer, VirtualServerRoute and TransportServer resources. | false
+`controller.healthStatus` | Add a location "/nginx-health" to the default server. The location responds with the 200 status code for any request. Useful for external health-checking of the Ingress controller. | false
+`controller.healthStatusURI` | Sets the URI of health status location in the default server. Requires `controller.healthStatus`. | "/nginx-health"
+`controller.nginxStatus.enable` | Enable the NGINX stub_status, or the NGINX Plus API. | true
+`controller.nginxStatus.port` | Set the port where the NGINX stub_status or the NGINX Plus API is exposed. | 8080
+`controller.nginxStatus.allowCidrs` | Add IPv4 IP/CIDR blocks to the allow list for NGINX stub_status or the NGINX Plus API. Separate multiple IP/CIDR by commas. | 127.0.0.1
+`controller.priorityClassName` | The PriorityClass of the Ingress controller pods. | None
+`controller.service.create` | Creates a service to expose the Ingress controller pods. | true
+`controller.service.type` | The type of service to create for the Ingress controller. | LoadBalancer
+`controller.service.externalTrafficPolicy` | The externalTrafficPolicy of the service. The value Local preserves the client source IP. | Local
+`controller.service.annotations` | The annotations of the Ingress controller service. | {}
+`controller.service.extraLabels` | The extra labels of the service. | {}
+`controller.service.loadBalancerIP` | The static IP address for the load balancer. Requires `controller.service.type` set to `LoadBalancer`. The cloud provider must support this feature. | ""
+`controller.service.externalIPs` | The list of external IPs for the Ingress controller service. | []
+`controller.service.loadBalancerSourceRanges` | The IP ranges (CIDR) that are allowed to access the load balancer. Requires `controller.service.type` set to `LoadBalancer`. The cloud provider must support this feature. | []
+`controller.service.name` | The name of the service. | Autogenerated
+`controller.service.customPorts` | A list of custom ports to expose through the Ingress controller service. Follows the conventional Kubernetes yaml syntax for service ports. | []
+`controller.service.httpPort.enable` | Enables the HTTP port for the Ingress controller service. | true
+`controller.service.httpPort.port` | The HTTP port of the Ingress controller service. | 80
+`controller.service.httpPort.nodePort` | The custom NodePort for the HTTP port. Requires `controller.service.type` set to `NodePort`. | ""
+`controller.service.httpPort.targetPort` | The target port of the HTTP port of the Ingress controller service. | 80
+`controller.service.httpsPort.enable` | Enables the HTTPS port for the Ingress controller service. | true
+`controller.service.httpsPort.port` | The HTTPS port of the Ingress controller service. | 443
+`controller.service.httpsPort.nodePort` | The custom NodePort for the HTTPS port. Requires `controller.service.type` set to `NodePort`.  | ""
+`controller.service.httpsPort.targetPort` | The target port of the HTTPS port of the Ingress controller service. | 443
+`controller.serviceAccount.imagePullSecretName` | The name of the secret containing docker registry credentials. Secret must exist in the same namespace as the helm release. | ""
+`controller.reportIngressStatus.enable` | Updates the address field in the status of Ingress resources with an external address of the Ingress controller. You must also specify the source of the external address either through an external service via `controller.reportIngressStatus.externalService`, `controller.reportIngressStatus.ingressLink` or the `external-status-address` entry in the ConfigMap via `controller.config.entries`. **Note:** `controller.config.entries.external-status-address` takes precedence over the others. | true
+`controller.reportIngressStatus.externalService` | Specifies the name of the service with the type LoadBalancer through which the Ingress controller is exposed externally. The external address of the service is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. `controller.reportIngressStatus.enable` must be set to `true`. The default is autogenerated and enabled when `controller.service.create` is set to `true` and `controller.service.type` is set to `LoadBalancer`. | Autogenerated
+`controller.reportIngressStatus.ingressLink` |  Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system. The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. `controller.reportIngressStatus.enable` must be set to `true`. | ""
+`controller.reportIngressStatus.enableLeaderElection` | Enable Leader election to avoid multiple replicas of the controller reporting the status of Ingress resources. `controller.reportIngressStatus.enable` must be set to `true`. | true
+`controller.reportIngressStatus.leaderElectionLockName` | Specifies the name of the ConfigMap, within the same namespace as the controller, used as the lock for leader election. controller.reportIngressStatus.enableLeaderElection must be set to true. | Autogenerated
+`controller.reportIngressStatus.annotations` | The annotations of the leader election configmap. | {}
+`controller.pod.annotations` | The annotations of the Ingress Controller pod. | {}
+`controller.pod.extraLabels` | The additional extra labels of the Ingress Controller pod. | {}
+`controller.appprotect.enable` | Enables the App Protect module in the Ingress Controller. | false
+`controller.appprotectdos.enable` | Enables the App Protect Dos module in the Ingress Controller. | false
+`controller.appprotectdos.debug` | Enable debugging for App Protect Dos. | false
+`controller.appprotectdos.maxDaemons` | Max number of ADMD instances. | 1
+`controller.appprotectdos.maxWorkers` | Max number of nginx processes to support. | Number of CPU cores in the machine
+`controller.appprotectdos.memory` | RAM memory size to consume in MB. | 50% of free RAM in the container or 80MB, the smaller
+`controller.readyStatus.enable` | Enables the readiness endpoint `"/nginx-ready"`. The endpoint returns a success code when NGINX has loaded all the config after the startup. This also configures a readiness probe for the Ingress Controller pods that uses the readiness endpoint. | true
+`controller.readyStatus.port` | The HTTP port for the readiness endpoint. | 8081
+`controller.enableLatencyMetrics` |  Enable collection of latency metrics for upstreams. Requires `prometheus.create`. | false
+`rbac.create` | Configures RBAC. | true
+`prometheus.create` | Expose NGINX or NGINX Plus metrics in the Prometheus format. | false
+`prometheus.port` | Configures the port to scrape the metrics. | 9113
+`prometheus.scheme` | Configures the HTTP scheme to use for connections to the Prometheus endpoint. | http
+`prometheus.secret` | The namespace / name of a Kubernetes TLS Secret. If specified, this secret is used to secure the Prometheus endpoint with TLS connections. | ""
 
-## NginxIngressController.Image
+## Notes
+* The service account name cannot be overridden and needs to be set to `nginx-ingress`. This is a requirement due to the RBAC and SCC configuration on OpenShift clusters.
+* The defaultServerSecret needs to be created before the IC deployment with the name of the secret supplied in the NginxIngress manifest, and cannot be created by instead supplying a cert and key.
+* If required, the `controller.wildcardTLS.secret` must also be created separately with the name of the secret supplied in the NginxIngress manifest.
 
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `repository` | `string` | The repository of the image. | Yes |
-| `tag` | `string` | The version of the image. | Yes |
-| `pullPolicy` | `string` | The ImagePullPolicy of the image. Valid values are `Never`, `Always` or `IfNotPresent` | Yes |
-
-## NginxIngressController.HealthStatus
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `enable` | `boolean` | Enable the HealthStatus. | Yes |
-| `uri` | `string` | URI of the location. Default is `/nginx-health`. | No |
-
-## NginxIngressController.NginxStatus
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `enable` | `boolean` | Enable the NginxStatus. | Yes |
-| `port` | `int` | Set the port where the NGINX stub_status or the NGINX Plus API is exposed. Default is `8080`. Format is `1023 - 65535` | No |
-| `allowCidrs` | `string` | Whitelist IPv4 IP/CIDR blocks to allow access to NGINX stub_status or the NGINX Plus API. Separate multiple IP/CIDR by commas. (default `127.0.0.1`) | No |
-
-## NginxIngressController.Service
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `extraLabels` | `map[string]string` | Specifies extra labels of the service. | No |
-| `extraAnnotations` | `map[string]string` | Specifies extra annotations of the service. | No |
-
-## NginxIngressController.ReportIngressStatus
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `enable` | `boolean` | Enable reporting of the Ingress status. | Yes |
-| `externalService` | `string` | Specifies the name of the service with the type LoadBalancer through which the Ingress controller pods are exposed externally. The external address of the service is used when reporting the status of Ingress resources. Note: if `serviceType` is `LoadBalancer`, the value of this field will be ignored, and the operator will use the name of the created LoadBalancer service instead. | No |
-| `ingressLink` | `string` | Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system. The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. Requires `reportIngressStatus.enable` set to `true`. Note: If `serviceType` is `LoadBalancer` or `reportIngressStatus.externalService` is set, the value of this field will be ignored. | No |
-
-## NginxIngressController.Prometheus
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `enable` | `boolean` | Enable Prometheus metrics. | Yes |
-| `port` | `int` | Sets the port where the Prometheus metrics are exposed. Default is 9113. Format is `1023 - 65535`. | No |
-| `secret` | `string` | A Secret with a TLS certificate and key for TLS termination of the Prometheus endpoint. The secret must be of the type kubernetes.io/tls. If specified, but the Ingress controller is not able to fetch the Secret from Kubernetes API, the Ingress Controller will fail to start. Format is namespace/name. | No |
-| `enableLatencyMetrics` | `boolean` | Bucketed response times from when NGINX establishes a connection to an upstream server to when the last byte of the response body is received by NGINX. **Note** The metric for the upstream isn't available until traffic is sent to the upstream. Requires prometheus set to true | No |
-
-## NginxIngressController.AppProtect
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `enable` | `boolean` | Enable App Protect WAF. | Yes |
-
-## NginxIngressController.AppProtectDos
-
-| Field | Type | Description | Required |
-| --- | --- | --- | --- |
-| `enable` | `boolean` | Enable App Protect DoS. | Yes |
-| `debug` | `boolean` | Enable debug mode. | No |
-| `maxDaemons` | `int` | Maximum number of ADMD instances. | No |
-| `maxWorkers` | `int` | Max number of nginx processes to support. | No |
-| `memory` | `int` | RAM memory size to consume in MB. | No |
+## Notes: Multiple NIC Deployments
+TBD

@@ -12,7 +12,6 @@ The following is a set of guidelines for contributing to the NGINX Ingress Opera
 
 [Style Guides](#style-guides)
   * [Git Style Guide](#git-style-guide)
-  * [Go Style Guide](#go-style-guide)
 
 [Code of Conduct](https://github.com/nginxinc/nginx-ingress-operator/blob/master/CODE_OF_CONDUCT.md)
 
@@ -24,16 +23,11 @@ Please open an Issue on GitHub with the label `question`.
 
 Follow our [Installation Guide](https://github.com/nginxinc/nginx-ingress-operator/blob/master/docs/installation.md) to get the NGINX Ingress Operator up and running.
 
-Read the [documentation](https://github.com/nginxinc/nginx-ingress-operator/tree/master/docs) and [examples](https://github.com/nginxinc/nginx-ingress-operator/tree/master/examples).
+Read the [documentation](https://github.com/nginxinc/nginx-ingress-operator/tree/master/docs) .
 
 ### Project Structure
 
-* This Operator is written in Go using the operator-framework and supports both the open source NGINX Ingress Controller and NGINX Plus Ingress Controller.
-* The project follows a standard Go project layout
-    * The main code is found at `cmd/manager/`
-    * The operator code is found at `pkg/`
-    * Build files for Docker and CI are found under `build/`
-    * We use [Go Modules](https://github.com/golang/go/wiki/Modules) for managing dependencies.
+* This Operator was created the using the Helm operator-framework and supports both the open source NGINX Ingress Controller and NGINX Plus Ingress Controller. It supports the same NGINX Ingress Controller features as the NGINX Ingress Controller Helm chart.
 
 ## Contributing
 
@@ -63,9 +57,3 @@ Note: if you’d like to implement a new feature, please consider creating a fea
     * Limit the subject line to 72 characters or less
     * Reference issues and pull requests liberally after the subject line
     * Add more detailed description in the body of the git message (`git commit -a` to give you more space and time in your text editor to write a good message instead of `git commit -am`)
-
-### Go Style Guide
-
-* Run `gofmt` over your code to automatically resolve a lot of style issues. Most editors support this running automatically when saving a code file.
-* Follow this guide on some good practice and idioms for Go -  https://github.com/golang/go/wiki/CodeReviewComments
-* To check for extra issues, install [golangci-lint](https://github.com/golangci/golangci-lint) and run `make lint` or `golangci-lint run`

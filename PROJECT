@@ -1,9 +1,10 @@
 domain: nginx.org
 layout:
-- go.kubebuilder.io/v3
+- helm.sdk.operatorframework.io/v1
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
+  sdk.x-openshift.io/v1: {}
 projectName: nginx-ingress-operator
 repo: github.com/nginxinc/nginx-ingress-operator
 resources:
@@ -12,8 +13,7 @@ resources:
     namespaced: true
   controller: true
   domain: nginx.org
-  group: k8s
-  kind: NginxIngressController
-  path: github.com/nginxinc/nginx-ingress-operator/api/v1alpha1
+  group: charts
+  kind: NginxIngress
   version: v1alpha1
 version: "3"

@@ -8,10 +8,13 @@ Learn more about operators in the [Kubernetes Documentation](https://kubernetes.
 
 To install a specific version of the NGINX Ingress Controller with the operator, a specific version of the NGINX Ingress Operator is required.
 
+Up until version 0.5.0, this Operator was Go based. Version 1.0.0 marks an uncompatible upgrade as this release swtiched the Operator to being Helm-based, built from the [NGINX Ingress Controller Helm chart](http://helm.nginx.com/#nginx-ingress-controller). The configuration for the Helm chart can be seen in the [NGINX Ingress Controller documentation](https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/#configuration).
+
 The following table shows the relation between the versions of the two projects:
 
 | NGINX Ingress Controller | NGINX Ingress Operator |
 | --- | --- |
+| 2.2.x | 1.0.0 |
 | 2.1.x | 0.5.0 |
 | 2.0.x | 0.4.0 |
 | 1.12.x | 0.3.0 |
@@ -28,9 +31,14 @@ Note: The NGINX Ingress Operator works only for NGINX Ingress Controller version
 
 1. Install the NGINX Ingress Operator. See [docs](./docs/installation.md).
    <br> NOTE: To use TransportServers as part of your NGINX Ingress Controller configuration, a GlobalConfiguration resource must be created *before* starting the Operator - [see the notes](./examples/deployment-oss-min/README.md#TransportServers)
-1. Deploy a new NGINX Ingress Controller using the [NginxIngressController](docs/nginx-ingress-controller.md) Custom Resource:
-    * For an NGINX installation see the [NGINX example](./examples/deployment-oss-min).
-    * For an NGINX Plus installation see the [NGINX Plus example](./examples/deployment-plus-min).
+2. Create a default server secret on the cluster - an example yaml for this can be found in the [NGINX Ingress Controller GitHub repo](https://github.com/nginxinc/kubernetes-ingress/blob/master/deployments/common/default-server-secret.yaml)
+3. Deploy a new NGINX Ingress Controller using the [NginxIngress](./config/samples/charts_v1alpha1_nginxingress.yaml) Custom Resource:
+    * Use the name of the default server secret created above for `controller.defaultTLS.secret` field (needs to be in the form `namespace/name`)
+    * If using NGINX Plus:
+      * Set the `controller.nginxPlus` to true
+      * Set the `controller.image.repository` and `controller.image.tag` to the appropriate values
+      * Set the `controller.serviceAccount.imagePullSecretName` if applicable
+    * For full configuration details see the Helm documentation [here](https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/#configuration).
 
 ## Upgrades
 
@@ -39,7 +47,7 @@ See [upgrade docs](./docs/upgrades)
 ## NGINX Ingress Operator Releases
 We publish NGINX Ingress Operator releases on GitHub. See our [releases page](https://github.com/nginxinc/nginx-ingress-operator/releases).
 
-The latest stable release is [0.5.0](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v0.5.0). For production use, we recommend that you choose the latest stable release.
+The latest stable release is [1.0.0](https://github.com/nginxinc/nginx-ingress-operator/releases/tag/v1.0.0). For production use, we recommend that you choose the latest stable release.
 
 ## Development
 
@@ -48,25 +56,13 @@ It is possible to run the operator in your local machine. This is useful for tes
 ### Run Operator locally
 
 1. Have access to a Kubernetes/Openshift cluster.
-1. Apply the latest CRDs:
+1. Apply the IC CRD:
    ```
     make install
-    kubectl apply -f config/crd/kic/
     ```
 2. Run `make run`.
 
 The operator will run in your local machine but will be communicating with the cluster.
-
-### Update CRD
-
-If any change is made in the CRD in the go code, run the following commands to update the changes in the CRD yaml:
-
-1. `make manifests`
-2. Apply the new CRD definition again in your cluster `make install`.
-
-### Run tests
-
-Run `make test` to run the full test suite including envtest, or `make unit-test` to run just the unit tests locally.
 
 ## Contributing
 

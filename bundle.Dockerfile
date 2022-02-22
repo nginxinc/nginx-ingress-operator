@@ -7,9 +7,9 @@ LABEL operators.operatorframework.io.bundle.metadata.v1=metadata/
 LABEL operators.operatorframework.io.bundle.package.v1=nginx-ingress-operator
 LABEL operators.operatorframework.io.bundle.channels.v1=alpha
 LABEL operators.operatorframework.io.bundle.channel.default.v1=alpha
-LABEL operators.operatorframework.io.metrics.builder=operator-sdk-v1.16.0
+LABEL operators.operatorframework.io.metrics.builder=operator-sdk-v1.10.1-ocp
 LABEL operators.operatorframework.io.metrics.mediatype.v1=metrics+v1
-LABEL operators.operatorframework.io.metrics.project_layout=go.kubebuilder.io/v3
+LABEL operators.operatorframework.io.metrics.project_layout=helm.sdk.operatorframework.io/v1
 
 # Labels for testing.
 LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
@@ -20,6 +20,6 @@ COPY bundle/manifests /manifests/
 COPY bundle/metadata /metadata/
 COPY bundle/tests/scorecard /tests/scorecard/
 
-LABEL com.redhat.openshift.versions="v4.6"
+LABEL com.redhat.openshift.versions="v4.5"
 LABEL com.redhat.delivery.operator.bundle=true
 LABEL com.redhat.delivery.backport=true
