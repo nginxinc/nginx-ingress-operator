@@ -8,17 +8,17 @@ This will deploy the operator in the `nginx-ingress-operator-system` namespace.
     ```
     git clone https://github.com/nginxinc/nginx-ingress-operator/
     cd nginx-ingress-operator/
-    git checkout v0.5.0
+    git checkout v0.5.1
     ```
 
    2. `Openshift` To deploy the Operator and associated resources to an OpenShift environment, run:
     ```
-    make deploy IMG=registry.connect.redhat.com/nginx/nginx-ingress-operator:0.5.0
+    make deploy IMG=registry.connect.redhat.com/nginx/nginx-ingress-operator:0.5.1
     ```
 
    3. Alternatively, to deploy the Operator and associated resources to all other environments:
     ```
-    make deploy IMG=nginx/nginx-ingress-operator:0.5.0
+    make deploy IMG=nginx/nginx-ingress-operator:0.5.1
     ```
 
 2. Check that the Operator is running:
