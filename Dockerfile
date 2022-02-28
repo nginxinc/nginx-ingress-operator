@@ -19,6 +19,8 @@ COPY controllers/ controllers/
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X main.version=${VERSION}" -a -o manager main.go
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:latest as base
+# temporary fix for CVE-2022-24407
+RUN microdnf --nodocs upgrade -y cyrus-sasl-lib
 ARG VERSION
 WORKDIR /
 COPY config/crd/kic ./config/crd/kic
