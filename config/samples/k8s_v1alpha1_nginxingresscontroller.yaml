@@ -7,7 +7,7 @@ spec:
   nginxPlus: false
   image:
     repository: docker.io/nginx/nginx-ingress
-    tag: 2.1.0-ubi
+    tag: 2.1.1-ubi
     pullPolicy: Always
   serviceType: NodePort
   ingressClass: nginx

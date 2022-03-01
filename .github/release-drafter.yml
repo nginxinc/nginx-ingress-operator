@@ -69,4 +69,4 @@ template: |
   ## Compatibility
 
   - NGINX Ingress Controller NIC_VERSION_REPLACE_ME!
-  - Openshift 4.5 or newer.
+  - Openshift 4.6 or newer.
