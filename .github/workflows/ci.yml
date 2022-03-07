@@ -40,7 +40,7 @@ jobs:
       repo_name: ${{ steps.vars.outputs.repo }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Output Variables
         id: vars
         run: |
@@ -54,7 +54,7 @@ jobs:
     needs: vars
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache Go build
         uses: actions/cache@v2
         with:
@@ -77,7 +77,7 @@ jobs:
     needs: vars
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Golang Environment
         uses: actions/setup-go@v2
         with:
@@ -100,7 +100,7 @@ jobs:
     needs: [binary, vars, unit-tests]
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Cache Go build
