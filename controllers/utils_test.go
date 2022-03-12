@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -396,5 +397,42 @@ func TestGenerateImage(t *testing.T) {
 
 	if expected != result {
 		t.Errorf("generateImage(%v, %v) returned %v but expected %v", rep, version, result, expected)
+	}
+}
+
+func TestGetResourceQty(t *testing.T) {
+	tests := []struct {
+		resource   string
+		defaultQty string
+		expected   resource.Quantity
+	}{
+		{
+			resource:   "100m",
+			defaultQty: defaultRequestCPU,
+			expected:   resource.MustParse("100m"),
+		},
+		{
+			resource:   "100Mi",
+			defaultQty: defaultRequestMemory,
+			expected:   resource.MustParse("100Mi"),
+		},
+		{
+			resource:   "",
+			defaultQty: defaultLimitCPU,
+			expected:   resource.MustParse(defaultLimitCPU),
+		},
+		{
+			resource:   "",
+			defaultQty: defaultLimitMemory,
+			expected:   resource.MustParse(defaultLimitMemory),
+		},
+	}
+
+	for _, test := range tests {
+		result := getResourceQty(test.resource, test.defaultQty)
+		if diff := cmp.Diff(test.expected, result); diff != "" {
+			t.Errorf("getResourceQty(%v, %v) mismatch (-want +got):\n%s", test.resource, test.defaultQty, diff)
+		}
+
 	}
 }

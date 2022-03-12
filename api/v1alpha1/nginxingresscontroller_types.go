@@ -164,6 +164,10 @@ type NginxIngressControllerSpec struct {
 	// +kubebuilder:validation:Optional
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
 	NginxReloadTimeout int `json:"nginxReloadTimeout"`
+	// Resources to request for the Ingress Controller.
+	// +kubebuilder:validation:Optional
+	// +operator-sdk:csv:customresourcedefinitions:type=spec
+	Resources *Resources `json:"resources,omitempty"`
 }
 
 // NginxIngressControllerStatus defines the observed state of NginxIngressController
@@ -300,6 +304,25 @@ type Service struct {
 	// Specifies extra annotations of the service.
 	// +kubebuilder:validation:Optional
 	ExtraAnnotations map[string]string `json:"extraAnnotations,omitempty"`
+}
+
+type Resources struct {
+	// Specifies the CPU request of the Ingress Controller.
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="100m"
+	CPURequest string `json:"cpuRequest,omitempty"`
+	// Specifies the CPU limit of the Ingress Controller.
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="1"
+	CPULimit string `json:"cpuLimit,omitempty"`
+	// Specifies the memory request of the Ingress Controller.
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="128Mi"
+	MemoryRequest string `json:"memoryRequest,omitempty"`
+	// Specifies the memory limit of the Ingress Controller.
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="1Gi"
+	MemoryLimit string `json:"memoryLimit,omitempty"`
 }
 
 func init() {

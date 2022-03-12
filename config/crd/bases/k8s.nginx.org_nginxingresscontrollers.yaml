@@ -262,6 +262,26 @@ spec:
                 required:
                 - enable
                 type: object
+              resources:
+                description: Resources to request for the Ingress Controller.
+                properties:
+                  cpuLimit:
+                    default: "1"
+                    description: Specifies the CPU limit of the Ingress Controller.
+                    type: string
+                  cpuRequest:
+                    default: 100m
+                    description: Specifies the CPU request of the Ingress Controller.
+                    type: string
+                  memoryLimit:
+                    default: 1Gi
+                    description: Specifies the memory limit of the Ingress Controller.
+                    type: string
+                  memoryRequest:
+                    default: 128Mi
+                    description: Specifies the memory request of the Ingress Controller.
+                    type: string
+                type: object
               service:
                 description: The service of the Ingress controller.
                 nullable: true

@@ -75,6 +75,16 @@ func deploymentForNginxIngressController(instance *k8sv1alpha1.NginxIngressContr
 									},
 								},
 							},
+							Resources: corev1.ResourceRequirements{
+								Requests: corev1.ResourceList{
+									corev1.ResourceCPU:    getResourceQty(instance.Spec.Resources.CPURequest, defaultRequestCPU),
+									corev1.ResourceMemory: getResourceQty(instance.Spec.Resources.MemoryRequest, defaultRequestMemory),
+								},
+								Limits: corev1.ResourceList{
+									corev1.ResourceCPU:    getResourceQty(instance.Spec.Resources.CPULimit, defaultLimitCPU),
+									corev1.ResourceMemory: getResourceQty(instance.Spec.Resources.MemoryLimit, defaultLimitMemory),
+								},
+							},
 						},
 					},
 				},

@@ -8,6 +8,7 @@ import (
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	secv1 "github.com/openshift/api/security/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/version"
 	"k8s.io/client-go/discovery"
@@ -16,6 +17,12 @@ import (
 )
 
 const apiVersionUnsupportedError = "server does not support API version"
+const (
+	defaultRequestCPU    = "100m"
+	defaultRequestMemory = "128Mi"
+	defaultLimitCPU      = "1"
+	defaultLimitMemory   = "1Gi"
+)
 
 // RunningK8sVersion contains the version of k8s
 var RunningK8sVersion *version.Version
@@ -206,4 +213,13 @@ func GetK8sVersion(client kubernetes.Interface) (v *version.Version, err error) 
 	}
 
 	return runningVersion, nil
+}
+
+// getResourceQty returns the resource quantity from the given string or the default value d if the string is empty.
+func getResourceQty(r string, d string) resource.Quantity {
+	value := r
+	if value == "" {
+		value = d
+	}
+	return resource.MustParse(value)
 }

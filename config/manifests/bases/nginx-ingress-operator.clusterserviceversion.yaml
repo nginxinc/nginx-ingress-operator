@@ -138,6 +138,9 @@ spec:
           of this field will be ignored.'
         displayName: Ingress Link
         path: reportIngressStatus.ingressLink
+      - description: Resources to request for the Ingress Controller.
+        displayName: Resources
+        path: resources
       - description: The service of the Ingress controller.
         displayName: Service
         path: service

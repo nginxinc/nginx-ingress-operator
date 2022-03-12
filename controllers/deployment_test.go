@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	k8sv1alpha1 "github.com/nginxinc/nginx-ingress-operator/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -33,6 +34,10 @@ func TestDeploymentForNginxIngressController(t *testing.T) {
 			Image: k8sv1alpha1.Image{
 				Repository: "nginx-ingress",
 				Tag:        "edge",
+			},
+			Resources: &k8sv1alpha1.Resources{
+				CPURequest:    "10m",
+				MemoryRequest: "64Mi",
 			},
 		},
 	}
@@ -103,6 +108,16 @@ func TestDeploymentForNginxIngressController(t *testing.T) {
 									},
 								},
 							},
+							Resources: corev1.ResourceRequirements{
+								Requests: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse("10m"),
+									corev1.ResourceMemory: resource.MustParse("64Mi"),
+								},
+								Limits: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse(defaultLimitCPU),
+									corev1.ResourceMemory: resource.MustParse(defaultLimitMemory),
+								},
+							},
 						},
 					},
 				},
@@ -111,8 +126,8 @@ func TestDeploymentForNginxIngressController(t *testing.T) {
 	}
 
 	result, _ := deploymentForNginxIngressController(instance, s)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("deploymentForNginxIngressController(%+v) returned %+v but expected %+v", instance, result, expected)
+	if !cmp.Equal(result, expected) {
+		t.Fatalf("Expected deployment to be equal to expected: %v", cmp.Diff(result, expected))
 	}
 }
 
