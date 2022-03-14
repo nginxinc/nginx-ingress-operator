@@ -3,7 +3,7 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - 'master'
+      - main
     paths-ignore:
       - 'docs/**'
       - 'examples/**'
@@ -12,7 +12,7 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
-      - master
+      - main
     types:
       - opened
       - reopened
@@ -210,7 +210,7 @@ jobs:
     name: Notify
     runs-on: ubuntu-20.04
     needs: [vars, build]
-    if: always() && github.ref == 'refs/heads/master'
+    if: always() && github.ref == 'refs/heads/main'
     steps:
       - name: Workflow Status
         id: check
