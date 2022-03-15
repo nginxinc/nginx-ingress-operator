@@ -14,7 +14,7 @@ The following is a set of guidelines for contributing to the NGINX Ingress Opera
   * [Git Style Guide](#git-style-guide)
   * [Go Style Guide](#go-style-guide)
 
-[Code of Conduct](https://github.com/nginxinc/nginx-ingress-operator/blob/master/CODE_OF_CONDUCT.md)
+[Code of Conduct](https://github.com/nginxinc/nginx-ingress-operator/blob/main/CODE_OF_CONDUCT.md)
 
 ## Ask a Question
 
@@ -22,9 +22,9 @@ Please open an Issue on GitHub with the label `question`.
 
 ## Getting Started
 
-Follow our [Installation Guide](https://github.com/nginxinc/nginx-ingress-operator/blob/master/docs/installation.md) to get the NGINX Ingress Operator up and running.
+Follow our [Installation Guide](https://github.com/nginxinc/nginx-ingress-operator/blob/main/docs/installation.md) to get the NGINX Ingress Operator up and running.
 
-Read the [documentation](https://github.com/nginxinc/nginx-ingress-operator/tree/master/docs) and [examples](https://github.com/nginxinc/nginx-ingress-operator/tree/master/examples).
+Read the [documentation](https://github.com/nginxinc/nginx-ingress-operator/tree/main/docs) and [examples](https://github.com/nginxinc/nginx-ingress-operator/tree/main/examples).
 
 ### Project Structure
 
@@ -48,7 +48,7 @@ To suggest an enhancement, please create an issue on GitHub with the label `enha
 ### Open a Pull Request
 
 * Fork the repo, create a branch, submit a PR when your changes are tested and ready for review
-* Fill in [our pull request template](https://github.com/nginxinc/nginx-ingress-operator/blob/master/.github/PULL_REQUEST_TEMPLATE.md)
+* Fill in [our pull request template](https://github.com/nginxinc/nginx-ingress-operator/blob/main/.github/PULL_REQUEST_TEMPLATE.md)
 
 Note: if you’d like to implement a new feature, please consider creating a feature request issue first to start a discussion about the feature.
 
