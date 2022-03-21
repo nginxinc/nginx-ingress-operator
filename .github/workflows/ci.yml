@@ -56,7 +56,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
       - name: Cache Go build
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
@@ -83,7 +83,7 @@ jobs:
         with:
           go-version: ${{ needs.vars.outputs.go_version }}
       - name: Cache Go tests
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
@@ -104,7 +104,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache Go build
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
