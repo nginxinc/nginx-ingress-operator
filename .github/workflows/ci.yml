@@ -214,7 +214,7 @@ jobs:
     steps:
       - name: Workflow Status
         id: check
-        uses: martialonline/workflow-status@v2
+        uses: martialonline/workflow-status@v3
       - name: Send Notification
         uses: 8398a7/action-slack@v3
         if: steps.check.outputs.status == 'failure'
