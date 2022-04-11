@@ -65,7 +65,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-local-build-
       - name: Setup Golang Environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ needs.vars.outputs.go_version }}
       - name: Build Binary
@@ -79,7 +79,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
       - name: Setup Golang Environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ needs.vars.outputs.go_version }}
       - name: Cache Go tests
@@ -113,7 +113,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-build-
       - name: Setup Golang Environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ needs.vars.outputs.go_version }}
       - name: Build binaries
