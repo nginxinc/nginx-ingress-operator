@@ -198,7 +198,7 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
       - name: Upload Scan Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         continue-on-error: true
         with:
           name: 'trivy-results.sarif'
