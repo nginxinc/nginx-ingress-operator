@@ -2,6 +2,8 @@
 
 # NGINX Ingress Operator
 
+**WARNING - DEPRECATION NOTICE: The NGINX Ingress Operator has been updated to be a Helm based operator. This repo has been deprecated and will soon be archived - the new NGINX Ingress Operator repo can be found at https://github.com/nginxinc/nginx-ingress-helm-operator.**
+
 The NGINX Ingress Operator is a Kubernetes/OpenShift component which deploys and manages one or more [NGINX/NGINX Plus Ingress Controllers](https://github.com/nginxinc/kubernetes-ingress) which in turn handle Ingress traffic for applications running in a cluster.
 
 Learn more about operators in the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
