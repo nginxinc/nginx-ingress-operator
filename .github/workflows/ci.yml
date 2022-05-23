@@ -117,7 +117,7 @@ jobs:
         with:
           go-version: ${{ needs.vars.outputs.go_version }}
       - name: Build binaries
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v3
         with:
           version: latest
           args: ${{ !startsWith(github.ref, 'refs/tags/') && 'build --snapshot' || 'release' }} ${{ github.event_name == 'pull_request' && '--single-target' || '' }} --rm-dist
