@@ -59,7 +59,6 @@ For more information about how to configure the NGINX Ingress Controller, check 
 
 ## TransportServers
 
-TransportServers provide support for TCP/UDP but are in active development and provided as a preview feature.
 A GlobalConfiguration resource is used to specify the TCP/UDP listeners and is required by TransportServers.
 To use TransportServers, you must create a GlobalConfiguration resource *after* creating the namespace and *before* starting the Operator.
 
