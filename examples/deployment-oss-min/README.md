@@ -64,7 +64,7 @@ To use TransportServers, you must create a GlobalConfiguration resource *after* 
 ```
 Step 1. namespace
 Step 2. global configuration <--- in this order
-Step 3. ingress controller
+Step 3. ingress operator
 ...
 ```
 
